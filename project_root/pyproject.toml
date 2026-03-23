@@ -1,0 +1,104 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# =========================================================
+# PROJECT METADATA
+# =========================================================
+[project]
+name = "spectraPyle"
+version = "5.0.0"
+description = "A flexible and scalable tool for stacking astronomical spectra"
+readme = "README.md"
+authors = [
+    { name = "Salvatore Quai", email = "salvatore.quai@unibo.it" }
+]
+license = { text = "MIT" }
+requires-python = ">=3.9"
+
+keywords = ["astronomy", "spectroscopy", "stacking", "astrophysics"]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Astronomy",
+]
+
+# =========================================================
+# CORE DEPENDENCIES
+# =========================================================
+dependencies = [
+    "numpy>=1.23",
+    "scipy>=1.9",
+    "pandas>=1.5",
+    "matplotlib>=3.6",
+    "plotly>=5.0",
+    "astropy>=5.0",
+    "dust_extinction>=1.3",
+    "h5py>=3.7",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.60",
+    "plotly>=5.0"
+]
+
+# =========================================================
+# OPTIONAL DEPENDENCIES (VERY IMPORTANT)
+# =========================================================
+[project.optional-dependencies]
+
+# Jupyter / GUI usage
+notebook = [
+    "ipywidgets>=8.0",
+    "ipython>=8.0"
+]
+
+# Dev tools
+dev = [
+    "pytest",
+    "black",
+    "ruff",
+]
+
+# Full install (everything)
+all = [
+    "ipywidgets>=8.0",
+    "ipython>=8.0",
+    "pytest",
+    "black",
+    "ruff",
+]
+
+# =========================================================
+# ENTRY POINT (CLI)
+# =========================================================
+[project.scripts]
+spectrapyle = "spectraPyle.cli:main"
+
+# =========================================================
+# PACKAGE DISCOVERY
+# =========================================================
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# =========================================================
+# INCLUDE DATA FILES (IMPORTANT FOR instrument rules)
+# =========================================================
+[tool.setuptools.package-data]
+"spectraPyle" = [
+    "instruments/*.json",
+    "../tables/*.csv"
+]
+
+# =========================================================
+# FORMATTERS (OPTIONAL BUT RECOMMENDED)
+# =========================================================
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+line-length = 88
