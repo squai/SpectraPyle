@@ -1,0 +1,255 @@
+wavelength_AA,formatted_ion,formatted_ion_simple,show
+770.409,$\mathrm{Ne}~\textsc{viii}$,Ne VIII,0
+780.324,$\mathrm{Ne}~\textsc{viii}$,Ne VIII,0
+937.814,$\mathrm{Ly}~\epsilon$,Ly$\epsilon$,1
+949.742,$\mathrm{Ly}~\delta$,Ly$\delta$,1
+977.03,$\mathrm{C}~\textsc{iii}$,C III,0
+989.79,$\mathrm{N}~\textsc{iii}$,N III,0
+991.514,$\mathrm{N}~\textsc{iii}$,N III,0
+991.579,$\mathrm{N}~\textsc{iii}$,N III,0
+1025.722,$\mathrm{Ly}~\beta$,Ly$\beta$,1
+1031.912,$\mathrm{O}~\textsc{vi}$,O VI,0
+1037.613,$\mathrm{O}~\textsc{vi}$,O VI,0
+1066.66,$\mathrm{Ar}~\textsc{i}$,Ar I,0
+1215.67,$\mathrm{Ly}~\alpha$,Ly$\alpha$,1
+1238.821,$\mathrm{N}~\textsc{v}$,N V,0
+1242.804,$\mathrm{N}~\textsc{v}$,N V,0
+1260.422,$\mathrm{Si}~\textsc{ii}$,Si II,0
+1264.73,$\mathrm{Si}~\textsc{ii}$,Si II,0
+1302.168,$\mathrm{O}~\textsc{i}$,O I,0
+1334.532,$\mathrm{C}~\textsc{ii}$,C II,0
+1335.708,$\mathrm{C}~\textsc{ii}$,C II,0
+1393.755,$\mathrm{Si}~\textsc{iv}$,Si IV,0
+1397.232,$\mathrm{O}~\textsc{iv}]$,O IV],0
+1399.78,$\mathrm{O}~\textsc{iv}]$,O IV],0
+1402.77,$\mathrm{Si}~\textsc{iv}$,Si IV,0
+1486.496,$\mathrm{N}~\textsc{iv}]$,N IV],0
+1548.187,$\mathrm{C}~\textsc{iv}$,C IV,0
+1550.772,$\mathrm{C}~\textsc{iv}$,C IV,0
+1640.42,$\mathrm{He}~\textsc{ii}$,He II,1
+1660.809,$\mathrm{O}~\textsc{iii}]$,O III],0
+1666.15,$\mathrm{O}~\textsc{iii}]$,O III],0
+1746.823,$\mathrm{N}~\textsc{iii}]$,N III],0
+1748.656,$\mathrm{N}~\textsc{iii}]$,N III],0
+1854.716,$\mathrm{Al}~\textsc{iii}$,Al III,0
+1862.79,$\mathrm{Al}~\textsc{iii}$,Al III,0
+1892.03,$\mathrm{Si}~\textsc{iii}]$,Si III],0
+1908.734,$\mathrm{C}~\textsc{iii}]$,C III],0
+2143.455,$\mathrm{N}~\textsc{ii}]$,N II],0
+2321.664,$\mathrm{[O}~\textsc{iii}]$,[O III],1
+2324.214,$\mathrm{C}~\textsc{ii}]$,C II],0
+2325.404,$\mathrm{C}~\textsc{ii}]$,C II],0
+2649.499,$\mathrm{[Fe}~\textsc{xi}]$,[Fe XI],0
+2734.098,$\mathrm{He}~\textsc{ii}$,He II,0
+2783.521,$\mathrm{[Mg}~\textsc{v}]$,[Mg V],0
+2796.352,$\mathrm{Mg}~\textsc{ii}]$,Mg II],0
+2803.531,$\mathrm{Mg}~\textsc{ii}]$,Mg II],0
+2830.193,$\mathrm{[Fe}~\textsc{iv}]$,[Fe IV],0
+2836.574,$\mathrm{[Fe}~\textsc{iv}]$,[Fe IV],0
+2854.508,$\mathrm{[Ar}~\textsc{iv}]$,[Ar IV],0
+2869.052,$\mathrm{[Ar}~\textsc{iv}]$,[Ar IV],0
+2928.857,$\mathrm{[Mg}~\textsc{v}]$,[Mg V],0
+2945.967,$\mathrm{He}~\textsc{i}$,He I,1
+3133.702,$\mathrm{O}~\textsc{iii}$,O III,0
+3188.667,$\mathrm{He}~\textsc{i}$,He I,1
+3204.026,$\mathrm{He}~\textsc{ii}$,He II,1
+3313.282,$\mathrm{O}~\textsc{iii}$,O III,0
+3346.783,$\mathrm{[Ne}~\textsc{v}]$,[Ne V],1
+3426.863,$\mathrm{[Ne}~\textsc{v}]$,[Ne V],1
+3445.039,$\mathrm{O}~\textsc{iii}$,O III,1
+3467.49,$\mathrm{[N}~\textsc{i}]$,[N I],0
+3467.536,$\mathrm{[N}~\textsc{i}]$,[N I],0
+3488.725,$\mathrm{He}~\textsc{i}$,He I,1
+3587.344,$\mathrm{[Fe}~\textsc{vii}]$,[Fe VII],0
+3663.543,$\mathrm{[Fe}~\textsc{vi}]$,[Fe VI],0
+3687.881,H19,H19,0
+3692.602,H18,H18,0
+3698.209,H17,H17,0
+3704.913,H16,H16,0
+3713.033,H15,H15,0
+3723.004,H14,H14,0
+3727.092,$\mathrm{[O}~\textsc{ii}]$,[O II],1
+3729.875,$\mathrm{[O}~\textsc{ii}]$,[O II],1
+3735.431,H13,H13,0
+3751.224,H12,H12,0
+3759.988,$\mathrm{[Fe}~\textsc{vii}]$,[Fe VII],0
+3771.708,H11,H11,0
+3798.982,H10,H10,0
+3836.479,H9,H9,0
+3840.359,$\mathrm{[Fe}~\textsc{v}]$,[Fe V],0
+3869.857,$\mathrm{[Ne}~\textsc{iii}]$,[Ne III],1
+3889.749,$\mathrm{He}~\textsc{i}$,He I,0
+3890.166,H8,H8,0
+3892.383,$\mathrm{[Fe}~\textsc{v}]$,[Fe V],0
+3912.438,$\mathrm{[Fe}~\textsc{v}]$,[Fe V],0
+3968.593,$\mathrm{[Ne}~\textsc{iii}]$,[Ne III],1
+3971.202,H$\epsilon$,H$\epsilon$,1
+4027.328,$\mathrm{He}~\textsc{i}$,He I,0
+4069.749,$\mathrm{[S}~\textsc{ii}]$,[S II],0
+4072.39,$\mathrm{[Fe}~\textsc{v}]$,[Fe V],0
+4077.5,$\mathrm{[S}~\textsc{ii}]$,[S II],0
+4102.9,H$\delta$,H$\delta$,1
+4144.93,$\mathrm{He}~\textsc{i}$,He I,0
+4180.04,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4181.778,$\mathrm{[Fe}~\textsc{v}]$,[Fe V],0
+4234.364,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4228.381,$\mathrm{[Fe}~\textsc{v}]$,[Fe V],0
+4288.6,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
+4304.387,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4318.353,$\mathrm{O}~\textsc{ii}$,O II,0
+4341.691,H$\gamma$,H$\gamma$,1
+4364.436,$\mathrm{[O}~\textsc{iii}]$,[O III],1
+4413.539,$\mathrm{[Ar}~\textsc{xiv}]$,[Ar XIV],0
+4416.139,$\mathrm{O}~\textsc{ii}$,O II,0
+4418.07,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4453.348,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
+4472.734,$\mathrm{He}~\textsc{i}$,He I,0
+4490.443,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4492.665,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4512.175,$\mathrm{N}~\textsc{iii}$,N III,0
+4523.902,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4557.17,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4584.119,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4585.122,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4630.636,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4635.438,$\mathrm{N}~\textsc{iii}$,N III,0
+4641.94,$\mathrm{N}~\textsc{iii}$,N III,0
+4643.15,$\mathrm{N}~\textsc{iii}$,N III,0
+4648.721,$\mathrm{C}~\textsc{iii}$,C III,0
+4651.552,$\mathrm{C}~\textsc{iii}$,C III,0
+4652.772,$\mathrm{C}~\textsc{iii}$,C III,0
+4659.354,$\mathrm{[Fe}~\textsc{iii}]$,[Fe III],0
+4687.021,$\mathrm{He}~\textsc{ii}$,He II,0
+4712.578,$\mathrm{[Ar}~\textsc{iv}]$,[Ar IV],0
+4741.446,$\mathrm{[Ar}~\textsc{iv}]$,[Ar IV],0
+4862.691,H$\beta$,H$\beta$,1
+4894.737,$\mathrm{[Fe}~\textsc{vii}]$,[Fe VII],0
+4904.439,$\mathrm{[Fe}~\textsc{iv}]$,[Fe IV],0
+4925.302,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+4960.295,$\mathrm{[O}~\textsc{iii}]$,[O III],1
+5008.24,$\mathrm{[O}~\textsc{iii}]$,[O III],1
+5019.84,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+5086.187,$\mathrm{[Fe}~\textsc{iii}]$,[Fe III],0
+5147.184,$\mathrm{[Fe}~\textsc{vi}]$,[Fe VI],0
+5160.327,$\mathrm{[Fe}~\textsc{vii}]$,[Fe VII],0
+5170.473,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+5177.482,$\mathrm{[Fe}~\textsc{vi}]$,[Fe VI],0
+5199.024,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+5201.705,$\mathrm{[N}~\textsc{i}]$,[N I],0
+5236.082,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+5237.518,$\mathrm{[Fe}~\textsc{iv}]$,[Fe IV],0
+5271.867,$\mathrm{[Fe}~\textsc{iii}]$,[Fe III],0
+5277.47,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+5277.848,$\mathrm{[Fe}~\textsc{vii}]$,[Fe VII],0
+5304.335,$\mathrm{[Fe}~\textsc{xiv}]$,[Fe XIV],0
+5310.587,$\mathrm{[Ca}~\textsc{v}]$,[Ca V],0
+5318.094,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+5318.263,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+5336.664,$\mathrm{[Fe}~\textsc{vi}]$,[Fe VI],0
+5425.728,$\mathrm{[Fe}~\textsc{vi}]$,[Fe VI],0
+5519.242,$\mathrm{[Cl}~\textsc{iii}]$,[Cl III],0
+5539.411,$\mathrm{[Cl}~\textsc{iii}]$,[Cl III],0
+5639.165,$\mathrm{[Fe}~\textsc{vi}]$,[Fe VI],0
+5678.575,$\mathrm{[Fe}~\textsc{vi}]$,[Fe VI],0
+5697.5,$\mathrm{C}~\textsc{iii}$,C III,0
+5722.287,$\mathrm{[Fe}~\textsc{vii}]$,[Fe VII],0
+5756.186,$\mathrm{[N}~\textsc{ii}]$,[N II],0
+5802.939,$\mathrm{C}~\textsc{iv}$,C IV,0
+5813.592,$\mathrm{C}~\textsc{iv}$,C IV,0
+5877.253,$\mathrm{He}~\textsc{i}$,He I,1
+6048.114,$\mathrm{O}~\textsc{i}$,O I,0
+6088.685,$\mathrm{[Fe}~\textsc{vii}]$,[Fe VII],0
+6302.046,$\mathrm{[O}~\textsc{i}]$,[O I],1
+6313.806,$\mathrm{[S}~\textsc{iii}]$,[S III],0
+6348.855,$\mathrm{Si}~\textsc{ii}$,Si II,0
+6365.536,$\mathrm{[O}~\textsc{i}]$,[O I],0
+6371.223,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+6376.272,$\mathrm{[Fe}~\textsc{x}]$,[Fe X],0
+6517.881,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
+6549.859,$\mathrm{[N}~\textsc{ii}]$,[N II],1
+6564.632,H$\alpha$,H$\alpha$,1
+6585.279,$\mathrm{[N}~\textsc{ii}]$,[N II],1
+6718.294,$\mathrm{[S}~\textsc{ii}]$,[S II],1
+6732.668,$\mathrm{[S}~\textsc{ii}]$,[S II],1
+7004.161,$\mathrm{O}~\textsc{i}$,O I,0
+7007.802,$\mathrm{[Ar}~\textsc{v}]$,[Ar V],0
+7067.144,$\mathrm{He}~\textsc{i}$,He I,0
+7137.757,$\mathrm{[Ar}~\textsc{iii}]$,[Ar III],0
+7157.129,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
+7172.597,$\mathrm{[Ar}~\textsc{iv}]$,[Ar IV],0
+7173.977,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
+7238.414,$\mathrm{C}~\textsc{ii}$,C II,0
+7239.255,$\mathrm{[Ar}~\textsc{iv}]$,[Ar IV],0
+7256.447,$\mathrm{O}~\textsc{i}$,O I,1
+7264.761,$\mathrm{[Ar}~\textsc{iv}]$,[Ar IV],0
+7283.355,$\mathrm{He}~\textsc{i}$,He I,1
+7322.007,$\mathrm{[O}~\textsc{ii}]$,[O II],0
+7332.75,$\mathrm{[O}~\textsc{ii}]$,[O II],0
+7379.862,$\mathrm{[Ni}~\textsc{ii}]$,[Ni II],0
+7413.201,$\mathrm{[Ni}~\textsc{ii}]$,[Ni II],0
+7454.591,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
+7470.367,$\mathrm{N}~\textsc{i}$,N I,0
+7613.095,$\mathrm{[S}~\textsc{xii}]$,[S XII],0
+7753.193,$\mathrm{[Ar}~\textsc{iii}]$,[Ar III],0
+7818.287,$\mathrm{He}~\textsc{i}$,He I,0
+7870.359,$\mathrm{Ar}~\textsc{i}$,Ar I,0
+7892.071,$\mathrm{[Ni}~\textsc{iii}]$,[Ni III],0
+7893.971,$\mathrm{[Fe}~\textsc{xi}]$,[Fe XI],0
+8239.054,$\mathrm{He}~\textsc{ii}$,He II,0
+8394.703,Pa20,Pa20,0
+8415.63,Pa19,Pa19,0
+8440.275,Pa18,Pa18,0
+8448.68,$\mathrm{O}~\textsc{i}$,O I,0
+8469.581,Pa17,Pa17,0
+8500.355,$\mathrm{Ca}~\textsc{ii}$,Ca II,0
+8504.819,Pa16,Pa16,0
+8544.437,$\mathrm{Ca}~\textsc{ii}$,Ca II,0
+8547.731,Pa15,Pa15,0
+8581.057,$\mathrm{[Cl}~\textsc{ii}]$,[Cl II],0
+8600.754,Pa14,Pa14,0
+8619.317,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
+8664.519,$\mathrm{Ca}~\textsc{ii}$,Ca II,0
+8667.399,Pa13,Pa13,0
+8682.666,$\mathrm{N}~\textsc{i}$,N I,0
+8705.637,$\mathrm{N}~\textsc{i}$,N I,0
+8714.096,$\mathrm{N}~\textsc{i}$,N I,0
+8752.875,Pa12,Pa12,0
+8865.216,Pa11,Pa11,0
+8894.352,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
+9017.384,Pa10,Pa10,0
+9071.089,$\mathrm{[S}~\textsc{iii}]$,[S III],1
+9231.547,Pa9,Pa9,0
+9533.715,$\mathrm{[S}~\textsc{iii}]$,[S III],1
+9548.588,Pa$\epsilon$,Pa$\epsilon$,1
+9826.824,$\mathrm{[C}~\textsc{i}]$,[C I],1
+9852.961,$\mathrm{[C}~\textsc{i}]$,[C I],1
+9915.718,$\mathrm{[S}~\textsc{viii}]$,[S VIII],0
+10030.479,$\mathrm{He}~\textsc{i}$,He I,0
+10033.91,$\mathrm{He}~\textsc{i}$,He I,0
+10052.123,Pa$\delta$,Pa$\delta$,1
+10289.549,$\mathrm{[S}~\textsc{ii}]$,[S II],0
+10323.319,$\mathrm{[S}~\textsc{ii}]$,[S II],0
+10339.243,$\mathrm{[S}~\textsc{ii}]$,[S II],0
+10749.744,$\mathrm{[Fe}~\textsc{xiii}]$,[Fe XIII],0
+10833.307,$\mathrm{He}~\textsc{i}$,He I,1
+10941.082,Pa$\gamma$,Pa$\gamma$,1
+11473.14,$\mathrm{[P}~\textsc{ii}]$,[P II],0
+11889.253,$\mathrm{[P}~\textsc{ii}]$,[P II],1
+12570.438,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],1
+12821.6,Pa$\beta$,Pa$\beta$,1
+12953.542,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
+13212.613,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],1
+15346.193,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
+16440.49,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],1
+16777.582,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
+16806.59,Br11,Br11,0
+17364.742,Br10,Br10,0
+18755.12,Pa$\alpha$,Pa$\alpha$,1
+19451.309,Br$\delta$,Br$\delta$,1
+19575.343,H$_2$,H$_2$,1
+20337.55,H$_2$,H$_2$,1
+20585.618,H$_2$,H$_2$,1
+21223.792,H$_2$,H$_2$,1
+21659.91,Br$\gamma$,Br$\gamma$,1
+22236.067,H$_2$,H$_2$,1
+22476.133,H$_2$,H$_2$,1

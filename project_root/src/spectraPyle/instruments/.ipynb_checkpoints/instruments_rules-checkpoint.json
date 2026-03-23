@@ -1,0 +1,81 @@
+{
+  "euclid": {
+    "constants": {
+      "wavelengths_blue": [9260.0, 13660.0],
+      "wavelengths_red": [11900.0, 19002.0],
+      "R": 600,
+      "reference_lambda": 16000,
+      "units": "erg/s/cm2/A",
+      "units_scale_factor": 1e-16
+    },
+
+    "quality": {
+      "pixel_mask": {
+        "type": "list_int",
+        "allowed": [0, 1, 2, 3, 4, 5, 6],
+        "default": [0]
+      },
+      "n_min_dithers": {
+        "type": "int",
+        "min": 0,
+        "max": 20,
+        "default": 3
+      }
+    },
+
+    "surveys": {
+      "wide": {
+        "grisms": ["red"],
+        "data_release": ["Q1", "DR1"]
+      },
+      "deep": {
+        "grisms": ["red", "blue", "all"],
+        "data_release": ["Q1", "DR1"]
+      }
+    },
+
+    "defaults": {
+      "survey": "wide",
+      "grism": "red",
+      "data_release": "DR1"
+    }
+  },
+
+  "desi": {
+    "constants": {
+      "wavelengths": [3600.0, 9824.0],
+      "R": 5200,
+      "reference_lambda": 9824,
+      "units": "erg/s/cm2/A",
+      "units_scale_factor": 1e-17
+    },
+
+    "quality": {
+      "pixel_mask": {
+        "type": "list_int",
+        "allowed": [],
+        "default": []
+      },
+      "n_min_dithers": {
+        "type": "int",
+        "min": 0,
+        "max": 20,
+        "default": 0
+      }
+    },
+
+    "surveys": {
+      "matched_Euclid_Q1": {
+        "grisms": ["merged"],
+        "data_release": ["Q1"]
+      }
+    },
+
+    "defaults": {
+      "survey": "matched_Euclid_Q1",
+      "grism": "merged",
+      "data_release": "Q1"
+    }
+  }
+}
+

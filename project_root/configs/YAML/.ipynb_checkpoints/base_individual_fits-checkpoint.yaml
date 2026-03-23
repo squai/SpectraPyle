@@ -1,0 +1,50 @@
+instrument:
+  instrument_name: euclid
+  survey_name: wide
+  grism_type: red
+  data_release: Q1
+instrument_constants:
+  wavelengths_blue:
+  - 9260.0
+  - 13660.0
+  wavelengths_red:
+  - 11900.0
+  - 19002.0
+  R: 600
+  reference_lambda: 16000
+  units: erg/s/cm2/A
+  units_scale_factor: 1.0e-16
+io:
+  spectra_mode: individual fits
+  input_dir: ../tests/INDIVIDUAL_FITS
+  filename_in: catalog_list
+  filename_in_extention: csv
+  output_dir: ../tests/INDIVIDUAL_FITS/outputs
+  spectra_dir: ../tests/INDIVIDUAL_FITS
+  filename_out: AUTO
+cosmology:
+  cosmo_H0: 70.0
+  cosmo_Om0: 0.3
+redshift:
+  z_type: rest_frame
+norm:
+  spectra_normalization: median
+catalog_columns:
+  ID_column_name: object_id
+  redshift_column_name: spe_z
+  galactic_extinction_parameters:
+    galactic_extinction: false
+resampling:
+  pixel_resampling_type: lambda
+  pixel_size_type: instrumental
+  nyquist_sampling: 5.0
+bootstrap:
+  bootstrapping_R: 300
+sigmaclip:
+  sigma_clipping_conditions: 3.0
+parallel:
+  multiprocessing: true
+  max_cpu_fraction: 0.9
+plot:
+  plot_results: true
+config_version: 1.0.0

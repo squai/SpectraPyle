@@ -1,0 +1,79 @@
+##########################################################################
+To run the code, you need to provide a configuration file containing the necessary input parameters. 
+You can use provided Jupoyter notebooks to create custom configuration files (see below).
+
+## How to Run
+You have two options (A and B):
+
+A) One of the Jupyter notebook:
+    - stackSpec_help_ALL_IN_ONE_FITS.ipynb (if you have all the spectra stored in a single fits file.)
+    - stackSpec_help_INDIVIDUAL_FITS.ipynb (if you a fits file for each spectrum.)
+    - stackSpec_help_DATALABS_METAFILES.ipynb (it allows you to  query the EUCLID SAS and stack spectra directly from the repository without storing them. REQUIRES access to ESA SAS via login)
+     
+     Follow the instructions in the notebooks to GENERATE the config file and RUN stackSpec to generate the stacked spectra.
+
+B) terminal (bash kernel):
+    1) Using the default set of values (in a bash terminal):
+
+    > python stackingEuclid.py
+
+    2) Passing a set of values via a configuration file in dictionary format. For example, using the provided configuration file "config_test":
+
+    > python stackingEuclid.py -c config_test
+
+    The command will run the stackSpec code, producing the stacking spectra for the provided test galaxies using the initial configuration given in the file config_test. 
+
+## Results
+The code generates a file in .fits format in the provided output directory defined in the config file (default is ./test/results/).
+
+The .fits file contains two HDUs:
+    - HDU[0] is the primary HDU and its header contains some info (such the redshift of the stack):
+    
+    To get the redshift of the stack:
+    from astropy.io import fits
+    with fits.open('path_to_file/name_stack.fits) as hdu:
+    header = hdu[0].header
+    redshift = header['REDSHIFT']
+    
+    - HDU[1] comtains the data generated, that can be accessed with the following keywords:
+        
+        'wavelength': Wavelength array of the stacked spectrum (in Angstroms)
+        
+        'specMedian': Stacked median spectrum
+        'specMedianDispersion': Dispersion (1 sigma) of the stacked median spectrum
+        'specMedianError': Uncertainty (1 sigma) of the stacked median spectrum
+        'specMean': Stacked mean spectrum
+        'specMeanDispersion': Dispersion (1 sigma) of the stacked mean spectrum
+        'specMeanError': Uncertainty (1 sigma) of the stacked mean spectrum
+        'specGeometricMean': Stacked geometric mean spectrum
+        'specGeometricMeanDispersion': Dispersion (1 sigma) of the stacked geometric mean spectrum
+        'specGeometricMeanError': Uncertainty (1 sigma) of the stacked geometric mean spectrum
+        'specWeightedMean': Stacked weighted spectrum
+        'specWeightedMeanDispersion': Dispersion (1 sigma) of the stacked weighted average spectrum
+        'specWeightedMeanError': Uncertainty (1 sigma) of the stacked weighted average spectrum
+        
+        'initialPixelCount': Number of spectra to be stacked (note: initialPixelCount=(2*len(sample)) when grism_type=='all')
+        'goodPixelCount': Number of good flux values per pixel actually used for stacking
+        'badPixelCount': Number of bad pixels per pixel
+        'sigmaClippedCount': Number of sigma clipped flux values per pixel
+        
+        For example, to get the mean stacked spectrum:
+        
+        from astropy.io import fits
+        with fits.open('path_to_file/name_stack.fits) as hdu:
+        data = hdu[1].data
+        wave = data.field('wavelength')
+        specMean = data.field('specMean')
+        
+## Plot 
+The plots of the generated stacked spectrum can be generated using the plotStack.ipynb notebook
+
+**Note:** If the sample includes faint fluxes (values below or equal to zero), the geometric mean calculation may yield unreliable results, triggering a warning for the user. In cases where every pixel in the sample has faint fluxes, the resulting geometric mean stacked spectrum will contain NaN values exclusively. This scenario is exemplified by the provided test sample.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+Feel free to contact Salvatore Quai at salvatore.quai@unibo.it for any questions or assistance.
+---------------------------------------------------------------------------------------------------------------------------------------
+
+## License
+TBD

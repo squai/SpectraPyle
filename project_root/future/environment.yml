@@ -1,0 +1,17 @@
+name: spectraPyle
+channels:
+  - conda-forge
+  - astropy
+dependencies:
+  - python=3.11
+  - numpy
+  - astropy
+  - plotly
+  - pydantic>=2.0
+  - dust_extinction
+  - h5py
+  - voila
+  - pip
+  - pip:
+    - jupyter
+    - spectraPyle

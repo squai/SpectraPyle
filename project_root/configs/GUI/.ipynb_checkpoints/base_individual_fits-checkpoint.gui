@@ -1,0 +1,127 @@
+{
+  "gui_state": {
+    "spectra_dir": "../tests/INDIVIDUAL_FITS",
+    "input_dir": "../tests/INDIVIDUAL_FITS",
+    "output_dir": "../tests/INDIVIDUAL_FITS/outputs/",
+    "filename_in": "catalog_list",
+    "filename_in_extention": "csv",
+    "filename_out": "AUTO",
+    "spectra_mode": "individual fits",
+    "spectra_datafile": "",
+    "ID_column_name": "object_id",
+    "redshift_column_name": "spe_z",
+    "galactic_extinction": false,
+    "gal_ext_column_name": "",
+    "custom_column_name": "",
+    "metadata_path_column_name": "",
+    "metadata_file_column_name": "",
+    "metadata_indx_column_name": "",
+    "instrument_name": "euclid",
+    "survey_name": "wide",
+    "grism_type": "red",
+    "data_release": "Q1",
+    "cosmo_H0": 70.0,
+    "cosmo_Om0": 0.3,
+    "z_type": "rest_frame",
+    "z_value": 0.0,
+    "spectra_normalization": "median",
+    "conservation": null,
+    "spectrum_edges": null,
+    "lambda_edges_rest": null,
+    "interval_norm_statistics": null,
+    "lambda_norm_rest": null,
+    "pixel_resampling_type": "lambda",
+    "pixel_size_type": "instrumental",
+    "pixel_resampling": null,
+    "nyquist_sampling": 5.0,
+    "sigma_clipping_conditions": 3.0,
+    "bootstrapping_R": 300,
+    "pixel_mask": [
+      0
+    ],
+    "n_min_dithers": 2,
+    "multiprocessing": true,
+    "max_cpu_fraction": 0.9,
+    "plot_results": true
+  },
+  "validated_config": {
+    "instrument": {
+      "instrument_name": "euclid",
+      "survey_name": "wide",
+      "grism_type": "red",
+      "data_release": "Q1",
+      "quality": null
+    },
+    "instrument_constants": {
+      "wavelengths_blue": [
+        9260.0,
+        13660.0
+      ],
+      "wavelengths_red": [
+        11900.0,
+        19002.0
+      ],
+      "R": 600,
+      "reference_lambda": 16000,
+      "units": "erg/s/cm2/A",
+      "units_scale_factor": 1e-16
+    },
+    "io": {
+      "spectra_mode": "individual fits",
+      "input_dir": "../tests/INDIVIDUAL_FITS",
+      "filename_in": "catalog_list",
+      "filename_in_extention": "csv",
+      "output_dir": "../tests/INDIVIDUAL_FITS/outputs",
+      "spectra_dir": "../tests/INDIVIDUAL_FITS",
+      "spectra_datafile": null,
+      "filename_out": "AUTO"
+    },
+    "cosmology": {
+      "cosmo_H0": 70.0,
+      "cosmo_Om0": 0.3
+    },
+    "redshift": {
+      "z_type": "rest_frame",
+      "z_value": null
+    },
+    "norm": {
+      "spectra_normalization": "median",
+      "conservation": null,
+      "lambda_norm_min": null,
+      "lambda_norm_max": null,
+      "interval_norm_statistics": null
+    },
+    "catalog_columns": {
+      "ID_column_name": "object_id",
+      "redshift_column_name": "spe_z",
+      "metadata": null,
+      "galactic_extinction_parameters": {
+        "galactic_extinction": false,
+        "gal_ext_column_name": null
+      },
+      "custom_normalization": null
+    },
+    "resampling": {
+      "pixel_resampling_type": "lambda",
+      "pixel_size_type": "instrumental",
+      "pixel_resampling": null,
+      "nyquist_sampling": 5.0
+    },
+    "lambda_edges_rest": null,
+    "pixel_crop": null,
+    "bootstrap": {
+      "bootstrapping_R": 300
+    },
+    "sigmaclip": {
+      "sigma_clipping_conditions": 3.0
+    },
+    "parallel": {
+      "multiprocessing": true,
+      "max_cpu_fraction": 0.9
+    },
+    "plot": {
+      "plot_results": true
+    },
+    "config_version": "1.0.0"
+  }
+}
