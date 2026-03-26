@@ -27,6 +27,10 @@ future/
 !tests/data/**/*.fits
 tests/**/outputs/
 
+*.json
+*.gui
+*.yaml
+!configs/**/default.*
 
 # =========================
 # Logs & outputs
