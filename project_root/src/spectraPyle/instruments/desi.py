@@ -49,7 +49,7 @@ def int_to_bin7(mask_spec, list_bits_to_be_masked = [0,2,6]):
     return masked_array
 """
 
-def readSpec(config, specid):
+def readSpec(config, specid, grism):
     """
     Reads spectrum data from FITS files. Supports single-spectrum FITS files or 
     multi-spectrum FITS files where spectra are stored in different HDUs.
@@ -59,6 +59,7 @@ def readSpec(config, specid):
                        - 'pixel_mask': Pixel mask configuration (bool or list of bits to mask).
                        - 'n_min_dithers': Minimum number of dithers for valid data.
         specid (str): Name of the spectrum to extract.
+        grism (str): Name of the grism 
 
     Returns:
         tuple: Wavelengths (lbd), flux, and error arrays.

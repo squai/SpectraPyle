@@ -12,6 +12,7 @@ def useSpec(
     zStack,
     ebv_gal,
     cosmo,
+    grism,
     metadata_name=None,
     hdu_indx=None
 ):
@@ -37,6 +38,8 @@ def useSpec(
         Galactic extinction E(B-V).
     cosmo : astropy.cosmology
         Cosmology object used for luminosity distance calculations.
+    grism : str
+        Grism identifier
     metadata_name : str, optional
         Metadata file path (required if spectra_datafile='metadata').
     hdu_indx : int, optional
@@ -87,7 +90,7 @@ def useSpec(
             config, specid, metadata_name, hdu_indx
         )
     else:
-        lbd, flux, error = inst.readSpec(config, specid)
+        lbd, flux, error = inst.readSpec(config, specid, grism)
 
     # -------- Galactic Extinction --------
     if condGalacticExtinction:

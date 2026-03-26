@@ -300,7 +300,6 @@ class Stacking:
                         data_dict['z_stacking'], grismList, chunk_data_input  
                     )
 
-
                 # Compute counts
                 initialPixelCount = np.sum(~np.isinf(chunk_stackArr), axis=1)
                 badPixelCount = np.sum(np.isnan(chunk_stackArr), axis=1)
@@ -309,7 +308,6 @@ class Stacking:
                 # Convert inf → NaN for sigma clipping
                 chunk_stackArr = np.where(chunk_stackArr == np.inf, np.nan, chunk_stackArr)
                 chunk_stackArrErr = np.where(chunk_stackArrErr == np.inf, np.nan, chunk_stackArrErr)
-
 
                 # Get current number of spectra (num_spectra) before resizing
                 current_spectra_count = stackArr_dset.shape[1]  # How many spectra are already stored

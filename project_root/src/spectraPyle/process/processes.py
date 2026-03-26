@@ -193,7 +193,7 @@ def process_spectrum_parallel(args):
             # -------- Spectrum Loading --------
             # Note: the spectrum will be shifted at redshift=z_stacking
             wavelength, spec, err = sspec.useSpec(
-                config, specid, z, z_stacking, ebv_g, cosmology,
+                config, specid, z, z_stacking, ebv_g, cosmology, grism, 
                     metadata_name, hdu_indx
             )
             

@@ -21,6 +21,12 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+config_test/
+future/
+*.fits
+!tests/data/**/*.fits
+tests/**/outputs/
+
 
 # =========================
 # Logs & outputs
@@ -31,7 +37,6 @@ build/
 # =========================
 # Data (important!)
 # =========================
-*.fits
 *.h5
 
 # keep small test CSV if needed

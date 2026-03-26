@@ -162,7 +162,41 @@ def readSpec(config, specid):
         
     return lbd, flux, error
 '''
-def readSpec(config, specid):
+
+def build_spectrum_filename(specid, config, grism):
+    """
+    Build spectrum filename depending on instrument/data release.
+
+    Parameters
+    ----------
+    specid : int or str
+    config : dict
+    grism : str ("red" | "blue")
+
+    Returns
+    -------
+    str
+    """
+
+    data_release = config.get("data_release")
+
+    # ---------------- DR1 ----------------
+    if data_release == "DR1":
+        prefix_map = {
+            "red": "RGS",
+            "blue": "BGS",
+        }
+
+        prefix = prefix_map.get(grism)
+        if prefix is None:
+            raise ValueError(f"Unknown grism: {grism}")
+
+        return f"SPECTRA_{prefix}-sedm {specid}.fits"
+
+    # ---------------- DEFAULT ----------------
+    return f"{specid}.fits"
+
+def readSpec(config, specid, grism):
     """
     Reads spectrum data from FITS files. Supports single-spectrum FITS files or 
     multi-spectrum FITS files where spectra are stored in different HDUs, or all in an HDU called 'SPECTRA'.
@@ -172,6 +206,7 @@ def readSpec(config, specid):
                        - 'pixel_mask': Pixel mask configuration (bool or list of bits to mask).
                        - 'n_min_dithers': Minimum number of dithers for valid data.
         specid (str): Name of the spectrum to extract.
+        grism (str): Name of the grism 
 
     Returns:
         tuple: Wavelengths (lbd), flux, and error arrays.
@@ -183,6 +218,8 @@ def readSpec(config, specid):
     pixel_mask = config['pixel_mask']
     n_min_dithers = config['n_min_dithers']
     spectrum_edges = config['spectrum_edges']
+
+    data_release = config['data_release']
     
     if config['spectra_datafile'] is not None:
         # Multi-spectrum FITS file
@@ -237,8 +274,12 @@ def readSpec(config, specid):
         # --------------------------------------------------
         # Case 3: one FITS file per spectrum
         # --------------------------------------------------
-        filepath = config['spectra_dir'] / f"{str(specid)}.fits"
+        #filepath = config['spectra_dir'] / f"{str(specid)}.fits"
         #filepath = f"{config['spectra_dir']}/{str(specid)}.fits"
+
+        filename = build_spectrum_filename(specid, config, grism)
+        filepath = config['spectra_dir'] / filename
+        
 
         with fits.open(filepath, memmap=True) as hdul:
             table1 = Table(hdul[1].data)
