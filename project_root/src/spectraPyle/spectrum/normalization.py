@@ -172,7 +172,7 @@ def francis1991_normalize(
     return norm_flux, norm_err
 '''
 
-def francis1991_normalize_fast(
+def francis1991_normalize(
     stackArr,
     stackArrErr,
     min_overlap=50,
@@ -181,7 +181,7 @@ def francis1991_normalize_fast(
     sigma_clip=3.0,
     max_iter_clip=3,
     eps=1e-10,
-):
+    ):
     """
     Fast Francis-style normalization with sigma-clipped overlap scaling.
 
