@@ -73,7 +73,7 @@ def normSpecCustom (lbd, flux, error, norm):
     errorNorm = error / norm
     return fluxNorm, errorNorm, norm
 
-
+'''
 def francis1991_normalize(
     stackArr,
     stackArrErr,
@@ -168,5 +168,188 @@ def francis1991_normalize(
         new_only = valid_i & ~valid_r
         ref_flux[new_only] = norm_flux[new_only, i]
         ref_var[new_only] = vi[new_only]
+
+    return norm_flux, norm_err
+'''
+
+def francis1991_normalize_fast(
+    stackArr,
+    stackArrErr,
+    min_overlap=50,
+    norm_stat="median",
+    feature_mask=None,
+    sigma_clip=3.0,
+    max_iter_clip=3,
+    eps=1e-10,
+):
+    """
+    Fast Francis-style normalization with sigma-clipped overlap scaling.
+
+    Parameters
+    ----------
+    stackArr : ndarray (Npix, Nspec)
+        Flux array
+    stackArrErr : ndarray (Npix, Nspec)
+        1-sigma errors
+    min_overlap : int
+        Minimum overlap for normalization
+    norm_stat : {'median', 'mean'}
+        Statistic used after clipping
+    feature_mask : ndarray (Npix,) or None
+        True = exclude from normalization
+    sigma_clip : float
+        Sigma clipping threshold (default: 3)
+    max_iter_clip : int
+        Max iterations for clipping
+    eps : float
+        Small value to avoid division issues
+
+    Returns
+    -------
+    norm_flux : ndarray
+    norm_err : ndarray
+    """
+
+    stat_func = np.nanmedian if norm_stat == "median" else np.nanmean
+
+    Npix, Nspec = stackArr.shape
+
+    norm_flux = np.full_like(stackArr, np.nan)
+    norm_err = np.full_like(stackArrErr, np.nan)
+
+    # --------------------------------------------------
+    # Masks
+    # --------------------------------------------------
+    valid = np.isfinite(stackArr) & np.isfinite(stackArrErr)
+
+    if feature_mask is None:
+        feature_mask = np.zeros(Npix, dtype=bool)
+
+    usable = valid & (~feature_mask[:, None])
+    usable_T = usable.T  # (Nspec, Npix)
+
+    # --------------------------------------------------
+    # Track normalization
+    # --------------------------------------------------
+    normalized = np.zeros(Nspec, dtype=bool)
+
+    # --------------------------------------------------
+    # Anchor spectrum
+    # --------------------------------------------------
+    counts = usable.sum(axis=0)
+    candidates = np.where(counts >= min_overlap)[0]
+
+    if len(candidates) == 0:
+        raise ValueError("No valid anchor spectrum")
+
+    anchor = candidates[0]
+
+    f0 = stackArr[:, anchor]
+    e0 = stackArrErr[:, anchor]
+    m0 = usable[:, anchor]
+
+    alpha0 = stat_func(f0[m0])
+
+    norm_flux[:, anchor] = f0 / alpha0
+    norm_err[:, anchor] = e0 / alpha0
+
+    normalized[anchor] = True
+
+    # --------------------------------------------------
+    # Sigma-clipped ratio function
+    # --------------------------------------------------
+    def robust_alpha(ref_vals, cur_vals):
+        mask = (
+            np.isfinite(ref_vals)
+            & np.isfinite(cur_vals)
+            & (np.abs(cur_vals) > eps)
+        )
+
+        if mask.sum() < min_overlap:
+            return np.nan
+
+        ratio = ref_vals[mask] / cur_vals[mask]
+
+        if ratio.size < min_overlap:
+            return np.nan
+
+        vals = ratio.copy()
+
+        for _ in range(max_iter_clip):
+            mu = np.nanmedian(vals)
+            std = np.nanstd(vals)
+
+            if std == 0 or not np.isfinite(std):
+                break
+
+            good = np.abs(vals - mu) < sigma_clip * std
+
+            if good.sum() == len(vals):
+                break
+
+            vals = vals[good]
+
+            if vals.size < min_overlap:
+                return np.nan
+
+        return stat_func(vals)
+
+    # --------------------------------------------------
+    # Iterative normalization
+    # --------------------------------------------------
+    progress = True
+
+    while progress:
+        progress = False
+
+        norm_idx = np.where(normalized)[0]
+        not_norm_idx = np.where(~normalized)[0]
+
+        if len(not_norm_idx) == 0:
+            break
+
+        for i in not_norm_idx:
+
+            fi = stackArr[:, i]
+            ei = stackArrErr[:, i]
+            mi = usable_T[i]
+
+            # vectorized overlap with normalized spectra
+            overlaps = usable_T[norm_idx] & mi
+            overlap_counts = overlaps.sum(axis=1)
+
+            good = overlap_counts >= min_overlap
+            if not np.any(good):
+                continue
+
+            # best overlap
+            j = norm_idx[np.argmax(overlap_counts)]
+
+            fj = norm_flux[:, j]
+            mj = usable_T[j]
+
+            overlap = mi & mj
+
+            ref_vals = fj[overlap]
+            cur_vals = fi[overlap]
+
+            alpha = robust_alpha(ref_vals, cur_vals)
+
+            if not np.isfinite(alpha):
+                continue
+
+            # apply normalization
+            norm_flux[:, i] = alpha * fi
+            norm_err[:, i] = alpha * ei
+
+            normalized[i] = True
+            progress = True
+
+    # --------------------------------------------------
+    # Final report
+    # --------------------------------------------------
+    if not np.all(normalized):
+        missing = np.where(~normalized)[0]
+        print(f"Warning: {len(missing)} spectra not normalized")
 
     return norm_flux, norm_err
