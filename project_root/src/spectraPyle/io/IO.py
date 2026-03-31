@@ -206,6 +206,7 @@ def build_wavelength_grid(wavelMin, wavelMax, config, z_stacking):
     return wavelength_centers, wavelength_bins, pixel_size
 
 
+'''
 def get_effective_cpu_limit():
     """
     Returns the number of CPUs effectively available to this process,
@@ -223,6 +224,50 @@ def get_effective_cpu_limit():
             return os.cpu_count()  # No CPU limit set
     except Exception:
         return os.cpu_count()  # Default to full count if detection fails
+'''
+
+
+def get_effective_cpu_limit():
+    import os
+    """
+    Returns the CPU effective number considering cgroups v1, v2 e CPU's affinity.
+    """
+    # 1. Affinity
+    try:
+        affinity_count = len(os.sched_getaffinity(0))
+    except (AttributeError, Exception):
+        affinity_count = os.cpu_count() or 1
+
+    limit = float('inf')
+
+    # 2. check cgroup v2 (cpu.max)
+    try:
+        with open('/sys/fs/cgroup/cpu.max', 'r') as f:
+            data = f.read().split()
+            if len(data) == 2:
+                max_val, period = data
+                if max_val != 'max':
+                    limit = int(max_val) / int(period)
+    except (FileNotFoundError, ValueError, ZeroDivisionError):
+        pass
+
+    # 3. check cgroup v1 (quota/period)
+    try:
+        with open('/sys/fs/cgroup/cpu/cpu.cfs_quota_us', 'r') as q, \
+             open('/sys/fs/cgroup/cpu/cpu.cfs_period_us', 'r') as p:
+            quota = int(q.read())
+            period = int(p.read())
+            if quota > 0 and period > 0:
+                limit = min(limit, quota / period)
+    except (FileNotFoundError, ValueError):
+        pass
+
+    # Result: minimum between cgroup limit, affinity and physical total available
+    final_cpus = min(limit, affinity_count)
+    
+    # Returns at least one core
+    return max(1, int(final_cpus))
+
 
 
 def output_units(config):
