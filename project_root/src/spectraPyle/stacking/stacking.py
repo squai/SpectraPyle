@@ -353,7 +353,7 @@ class Stacking:
             stackArrErr = np.where(stackArr == np.nan, np.nan, stackArrErr)
 
             # Compute some other counts
-            data_dict['sigmaClippedCount'] = np.sum(np.isnan(stackArr_dset), axis=1) - data_dict['badPixelCount'] - data_dict['voidPixelCount']
+            data_dict['sigmaClippedCount'] = np.sum(np.isnan(stackArr), axis=1) - data_dict['badPixelCount'] - data_dict['voidPixelCount']
 
             #initialPixelCount - badPixelCount
             data_dict['goodPixelCount'] = data_dict['initialPixelCount'] - data_dict['badPixelCount'] - data_dict['sigmaClippedCount']

@@ -73,6 +73,178 @@ def normSpecCustom (lbd, flux, error, norm):
     errorNorm = error / norm
     return fluxNorm, errorNorm, norm
 
+
+def francis1991_normalize(
+    stackArr,
+    stackArrErr,
+    min_overlap=50,
+    norm_stat="median",
+    sigma_clip=3.0,
+    max_iter_clip=3,
+    feature_mask=None,
+    eps=1e-10,
+):
+    """
+    Robust Francis-style normalization with sigma-clipped overlap scaling.
+
+    Parameters
+    ----------
+    stackArr : ndarray (Npix, Nspec)
+        Flux array
+    stackArrErr : ndarray (Npix, Nspec)
+        1-sigma errors
+    min_overlap : int
+        Minimum overlap for normalization
+    norm_stat : {'median', 'mean'}
+        Statistic used after clipping
+    feature_mask : ndarray (Npix,) or None
+        True = exclude from normalization
+    sigma_clip : float
+        Sigma clipping threshold (default: 3)
+    max_iter_clip : int
+        Max iterations for clipping
+    eps : float
+        Small value to avoid division issues
+
+    Returns
+    -------
+    norm_flux : ndarray
+    norm_err : ndarray
+    """
+    
+    print ("\nStarting stacking Francis 1991-like") 
+
+    stat_func = np.nanmedian if norm_stat == "median" else np.nanmean
+
+    Npix, Nspec = stackArr.shape
+
+    norm_flux = np.full_like(stackArr, np.nan)
+    norm_err = np.full_like(stackArrErr, np.nan)
+
+    # --------------------------------------------------
+    # Feature mask
+    # --------------------------------------------------
+    if feature_mask is None:
+        feature_mask = np.zeros(Npix, dtype=bool)
+
+    usable = (
+        np.isfinite(stackArr)
+        & np.isfinite(stackArrErr)
+        & (~feature_mask[:, None])
+    )
+
+    counts = usable.sum(axis=0)
+
+    anchor = np.argmax(counts)
+
+    if counts[anchor] < min_overlap:
+        raise ValueError("No valid anchor spectrum found")
+
+    # --------------------------------------------------
+    # Initialize reference
+    # --------------------------------------------------
+    f0 = stackArr[:, anchor]
+    e0 = stackArrErr[:, anchor]
+
+    valid0 = usable[:, anchor]
+
+    alpha0 = stat_func(f0[valid0])
+
+    norm_flux[:, anchor] = f0 / alpha0
+    norm_err[:, anchor] = e0 / alpha0
+
+    ref_flux = norm_flux[:, anchor].copy()
+
+    ref_count = np.zeros(Npix)
+    ref_count[np.isfinite(ref_flux)] = 1
+
+    # --------------------------------------------------
+    # Robust alpha estimator
+    # --------------------------------------------------
+    def robust_alpha(ref_vals, cur_vals):
+
+        mask = (
+            np.isfinite(ref_vals)
+            & np.isfinite(cur_vals)
+            & (np.abs(cur_vals) > eps)
+        )
+
+        if mask.sum() < min_overlap:
+            return np.nan
+
+        ratio = ref_vals[mask] / cur_vals[mask]
+
+        vals = ratio.copy()
+
+        for _ in range(max_iter_clip):
+            mu = np.nanmedian(vals)
+            std = np.nanstd(vals)
+
+            if std == 0 or not np.isfinite(std):
+                break
+
+            good = np.abs(vals - mu) < sigma_clip * std
+
+            if good.sum() == len(vals):
+                break
+
+            vals = vals[good]
+
+            if vals.size < min_overlap:
+                return np.nan
+            
+        median_vals = stat_func(vals)
+
+        return median_vals
+
+    # --------------------------------------------------
+    # Incremental normalization
+    # --------------------------------------------------
+    for i in range(1, Nspec):
+
+        fi = stackArr[:, i]
+        ei = stackArrErr[:, i]
+
+        valid_i = np.isfinite(fi) & np.isfinite(ei)
+        valid_r = np.isfinite(ref_flux)
+
+        overlap = valid_i & valid_r & (~feature_mask)
+
+        if overlap.sum() < min_overlap:
+            continue
+
+        ref_vals = ref_flux[overlap]
+        cur_vals = fi[overlap]
+
+        alpha = robust_alpha(ref_vals, cur_vals)
+
+        if not np.isfinite(alpha):
+            continue
+
+        # normalize
+        norm_flux[:, i] = alpha * fi
+        norm_err[:, i] = alpha * ei
+
+        # --------------------------------------------------
+        # Update reference (COUNT WEIGHTED)
+        # --------------------------------------------------
+        both = overlap
+
+        ref_flux[both] = (
+            ref_flux[both] * ref_count[both] + norm_flux[both, i]
+        ) / (ref_count[both] + 1)
+
+        ref_count[both] += 1
+
+        # add new pixels
+        new_only = valid_i & (~valid_r)
+
+        ref_flux[new_only] = norm_flux[new_only, i]
+        ref_count[new_only] = 1
+
+    return norm_flux, norm_err
+
+
 '''
 def francis1991_normalize(
     stackArr,
@@ -172,6 +344,124 @@ def francis1991_normalize(
     return norm_flux, norm_err
 '''
 
+'''
+def francis1991_normalize(
+    stackArr,
+    stackArrErr,
+    min_overlap=50,
+    norm_stat="median",
+):
+    """
+    Francis+1991 incremental normalization of fully assembled spectra.
+
+    Parameters
+    ----------
+    stackArr : ndarray (Npix, Nspec)
+        Flux density array (NaN = invalid)
+    stackArrErr : ndarray (Npix, Nspec)
+        1-sigma error array (NaN = invalid)
+    min_overlap : int
+        Minimum number of overlapping pixels for normalization
+    norm_stat : {'median', 'mean'}
+        Statistic used for normalization (default: median)
+
+    Returns
+    -------
+    norm_flux : ndarray (Npix, Nspec)
+        Normalized flux array
+    norm_err : ndarray (Npix, Nspec)
+        Normalized 1-sigma error array
+    """
+    print ("HHHHHH", flush=True)
+    
+    stat_func = np.nanmedian if norm_stat == "median" else np.nanmean
+
+    Npix, Nspec = stackArr.shape
+
+    norm_flux = np.full_like(stackArr, np.nan)
+    norm_err = np.full_like(stackArrErr, np.nan)
+
+    # --------------------------------------------------
+    # Initialize reference composite using first spectrum
+    # --------------------------------------------------
+    f0 = stackArr[:, 0]
+    e0 = stackArrErr[:, 0]
+
+    valid0 = np.isfinite(f0) & np.isfinite(e0)
+    if valid0.sum() == 0:
+        raise ValueError("First spectrum has no valid pixels")
+
+    alpha0 = stat_func(f0[valid0])
+
+    norm_flux[:, 0] = f0 / alpha0
+    norm_err[:, 0] = e0 / alpha0
+
+    ref_flux = norm_flux[:, 0].copy()
+    ref_var = norm_err[:, 0] ** 2
+    
+    ##
+    ref_count = np.zeros(Npix)
+    ref_count[valid0] = 1
+    ## 
+    
+    # --------------------------------------------------
+    # Incremental normalization
+    # --------------------------------------------------
+    for i in range(1, Nspec):
+
+        fi = stackArr[:, i]
+        ei = stackArrErr[:, i]
+
+        valid_i = np.isfinite(fi) & np.isfinite(ei)
+        valid_r = np.isfinite(ref_flux) & np.isfinite(ref_var)
+
+        overlap = valid_i & valid_r
+
+        if overlap.sum() < min_overlap:
+            continue
+
+        ref_stat = stat_func(ref_flux[overlap])
+        cur_stat = stat_func(fi[overlap])
+
+        alpha = ref_stat / cur_stat
+
+        norm_flux[:, i] = alpha * fi
+        norm_err[:, i] = alpha * ei
+
+        # --- update reference composite ---
+        vi = norm_err[:, i] ** 2
+        both = overlap
+        
+        ref_flux[both] = (
+            ref_flux[both] * ref_count[both] + norm_flux[both, i]
+        ) / (ref_count[both] + 1)
+        
+        ref_var[both] = ref_flux[both]
+        
+        ref_count[both] += 1
+        
+        
+        """
+        w_old = 1.0 / ref_var[both]
+        w_new = 1.0 / vi[both]
+
+        ref_flux[both] = (
+            ref_flux[both] * w_old + norm_flux[both, i] * w_new
+        ) / (w_old + w_new)
+
+        ref_var[both] = 1.0 / (w_old + w_new)
+        """
+        
+        
+        # add new-only pixels
+        new_only = valid_i & ~valid_r
+        ref_flux[new_only] = norm_flux[new_only, i]
+        ref_var[new_only] = vi[new_only]
+
+    return norm_flux, norm_err
+'''
+
+'''
 def francis1991_normalize(
     stackArr,
     stackArrErr,
@@ -209,6 +499,8 @@ def francis1991_normalize(
     norm_flux : ndarray
     norm_err : ndarray
     """
+    
+    print ("\nStarting stacking following Francis 1991") 
 
     stat_func = np.nanmedian if norm_stat == "median" else np.nanmean
 
@@ -353,3 +645,4 @@ def francis1991_normalize(
         print(f"Warning: {len(missing)} spectra not normalized")
 
     return norm_flux, norm_err
+'''
