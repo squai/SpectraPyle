@@ -1,5 +1,6 @@
 ##########################################################################
 ## HISTORY:
+## v5.1 modified Francis-like stacking (aka template normalization). 
 ## v5.0 optimesed the configuration for JSON/YAML standards amd CLI approach (for HPC users)
 ## v5.0 made a GUI accessible from external port (via python script, voila package)
 ## v5.0 completely revised the module structure of the project, added a schema with a rigid control over the configuration paramters, and a runtime adapter function that guarantees agreement between raw configuration and validated configuration
