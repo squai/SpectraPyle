@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 # =========================================================
 [project]
 name = "spectraPyle"
-version = "5.0.0"
+version = "5.0.1"
 description = "A flexible and scalable tool for stacking astronomical spectra"
 readme = "README.md"
 authors = [
