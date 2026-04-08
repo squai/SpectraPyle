@@ -21,19 +21,18 @@ __pycache__/
 *.egg-info/
 dist/
 build/
-config_test/
-future/
+project_root/future/
 *.fits
-!tests/data/**/*.fits
-tests/**/outputs/
-old/
-my_notebooks/
+!project_root/tests/**/*.fits
+project_root/tests/**/output*/
+project_root/notebooks/old/
+project_root/notebooks/my_notebooks/
 
 *.json
 *.gui
 *.yaml
-!configs/**/default.*
-!src/spectraPyle/instruments/instruments_rules.json
+!project_root/configs/**/default.*
+!project_root/src/spectraPyle/instruments/instruments_rules.json
 
 # =========================
 # Logs & outputs
