@@ -1,10 +1,61 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.so
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# macOS
+# =========================
+.DS_Store
+
+# =========================
+# Packaging
+# =========================
 *.egg-info/
 dist/
 build/
-__pycache__/
-*.pyc
-.ipynb_checkpoints/
-*.log
+config_test/
+future/
+*.fits
+!tests/data/**/*.fits
+tests/**/outputs/
+old/
+my_notebooks/
+
 *.json
 *.gui
-.env
+*.yaml
+!configs/**/default.*
+!src/spectraPyle/instruments/instruments_rules.json
+
+# =========================
+# Logs & outputs
+# =========================
+*.log
+*.out
+
+# =========================
+# Data (important!)
+# =========================
+*.h5
+
+# keep small test CSV if needed
+# !tests/*.csv
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Temporary / scratch
+# =========================
+*~

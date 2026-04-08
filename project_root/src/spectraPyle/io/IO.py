@@ -11,6 +11,29 @@ import spectraPyle.spectrum.resampling as sres
 
 from tqdm import tqdm
 
+import os
+
+'''
+def get_incremental_dir(base_path):
+    """
+    Incremental output directory
+
+    Args:
+        base_path: output directory from the configuration file
+
+    Returns: 
+        new_path: incremental {base_path}_i (i=1,2,...), if base_path exists. 
+    """
+    if not os.path.exists(base_path):
+        return base_path
+
+    i = 1
+    while True:
+        new_path = f"{base_path}_{i}"
+        if not os.path.exists(new_path):
+            return new_path
+        i += 1
+''' 
 
 def read_catalog(dirIn, fname, extension, mandatory_keys):
     """
@@ -348,4 +371,4 @@ def save_to_file(config, data_dict):
     print(f"FITS file '{output_filename}' has been saved.")
     
     return output_filename
-    
+
