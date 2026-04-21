@@ -137,7 +137,7 @@ def francis1991_normalize(
     counts = usable.sum(axis=0)
 
     # --------------------------------------------------
-    # NEW: anchor = first (lowest-z) spectrum with enough pixels
+    # anchor = first (lowest-z) spectrum with enough pixels
     # --------------------------------------------------
     anchor = None
     for i in range(Nspec):
@@ -171,21 +171,8 @@ def francis1991_normalize(
     # --------------------------------------------------
     # Robust alpha estimator
     # --------------------------------------------------
-    def robust_alpha(ref_vals, cur_vals):
-
-        mask = (
-            np.isfinite(ref_vals)
-            & np.isfinite(cur_vals)
-            & (np.abs(cur_vals) > eps)
-        )
-
-        if mask.sum() < min_overlap:
-            return np.nan
-
-        ratio = ref_vals[mask] / cur_vals[mask]
-
-        vals = ratio.copy()
-
+    
+    def sig_clip_alpha(vals):
         for _ in range(max_iter_clip):
             mu = np.nanmedian(vals)
             std = np.nanstd(vals)
@@ -199,12 +186,31 @@ def francis1991_normalize(
                 break
 
             vals = vals[good]
-
+            
             if vals.size < min_overlap:
                 return np.nan
+        return vals
+    
+    def robust_alpha(ref_vals, cur_vals):
 
-        return stat_func(vals)
+        mask = (
+            np.isfinite(ref_vals)
+            & np.isfinite(cur_vals)
+            & (np.abs(cur_vals) > eps)
+        )
 
+        if mask.sum() < min_overlap:
+            return np.nan
+
+        #ratio = ref_vals[mask] / cur_vals[mask]
+        #vals = ratio.copy()
+        #vals = sig_clip_alpha(vals)
+        #return stat_func(vals)
+        
+        ref_vals_sc = sig_clip_alpha(ref_vals[mask])
+        cur_vals_sc = sig_clip_alpha(cur_vals[mask])
+        return stat_func(ref_vals_sc) / stat_func(cur_vals_sc)
+    
     # --------------------------------------------------
     # Incremental normalization
     # --------------------------------------------------
