@@ -257,17 +257,17 @@ def process_spectrum_parallel(args):
             )
 
         except Exception as e:
-            print(f"Error processing spectrum {specid}: {e}")
+            print(f"Skipping spectrum {specid}: {e} ")
 
             normalization_factor = np.nan
-            spectra_not_found = specid
+            skip_spectrum = specid
 
             return (
                 specid,
                 np.full_like(wavelength_stacking_bins[:-1], np.inf),
                 np.full_like(wavelength_stacking_bins[:-1], np.inf),
                 normalization_factor,
-                spectra_not_found
+                skip_spectrum
             )
 
         
