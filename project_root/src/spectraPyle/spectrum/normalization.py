@@ -1,8 +1,3 @@
-#############################################################################
-## HISTORY:
-## v3.1 normalization.py: returning the normalization factor used
-#############################################################################
-
 import numpy as np
 
 def normSpecInterv(specid, lbd, flux, error, lambdamin_norm, lambdamax_norm, norm_stat):
@@ -151,7 +146,7 @@ def francis1991_normalize(
     if anchor is None:
         raise ValueError("No valid anchor spectrum found")
 
-    print(f"Anchor spectrum index: {anchor}", flush=True)
+    print(f"Francis 1991-like stacked: Anchor spectrum index: {anchor}", flush=True)
 
     # --------------------------------------------------
     # Initialize reference
@@ -205,14 +200,21 @@ def francis1991_normalize(
         if mask.sum() < min_overlap:
             return np.nan
 
+        ## median of ratio
         #ratio = ref_vals[mask] / cur_vals[mask]
         #vals = ratio.copy()
         #vals = sig_clip_alpha(vals)
         #return stat_func(vals)
-        
+
+        ## ratio of medians
         ref_vals_sc = sig_clip_alpha(ref_vals[mask])
         cur_vals_sc = sig_clip_alpha(cur_vals[mask])
-        return stat_func(ref_vals_sc) / stat_func(cur_vals_sc)
+
+        ## with sigma clipping
+        #return stat_func(ref_vals_sc) / stat_func(cur_vals_sc)
+
+        ## no sigma clipping
+        return stat_func(ref_vals[mask]) / stat_func(cur_vals[mask])
     
     # --------------------------------------------------
     # Incremental normalization
@@ -235,8 +237,8 @@ def francis1991_normalize(
 
         alpha = robust_alpha(ref_vals, cur_vals)
 
-        if not np.isfinite(alpha) or (alpha < 0):
-            print (fr"Normalization failure for spectrum N.{str(i)}: invalid normalization value ({alpha}) bhhh", flush=True)
+        if not np.isfinite(alpha) or (alpha < 0) or (alpha > 1000):
+            print (fr"Normalization failure for spectrum N.{str(i)}: invalid normalization value ({alpha}).", flush=True)
             continue
 
         # normalize
