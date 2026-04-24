@@ -108,24 +108,29 @@ def main_parallel(
                 desc="Processing Files"
             )
         )
-
+    
+    # Flatten results 
+    flat_results = [item for sublist in results for item in sublist]
+    
     # -------- Unpack results --------
-    specid, specResampledArr, errResampledArr, normalization_factors, spectra_not_found = zip(*results)
-
-    specid = np.array(specid)
-    specResampledArr = np.array(specResampledArr).squeeze().T
-    errResampledArr = np.array(errResampledArr).squeeze().T
-    normalization_factors = np.array(normalization_factors).squeeze()
-    spectra_not_found = np.array(spectra_not_found, dtype=str).squeeze()
+    specid_result, specResampledArr, errResampledArr, normalization_factors, spectra_not_found = zip(*flat_results)
+    
+    # Convert to arrays
+    specid_result = np.array(specid_result)
+    
+    specResampledArr = np.array(specResampledArr).T
+    errResampledArr = np.array(errResampledArr).T
+    
+    normalization_factors = np.array(normalization_factors)
+    spectra_not_found = np.array(spectra_not_found, dtype=str)
 
     return (
         specResampledArr,
         errResampledArr,
         normalization_factors,
         spectra_not_found,
-        specid
+        specid_result
     )
-
 
 def process_spectrum_parallel(args):
     """
@@ -170,14 +175,13 @@ def process_spectrum_parallel(args):
     Returns
     -------
     tuple
-        (specid, specResampled, errResampled, normalization_factor, spectra_not_found)
+        (specid_grism, specResampled, errResampled, normalization_factor, spectra_not_found)
 
     Notes
     -----
     - If spectrum loading or processing fails, returns arrays filled with inf and
       marks the spectrum as not found.
     """
-
     (
         specid, z, ebv_g, norm_param,
         metadata_name, hdu_indx,
@@ -186,19 +190,17 @@ def process_spectrum_parallel(args):
         z_stacking, grismList
     ) = args
 
-    use_metadata = config.get('spectra_datafile', '') == 'metadata'
-    
+    results = []
+
     for grism in grismList:
         try:
             # -------- Spectrum Loading --------
-            # Note: the spectrum will be shifted at redshift=z_stacking
             wavelength, spec, err = sspec.useSpec(
-                config, specid, z, z_stacking, ebv_g, cosmology, grism, 
-                    metadata_name, hdu_indx
+                config, specid, z, z_stacking, ebv_g, cosmology, grism,
+                metadata_name, hdu_indx
             )
-            
-        
-            # -------- Spectra Normalization --------
+
+            # -------- Normalization --------
             if config['spectra_normalization'] in ['no_normalization', 'template']:
                 normalization_factor = 1.0
 
@@ -213,13 +215,10 @@ def process_spectrum_parallel(args):
                 )
 
             elif config['spectra_normalization'] == 'interval':
-                if config['z_type'] == 'observed_frame':
-                    z_st = 0
-                else:
-                    z_st = z_stacking
-                    
+                z_st = 0 if config['z_type'] == 'observed_frame' else z_stacking
+
                 spec, err, normalization_factor = snorm.normSpecInterv(
-                    specid, 
+                    specid,
                     wavelength, spec, err,
                     config['lambda_norm_rest'][0] * (1 + z_st),
                     config['lambda_norm_rest'][1] * (1 + z_st),
@@ -248,26 +247,22 @@ def process_spectrum_parallel(args):
 
             spectra_not_found = np.nan
 
-            return (
-                specid,
-                specResampled,
-                errResampled,
-                normalization_factor,
-                spectra_not_found
-            )
-
         except Exception as e:
-            print(f"Skipping spectrum {specid}: {e} ")
+            print(f"Error processing spectrum {specid} (grism={grism}): {e}", flush=True)
 
+            specResampled = np.full_like(wavelength_stacking_bins[:-1], np.inf)
+            errResampled = np.full_like(wavelength_stacking_bins[:-1], np.inf)
             normalization_factor = np.nan
-            skip_spectrum = specid
+            spectra_not_found = specid
 
-            return (
-                specid,
-                np.full_like(wavelength_stacking_bins[:-1], np.inf),
-                np.full_like(wavelength_stacking_bins[:-1], np.inf),
-                normalization_factor,
-                skip_spectrum
-            )
+        # append ONE result per grism
+        results.append((
+            specid,  
+            specResampled,
+            errResampled,
+            normalization_factor,
+            spectra_not_found
+        ))
 
+    return results
         

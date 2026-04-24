@@ -38,7 +38,7 @@ def prepare_stacking(config, z_stacking, zMin, zMax, lambda_edges):
         grismList = ['blue', 'red']
     else:
         raise NameError('grism type not understood')
-        
+     
     return lbd_min, lbd_max, grismList
 
 
@@ -60,108 +60,6 @@ def int_to_bin7(mask_spec, list_bits_to_be_masked=[0, 2, 6]):
 
     return masked_array
 
-'''
-def int_to_bin7(mask_spec, list_bits_to_be_masked = [0,2,6]):
-    masked_array = np.full_like(mask_spec, False, dtype=bool)
-    for k, n in enumerate(mask_spec):
-        nb = f'{n:07b}'[::-1]
-        if len(str(nb)) == 7:
-            list_bits = []
-            for i in range(len(nb)):
-                if nb[i] == str(1):
-                    list_bits.append(i)
-            masked_array[k] = any(x in list_bits_to_be_masked for x in list_bits)
-        else:
-            raise ValueError('wrong binary number!')
-    return masked_array
-
-
-def readSpec(config, specid):
-    """
-    Reads spectrum data from FITS files. Supports single-spectrum FITS files or 
-    multi-spectrum FITS files where spectra are stored in different HDUs.
-
-    Args:
-        config (dict): Configuration dictionary with keys:
-                       - 'pixel_mask': Pixel mask configuration (bool or list of bits to mask).
-                       - 'n_min_dithers': Minimum number of dithers for valid data.
-        specid (str): Name of the spectrum to extract.
-
-    Returns:
-        tuple: Wavelengths (lbd), flux, and error arrays.
-
-    Raises:
-        NameError: If required data columns are not found or if the file format is not recognized.
-    """
-    pixel_mask = config['pixel_mask']
-    n_min_dithers = config['n_min_dithers']
-    spectrum_edges = config['spectrum_edges']
-    
-    if config['spectra_datafile'] is not None:
-        # Handle multi-spectrum FITS file
-        with fits.open(config['spectra_dir']+config['spectra_datafile']+'.fits') as hdul:
-            for hdu in hdul:
-                if hdu.name == str(specid):
-                    table1 = Table(hdu.data)
-                    break
-            else:
-                raise NameError(f"Spectral data for '{specid}' not found in {config['spectra_datafile']}.fits.")
-                sys.exit(1)
-    else:
-        # Handle single-spectrum FITS file
-        with fits.open(config['spectra_dir']+str(specid)+'.fits') as hdulist:
-            table1 = Table(hdulist[1].data)
-
-    # Extract flux
-    if 'flux' in table1.colnames:
-        flux = table1['flux']
-    elif 'SIGNAL' in table1.colnames:
-        flux = table1['SIGNAL']
-    else:
-        raise NameError('Data model of the input fluxes *.fits file not recognized.')
-
-    # Extract error
-    if 'error' in table1.colnames:
-        error = table1['error']
-    elif 'VAR' in table1.colnames:
-        error = np.sqrt(table1['VAR'])
-    else:
-        raise NameError('Data model of the input errors *.fits file not recognized.')
-
-    # Extract wavelength
-    if 'wave' in table1.colnames:
-        lbd = table1['wave']
-    elif 'WAVELENGTH' in table1.colnames:
-        lbd = table1['WAVELENGTH']
-    else:
-        raise NameError('Data model of the input wavelengths *.fits file not recognized.')
-
-    # Optional extra data
-    mask = table1['mask'] if 'mask' in table1.colnames else table1['MASK'] if 'MASK' in table1.colnames else None
-    ndith = table1['NDith'] if 'NDith' in table1.colnames else table1['NDITH'] if 'NDITH' in table1.colnames else None
-    quality = table1['Quality'] if 'Quality' in table1.colnames else table1['QUALITY'] if 'QUALITY' in table1.colnames else None
-
-    # Apply pixel bitmask
-    if pixel_mask and mask is not None:
-        indxBadPixels = int_to_bin7(mask, list_bits_to_be_masked=pixel_mask)
-        flux[indxBadPixels] = np.nan
-        error[indxBadPixels] = np.nan
-
-    # Apply dithers filter
-    if n_min_dithers > 0 and ndith is not None:
-        flux = np.where(ndith < n_min_dithers, np.nan, flux)
-        error = np.where(ndith < n_min_dithers, np.nan, error)
-    
-    if spectrum_edges is not False:
-        flux[:spectrum_edges[0]] = np.nan
-        error[:spectrum_edges[0]] = np.nan
-        
-        flux[spectrum_edges[1]:] = np.nan
-        error[spectrum_edges[1]:] = np.nan
-    
-        
-    return lbd, flux, error
-'''
 
 def build_spectrum_filename(specid, config, grism):
     """
@@ -234,6 +132,12 @@ def readSpec(config, specid, grism):
                 table1 = Table(hdul[str(specid)].data)
 
             # --------------------------------------------------
+            # Case 1bis: one spectrum per HDU, HDU name == specid_{grism}
+            # --------------------------------------------------
+            elif fr"{specid}_{grism}" in hdul:
+                table1 = Table(hdul[fr"{specid}_{grism}"].data)
+            
+            # --------------------------------------------------
             # Case 2: all spectra in a single table HDU
             # --------------------------------------------------
             elif 'SPECTRA' in hdul:
@@ -263,7 +167,6 @@ def readSpec(config, specid, grism):
             # --------------------------------------------------
             # Unknown format
             # --------------------------------------------------
-            
             else:
                 raise NameError(
                     f"Unrecognized FITS structure in "
