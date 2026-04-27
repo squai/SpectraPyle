@@ -73,7 +73,7 @@ def useSpec(
     conservation = config['conservation']
     condGalacticExtinction = config['galactic_extinction']
     condAirVac = config['air_vacuum']
-    use_metadata = config.get('spectra_datafile', '') == 'metadata'
+    use_metadata = config.get('spectra_mode') == 'metadata path'
 
     inst = importlib.import_module(
         f"spectraPyle.instruments.{config['instrument_name']}"

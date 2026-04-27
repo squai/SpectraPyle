@@ -2,24 +2,16 @@
   "instrument": {
     "instrument_name": "euclid",
     "survey_name": "wide",
-    "grism_type": "red",
+    "grisms": ["red"],
     "data_release": "Q1",
     "quality": {
-      "pixel_mask": [
-        0
-      ],
+      "pixel_mask": [0],
       "n_min_dithers": 3
     }
   },
   "instrument_constants": {
-    "wavelengths_blue": [
-      9260.0,
-      13660.0
-    ],
-    "wavelengths_red": [
-      11900.0,
-      19002.0
-    ],
+    "wavelengths_blue": [9260.0, 13660.0],
+    "wavelengths_red": [11900.0, 19002.0],
     "R": 600,
     "reference_lambda": 16000,
     "units": "erg/s/cm2/A",
@@ -31,8 +23,12 @@
     "filename_in": "catalog_list",
     "filename_in_extention": "csv",
     "output_dir": "../tests/INDIVIDUAL_FITS/outputs",
-    "spectra_dir": "../tests/INDIVIDUAL_FITS",
-    "spectra_datafile": null,
+    "grism_io": {
+      "red": {
+        "spectra_dir": "../tests/INDIVIDUAL_FITS",
+        "spectra_datafile": null
+      }
+    },
     "filename_out": "AUTO"
   },
   "cosmology": {
@@ -67,7 +63,7 @@
     "nyquist_sampling": 5.0
   },
   "lambda_edges_rest": null,
-  "pixel_crop": null,
+  "spectrum_edges": null,
   "bootstrap": {
     "bootstrapping_R": 300
   },

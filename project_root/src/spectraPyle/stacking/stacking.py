@@ -138,7 +138,7 @@ class Stacking:
         if self.config['spectra_normalization'] == 'custom':
             keys_input.append(self.config['custom_column_name'])
 
-        if self.config['spectra_datafile'] == 'metadata':
+        if self.config['spectra_mode'] == 'metadata path':
             keys_input.append(self.config['metadata_path_column_name'])
             keys_input.append(self.config['metadata_file_column_name'])
             keys_input.append(self.config['metadata_indx_column_name'])
@@ -201,7 +201,7 @@ class Stacking:
             f"spectraPyle.supported_instruments.{self.config['instrument_name']}"
             )
 
-            if self.config.get('spectra_datafile', '') == 'metadata':
+            if self.config.get('spectra_mode') == 'metadata path':
                 metadata_name = (
                     data_input[self.config['metadata_path_column_name']]
                     + '/'
@@ -218,7 +218,8 @@ class Stacking:
                     self.config, specIDs[0], metadata_name, hdu_indx
                 )
             else:
-                data_dict['wavelength_stacking'], _, _ = inst.readSpec(self.config, specIDs[0])
+                first_grism = self.config['grisms'][0]
+                data_dict['wavelength_stacking'], _, _ = inst.readSpec(self.config, specIDs[0], first_grism)
 
 
             data_dict['pixelResampling'] = 'original'

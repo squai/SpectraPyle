@@ -63,7 +63,7 @@ def main_parallel(
 
     config = self.config
     cosmology = self.cosmology
-    use_metadata = config.get('spectra_datafile', '') == 'metadata'
+    use_metadata = config.get('spectra_mode') == 'metadata path'
 
     # -------- Metadata preparation --------
     if use_metadata:

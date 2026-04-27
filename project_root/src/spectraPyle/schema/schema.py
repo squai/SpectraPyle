@@ -9,9 +9,8 @@ StackingConfigResolver  (rules + defaults)
         ↓
 FINAL CONFIG (typed, stable)
         ↓
-stack.run()  
+stack.run()
 """
-
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import Optional, List, Literal, Dict, Any, Tuple
@@ -25,7 +24,6 @@ import numpy as np
 # =========================================================
 
 INSTRUMENT_RULES_PATH = Path(__file__).parent.parent / "instruments" / "instruments_rules.json"
-
 
 with open(INSTRUMENT_RULES_PATH, "r") as f:
     INSTRUMENT_RULES: Dict[str, Any] = json.load(f)
@@ -43,22 +41,16 @@ SpectraMode = Literal[
     "combined fits"
 ]
 
-IO_MODE_RULES = {
-    "individual fits": {
-        "required": ["spectra_dir"],
-        "forbidden": ["spectra_datafile"],
-    },
-    "combined fits": {
-        "required": ["spectra_dir", "spectra_datafile"],
-    },
-    "metadata path": {
-        "auto_set": {"spectra_datafile": "metadata", "spectra_dir": None},
-    },
-}
 
-class Config:
-    frozen = True
-    extra = "forbid"
+class GrismIOConfig(BaseModel):
+    """Per-grism I/O paths (directory for individual files, or combined FITS filename)."""
+
+    spectra_dir: Optional[Path] = None
+    spectra_datafile: Optional[str] = None   # filename without .fits extension
+
+    class Config:
+        frozen = True
+
 
 class IOConfig(BaseModel):
 
@@ -70,17 +62,13 @@ class IOConfig(BaseModel):
 
     output_dir: Optional[Path] = None
 
-    spectra_dir: Optional[Path] = None
-    spectra_datafile: Optional[str] = None
+    # Per-grism I/O:  {"red": GrismIOConfig(...), "blue": GrismIOConfig(...)}
+    grism_io: Dict[str, GrismIOConfig] = Field(default_factory=dict)
 
     filename_out: str = "AUTO"
 
-    @model_validator(mode="after")
-    def normalize_metadata_mode(self):
-        rules = IO_MODE_RULES.get(self.spectra_mode, {})
-        for k, v in rules.get("auto_set", {}).items():
-            setattr(self, k, v)
-        return self
+    class Config:
+        frozen = True
 
 
 # =========================================================
@@ -192,9 +180,7 @@ PixelModeType = Literal["manual", "instrumental"]
 class ResamplingConfig(BaseModel):
 
     pixel_resampling_type: ResamplingType = "lambda"
-
     pixel_size_type: PixelModeType = "instrumental"
-
     pixel_resampling: Optional[float] = None
     nyquist_sampling: Optional[float] = 5
 
@@ -202,35 +188,20 @@ class ResamplingConfig(BaseModel):
     def validate_pixel(self):
 
         if self.pixel_size_type == "manual":
-
             if self.pixel_resampling is None:
-                raise ValueError(
-                    "pixel_resampling required if pixel_size_type = manual"
-                )
-
+                raise ValueError("pixel_resampling required if pixel_size_type = manual")
             if self.pixel_resampling <= 0:
-                raise ValueError(
-                    "pixel_resampling must be > 0"
-                )
-
+                raise ValueError("pixel_resampling must be > 0")
             self.nyquist_sampling = None
 
         elif self.pixel_size_type == "instrumental":
-
             if self.nyquist_sampling is None:
-                raise ValueError(
-                    "nyquist_sampling required if pixel_size_type = instrumental"
-                )
-
+                raise ValueError("nyquist_sampling required if pixel_size_type = instrumental")
             if self.nyquist_sampling <= 0:
-                raise ValueError(
-                    "nyquist_sampling must be > 0"
-                )
-
+                raise ValueError("nyquist_sampling must be > 0")
             self.pixel_resampling = None
 
         return self
-
 
 
 # =========================================================
@@ -298,7 +269,7 @@ class InstrumentQualityConfig(BaseModel):
 class InstrumentConfig(BaseModel):
     instrument_name: str
     survey_name: str
-    grism_type: str
+    grisms: List[str]           # replaces grism_type; e.g. ["red"] or ["red", "blue"]
     data_release: str
     quality: Optional[InstrumentQualityConfig] = None
 
@@ -333,9 +304,9 @@ class StackingConfig(BaseModel):
     parallel: ParallelConfig = ParallelConfig()
 
     plot: PlotConfig = PlotConfig()
-    
+
     config_version: str = "1.0.0"
-    
+
     class Config:
         frozen = True
 
@@ -372,64 +343,75 @@ class StackingConfigResolver:
         inst_name = cfg.instrument.instrument_name
         rules = INSTRUMENT_RULES.get(inst_name, {})
 
-        # === CONSTANTS ===
+        # Validate selected grisms against survey rules
+        survey_rules = rules.get("surveys", {}).get(cfg.instrument.survey_name, {})
+        allowed_grisms = survey_rules.get("grisms", [])
+        for g in cfg.instrument.grisms:
+            if allowed_grisms and g not in allowed_grisms:
+                raise ValueError(
+                    f"Grism '{g}' is not available for survey "
+                    f"'{cfg.instrument.survey_name}'. Allowed: {allowed_grisms}."
+                )
+
+        if not cfg.instrument.grisms:
+            raise ValueError("At least one grism must be selected.")
+
+        # Constants
         constants = rules.get("constants", {})
 
-        # === QUALITY ===
+        # Quality defaults
         quality_rules = rules.get("quality", {})
+        quality_defaults = {k: v.get("default") for k, v in quality_rules.items()}
+        user_quality = cfg.instrument.quality.model_dump() if cfg.instrument.quality else {}
+        merged_quality = ({**quality_defaults, **user_quality}
+                          if quality_defaults or user_quality else None)
 
-        quality_defaults = {
-            key: spec.get("default")
-            for key, spec in quality_rules.items()
-        }
-        
-        user_quality = (
-            cfg.instrument.quality.model_dump()
-            if cfg.instrument.quality
-            else {}
-        )
-
-        merged_quality = (
-            {**quality_defaults, **user_quality}
-            if quality_defaults or user_quality
-            else None
-        )
-
-        # ---------------- APPLY UPDATE ----------------
         cfg = cfg.model_copy(
             update={
                 "instrument_constants": constants,
                 "instrument": cfg.instrument.model_copy(
                     update={"quality": merged_quality}
-                )
+                ),
             },
-            deep=True
+            deep=True,
         )
 
+        # ---- IO rules: validate per-grism paths ----
+        mode = cfg.io.spectra_mode
 
-        
-        # ---- IO rules ----
-        io_rules = IO_MODE_RULES.get(cfg.io.spectra_mode, {})
+        if mode == "individual fits":
+            for g in cfg.instrument.grisms:
+                gcfg = cfg.io.grism_io.get(g)
+                if gcfg is None or gcfg.spectra_dir is None:
+                    raise ValueError(
+                        f"spectra_dir is required for grism '{g}' "
+                        f"in 'individual fits' mode."
+                    )
 
-        for field in io_rules.get("required", []):
-            if getattr(cfg.io, field) is None:
-                raise ValueError(f"{field} required for mode {cfg.io.spectra_mode}")
+        elif mode == "combined fits":
+            for g in cfg.instrument.grisms:
+                gcfg = cfg.io.grism_io.get(g)
+                if gcfg is None or gcfg.spectra_dir is None or gcfg.spectra_datafile is None:
+                    raise ValueError(
+                        f"Both spectra_dir and spectra_datafile are required "
+                        f"for grism '{g}' in 'combined fits' mode."
+                    )
 
         # ---- Resampling vs Redshift ----
         if (
             cfg.resampling.pixel_resampling_type == "none"
             and cfg.redshift.z_type != "observed_frame"
         ):
-            raise ValueError("Resampling 'none' allowed only in observed_frame")
+            raise ValueError("Resampling 'none' is only allowed in observed_frame mode.")
 
         # ---- Catalog requirements ----
         reqs = compute_catalog_requirements(cfg)
 
         if "redshift_column_name" in reqs and cfg.catalog_columns.redshift_column_name is None:
-            raise ValueError("Missing redshift column")
+            raise ValueError("Missing redshift_column_name in catalog_columns.")
 
         if "metadata" in reqs and cfg.catalog_columns.metadata is None:
-            raise ValueError("Metadata columns required")
+            raise ValueError("metadata columns required for metadata path mode.")
 
         if (
             "custom_normalization" in reqs
@@ -438,8 +420,6 @@ class StackingConfigResolver:
                 or cfg.catalog_columns.custom_normalization.custom_column_name is None
             )
         ):
-            raise ValueError("Custom normalization column required")
+            raise ValueError("custom_normalization column is required.")
 
         return cfg
-
-
