@@ -327,7 +327,7 @@ def save_to_file(config, data_dict):
     primary_hdu = fits.PrimaryHDU()
     primary_hdu.header['INSTR'] = config['instrument_name']
     primary_hdu.header['SURVEY'] = config['survey_name']
-    primary_hdu.header['GRISM'] = config['grism_type']
+    primary_hdu.header['GRISM'] = ','.join(config.get('grisms', []))
     primary_hdu.header['REDSHIFT'] = (data_dict['z_stacking'], 'z of the stacked spectrum')
     primary_hdu.header['NORMTYPE'] = (config['spectra_normalization'], 'type of spectra normalization')
     primary_hdu.header['NORMINTR'] = (f"{norm_interv_out}", 'lamda normalization')

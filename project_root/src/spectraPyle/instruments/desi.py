@@ -6,31 +6,35 @@ import sys
 from pathlib import Path        
 
 def prepare_stacking(config, z_stacking, zMin, zMax, lambda_edges):
-    
-    grism_type=config['grism_type']
-    wavelengths_grism=config['wavelengths']
-    
+
+    grisms = config['grisms']          # List[str], e.g. ['merged']
+    wavelengths_grism = config['wavelengths']
+
+    _supported = {'merged': wavelengths_grism}
+
     if config['z_type'] == 'observed_frame':
-        z_stacking = zMax = zMin = 0 # so that lbd_min and lbd_max are equal to 
-                                     # wavelengths_grism[0] and 
-                                     # wavelengths_grism[1], rispectively.
-    
+        z_stacking = zMax = zMin = 0
+
     if lambda_edges is None:
-        ## defining the wavelength array of the stacked spectrum:
-        if (grism_type == 'merged'):
-            lbd_min = wavelengths_grism[0] * (1 + z_stacking) / (1 + zMax)
-            lbd_max = wavelengths_grism[1] * (1 + z_stacking) / (1 + zMin)
-        else:
-            raise NameError('grism_type "', grism_type, '" not supported!')
+        lbd_mins, lbd_maxs = [], []
+        for g in grisms:
+            if g not in _supported:
+                raise ValueError(
+                    f"Grism '{g}' is not supported for DESI. "
+                    f"Supported: {list(_supported)}."
+                )
+            wl = _supported[g]
+            lbd_mins.append(wl[0] * (1 + z_stacking) / (1 + zMax))
+            lbd_maxs.append(wl[1] * (1 + z_stacking) / (1 + zMin))
+        lbd_min = min(lbd_mins)
+        lbd_max = max(lbd_maxs)
     else:
         lbd_min = lambda_edges[0] * (1 + z_stacking)
         lbd_max = lambda_edges[1] * (1 + z_stacking)
 
-    if (grism_type == 'merged'):
-        grismList = [grism_type]
-    else:
-        raise NameError('grism type not understood')
-        
+    use_metadata = config.get('spectra_mode') == 'metadata path'
+    grismList = ['metadata'] if use_metadata else list(grisms)
+
     return lbd_min, lbd_max, grismList
 
 """
@@ -71,20 +75,23 @@ def readSpec(config, specid, grism):
     #n_min_dithers = config['n_min_dithers']
     spectrum_edges = config['spectrum_edges']
     
-    if config['spectra_datafile'] is not None:
-        # Handle multi-spectrum FITS file
-        filepath = config['spectra_dir'] / f"{config['spectra_datafile']}.fits"
+    gcfg = config.get('grism_io', {}).get(grism, {})
+    spectra_dir      = gcfg.get('spectra_dir')
+    spectra_datafile = gcfg.get('spectra_datafile')
+
+    if spectra_datafile:
+        filepath = Path(spectra_dir) / f"{spectra_datafile}.fits"
         with fits.open(filepath) as hdul:
             for hdu in hdul:
                 if hdu.name == str(specid):
                     table1 = Table(hdu.data)
                     break
             else:
-                raise NameError(f"Spectral data for '{specid}' not found in {config['spectra_datafile']}.fits.")
-                sys.exit(1)
+                raise NameError(f"Spectrum '{specid}' not found in {spectra_datafile}.fits.")
     else:
-        # Handle single-spectrum FITS file
-        filepath = config['spectra_dir'] / f"{str(specid)}.fits"
+        if not spectra_dir:
+            raise ValueError(f"spectra_dir not configured for grism '{grism}'. Check config['grism_io'].")
+        filepath = Path(spectra_dir) / f"{str(specid)}.fits"
         with fits.open(filepath) as hdulist:
             table1 = Table(hdulist[1].data)
 

@@ -1,7 +1,8 @@
 instrument:
   instrument_name: euclid
   survey_name: wide
-  grism_type: red
+  grisms:
+  - red
   data_release: Q1
   quality:
     pixel_mask:
@@ -24,7 +25,10 @@ io:
   filename_in: catalog_list
   filename_in_extention: csv
   output_dir: ../tests/INDIVIDUAL_FITS/outputs
-  spectra_dir: ../tests/INDIVIDUAL_FITS
+  grism_io:
+    red:
+      spectra_dir: ../tests/INDIVIDUAL_FITS
+      spectra_datafile: null
   filename_out: AUTO
 cosmology:
   cosmo_H0: 70.0
