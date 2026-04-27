@@ -10,6 +10,9 @@ def prepare_stacking(config, z_stacking, zMin, zMax, lambda_edges):
     grism_type=config['grism_type']
     wavelengths_grism_1=config['wavelengths_blue']
     wavelengths_grism_2=config['wavelengths_red']
+
+    data_release = config.get("data_release")
+    use_metadata = config.get('spectra_datafile', '') == 'metadata'
     
     if config['z_type'] == 'observed_frame':
         z_stacking = zMax = zMin = 0 # so that lbd_min and lbd_max are equal to 
@@ -32,13 +35,16 @@ def prepare_stacking(config, z_stacking, zMin, zMax, lambda_edges):
         lbd_min = lambda_edges[0] * (1 + z_stacking)
         lbd_max = lambda_edges[1] * (1 + z_stacking)
 
-    if (grism_type == 'red') or (grism_type == 'blue'):
-        grismList = [grism_type]
-    elif (grism_type == 'all'):
-        grismList = ['blue', 'red']
+    if use_metadata:
+        grismList = ['metadata'] 
     else:
-        raise NameError('grism type not understood')
-     
+        if (grism_type == 'red') or (grism_type == 'blue'):
+            grismList = [grism_type]
+        elif (grism_type == 'all'):
+            grismList = ['blue', 'red']
+        else:
+            raise NameError('grism type not understood')
+
     return lbd_min, lbd_max, grismList
 
 
