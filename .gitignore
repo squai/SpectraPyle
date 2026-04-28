@@ -39,7 +39,7 @@ project_root/notebooks/my_notebooks/
 # =========================
 *.log
 *.out
-
+*CLAUDE.md
 # =========================
 # Data (important!)
 # =========================
