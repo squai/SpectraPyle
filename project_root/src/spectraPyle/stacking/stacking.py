@@ -414,16 +414,9 @@ class Stacking:
 
         #################################################################################################################
         """ saving to file: """
+        output_filename = None
         if self.config['save_to_file']:
             output_filename = sio.save_to_file(self.config, data_dict)
-
-
-        #################################################################################################################
-        """ Plotting results: """
-
-        if self.config['plot_results']:
-            spl.plotting(output_filename=output_filename, width=950, height=550)
-
 
 
         #################################################################################################################
@@ -440,6 +433,8 @@ class Stacking:
         print (self.config['filename_in'], ' stacking completed.')
         print("#" * self.width_print + "\n")
         print ()
+
+        return output_filename
 
 class InstrumentLoader:
     def __init__(self):
@@ -485,8 +480,8 @@ def validate_config(raw_dict):
 
 def run_stacking(config):
     stack = Stacking(config)
-    stack.run()   
-    return stack
+    output_filename = stack.run()
+    return output_filename
 
 """
 def main(config):
@@ -601,7 +596,10 @@ if __name__ == "__main__":
         value = yaml.safe_load(unknown[i + 1])
         set_nested(raw, key, value)
 
-    main(config=raw)
+    output_filename = main(config=raw)
+
+    if raw.get('plot_results', True) and output_filename:
+        spl.plotting(output_filename=output_filename, width=950, height=550)
     
     
     """
