@@ -1,0 +1,26 @@
+# --- Dati e Output (IL PUNTO CRUCIALE) ---
+# Ignora i file FITS e HDF5 anche se sono nel repo come campioni
+*.fits
+*.fits.gz
+*.h5
+*.hdf5
+
+# --- Documentazione e Media ---
+# Non serve che Claude legga immagini o PDF ogni volta
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.svg
+docs/_build/
+
+# --- File di sistema e log ---
+*.log
+.DS_Store
+Thumbs.db
+
+# --- Build e Cache ---
+dist/
+build/
+*.egg-info/
+
