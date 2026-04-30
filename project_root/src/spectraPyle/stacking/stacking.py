@@ -9,7 +9,7 @@ __credits__ = ["Salvatore Quai",
 "Xavier Lopez Lopez", 
 "Elisabeta Lusso", 
 "Sotiria Fotopoulou"]
-__version__ = "5.1"
+__version__ = "5.0.2"
 __maintainer__ = "Salvatore Quai"
 __email__ = "salvatore.quai@unibo.it"
 __status__ = "Developement"
