@@ -1,467 +1,369 @@
-import numpy as np
-import pandas as pd
+import os
+import spectraPyle
+import matplotlib as mpl
 from astropy.io import fits
-from pathlib import Path
+import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-import spectraPyle
+import pandas as pd
+from pathlib import Path
 
+def plotting(output_filename, width=550, height=550):
 
-# Ordered list of stacking methods (first found is shown by default)
-FLUX_COLUMN_NAMES = ["specMedian", "specMean", "specGeometricMean", "specWeightedMean"]
-
-COLORS = {
-    "specMedian":        "rgba(0, 180, 220, 1)",
-    "specMean":          "rgba(230, 130, 0, 1)",
-    "specWeightedMean":  "rgba(140, 0, 180, 1)",
-    "specGeometricMean": "rgba(0, 160, 60, 1)",
-}
-
-FILL_COLORS = {
-    "specMedian":        "rgba(0, 180, 220, 0.18)",
-    "specMean":          "rgba(230, 130, 0, 0.18)",
-    "specWeightedMean":  "rgba(140, 0, 180, 0.18)",
-    "specGeometricMean": "rgba(0, 160, 60, 0.18)",
-}
-
-_GREEK = {
-    r"$\alpha$": "α", r"$\beta$": "β",
-    r"$\gamma$": "γ", r"$\delta$": "δ",
-}
-
-
-def _step_xy(x, y):
-    """Convert (x, y) arrays to hv-step mode for Scattergl (no native line.shape)."""
-    n = len(x)
-    if n <= 1:
-        return np.asarray(x, float), np.asarray(y, float)
-    x_out = np.empty(2 * n - 1, float)
-    y_out = np.empty(2 * n - 1, float)
-    x_out[0::2] = x
-    x_out[1::2] = x[1:]
-    y_out[0::2] = y
-    y_out[1::2] = y[:-1]
-    return x_out, y_out
-
-
-def _display_fig(fig):
-    """Show figure inline in Jupyter; fall back to fig.show() elsewhere."""
-    try:
-        from IPython.display import display
-        display(fig)
-    except Exception:
-        fig.show()
-
-
-# ---------------------------------------------------------------------------
-# Public entry point
-# ---------------------------------------------------------------------------
-
-def plotting(output_filename, width=950, height=650):
-    """Plot a SpectraPyle output FITS file.
-
-    Displays inline when called from a Jupyter notebook cell (or inside an
-    ipywidgets Output widget). Returns the Plotly figure for customisation.
-    """
-    print(f"Plotting {output_filename}")
-
+    print(f"Plotting {output_filename} stack results")
+    
     redshift, units, units_fscale = get_header(name_stack=output_filename)
-
+    
     if units_fscale == 1:
-        y_label = (f"Luminosity [{units}]" if units == "erg/s/cm2"
-                   else f"Flux [{units}]")
+        if units == "erg/s/cm2":
+            units = f"Luminosity [{units}]"
+        elif units == "arbitrary units":
+            units = f"Flux [{units}]"
+        else:
+            print ('units ', units, ' not understood!')
+            units = f"Flux (units not understood!)"
     else:
-        y_label = f"Flux [{units_fscale} {units}]"
-
-    (counts_columns, wavelength_column, flux_columns,
-     error_columns, dispersion_columns, _) = read_fits_and_select_columns(output_filename)
-
-    # Wavelength: bin midpoints stored in Å → convert to nm
-    wav_nm = np.asarray(wavelength_column["wavelength"], dtype=float) / 10.0
-
+        units = f"Flux [{units_fscale} {units}]"
+    
     fig = make_subplots(
         rows=2, cols=1,
         shared_xaxes=True,
         row_heights=[0.15, 0.85],
-        vertical_spacing=0.05,
+        vertical_spacing=0.05
     )
 
-    # ---- Top panel: pixel counts (4 traces) ----
-    count_keys   = ["All spectra", "Used spectra", "Bad pixels", "Sigma clipped"]
-    count_colors = ["black", "steelblue", "crimson", "grey"]
-    for key, color in zip(count_keys, count_colors):
-        visible = True if key in ("All spectra", "Used spectra") else "legendonly"
-        cx, cy = _step_xy(wav_nm, np.asarray(counts_columns[key], dtype=float))
-        fig.add_trace(go.Scattergl(
-            x=cx, y=cy,
-            mode="lines",
+    # Read stacking results
+    #(counts_columns, wavelength_column, flux_columns, error_columns,
+    # dispersion_columns, percentile_columns) = ploti.read_fits_and_select_columns(output_filename)
+    (counts_columns, wavelength_column, flux_columns, error_columns,
+     dispersion_columns, percentile_columns) = read_fits_and_select_columns(output_filename)
+
+    # Wavelength bin midpoints
+    wavelength_nanom = wavelength_column['wavelength'] / 10
+    bin_width = np.diff(wavelength_nanom).mean()
+    spectral_axis_midpoints = wavelength_nanom - (bin_width / 2)
+
+    # Define display order and colors
+    display_order = ["All spectra", "Used spectra", "Bad pixels", "Sigma clipped"]
+    colors = ['black', 'blue', 'red', 'grey']
+    
+    # show the count statistics in the top panel:
+    for key, color in zip(display_order, colors):
+        is_visible = key in ["All spectra", "Used spectra"]  # Show only these by default
+        fig.add_trace(go.Scatter(
+            x=spectral_axis_midpoints,
+            y=counts_columns[key],
+            mode='lines',
             name=key,
-            visible=visible,
-            line=dict(color=color, width=1),
-            legendgroup=key,
+            visible=True if is_visible else 'legendonly',
+            line=dict(color=color, shape='hv'),
+            legendgroup=key,  # Individual toggle groups
             showlegend=True,
-            hovertemplate="λ = %{x:.2f} nm<br>N = %{y:.0f}<extra>" + key + "</extra>",
         ), row=1, col=1)
+    
+    # show the stacked spectra:
+    display_order = [
+        "specMean",
+        "specMedian",
+        "specWeightedMean",
+        "specGeometricMean"
+    ]
 
-    # ---- y-range for spectra panel ----
-    all_finite = np.concatenate([
-        v[np.isfinite(v)] for v in flux_columns.values()
-    ]) if flux_columns else np.array([0.0, 1.0])
+    colors = {
+        "specMean": "orange",                 # RGB(255, 165, 0)
+        "specMedian": "cyan",                  # RGB(0, 255, 255)
+        "specWeightedMean": "purple",          # RGB(128, 0, 128)
+        "specGeometricMean": "green"           # RGB(0, 128, 0)
+    }
 
-    if len(all_finite):
-        y_min = float(np.nanpercentile(all_finite, 1))
-        y_max = float(np.nanpercentile(all_finite, 99))
-    else:
-        y_min, y_max = 0.0, 1.0
-
-    span = y_max - y_min if y_max != y_min else 1.0
-    y_min -= 0.05 * span
-    # extra headroom for emission-line labels
-    y_max += 0.20 * span
-
-    # ---- Spectral line markers — consolidated traces ----
-    if redshift != "observed_frame":
+    error_fillcolors = {
+        "specMean": "rgba(255, 165, 0, 0.2)",      # transparent orange
+        "specMedian": "rgba(0, 255, 255, 0.2)",    # transparent cyan
+        "specWeightedMean": "rgba(128, 0, 128, 0.2)",  # transparent purple
+        "specGeometricMean": "rgba(0, 128, 0, 0.2)"    # transparent green
+    }
+    
+    y_min = 0.9*np.nanmin((np.nanmin(flux_columns["specMean"]), 
+                      np.nanmin(flux_columns["specMedian"])))
+    
+    y_max = 1.1*np.nanmax((np.nanmax(flux_columns["specMean"]), 
+                      np.nanmax(flux_columns["specMedian"])))
+    
+    # add emission lines:
+    main_flux = flux_columns["specMedian"]  
+    
+    if redshift != 'observed_frame':
+        #module_dir = os.path.dirname(spectraPyle.__file__)
+        #em_line_table_path = os.path.join(module_dir, "tables", "emission_lines_vacuum_table.csv")
         project_root = Path(spectraPyle.__file__).parent.parent.parent
-        em_path  = project_root / "tables" / "emission_lines_vacuum_table.csv"
-        abs_path = project_root / "tables" / "absorptions_table.csv"
+        em_line_table_path = project_root / "tables" / "emission_lines_vacuum_table.csv"
+        add_line_markers(fig, em_line_table_path, spectral_axis_midpoints, main_flux, redshift, row=2, col=1)
 
-        ref_key = next((k for k in FLUX_COLUMN_NAMES if k in flux_columns), None)
-        if ref_key is not None:
-            ref_flux = flux_columns[ref_key]
-            try:
-                if em_path.exists():
-                    add_line_markers(fig, em_path, wav_nm, ref_flux, redshift,
-                                     y_min=y_min, row=2, col=1)
-            except Exception as e:
-                print(f"Warning: emission line markers skipped — {e}")
-            try:
-                if abs_path.exists():
-                    add_absorption_features(fig, abs_path, wav_nm, ref_flux, redshift,
-                                            y_min=y_min, row=2, col=1)
-            except Exception as e:
-                print(f"Warning: absorption feature markers skipped — {e}")
+        # addabsorption features:
+        #abs_feat_table_path = os.path.join(module_dir, "tables", "absorptions_table.csv")
+        abs_feat_table_path = project_root / "tables" / "absorptions_table.csv"
+        add_absorption_features(fig, abs_feat_table_path, spectral_axis_midpoints, main_flux, redshift, row=2, col=1)
 
-    # ---- Bottom panel: stacked spectra (≤ 20 traces for 4 methods) ----
-    first_method = next((k for k in FLUX_COLUMN_NAMES if k in flux_columns), None)
+    for key in display_order:
+        is_visible = key == "specMedian"
+        base_visibility = True if is_visible else "legendonly"
+        error_visibility = True if is_visible else "legendonly"
 
-    for key in FLUX_COLUMN_NAMES:
-        if key not in flux_columns:
-            continue
-
-        is_default = (key == first_method)
-        base_vis   = True if is_default else "legendonly"
-        flux       = np.asarray(flux_columns[key], dtype=float)
-        fx, fy     = _step_xy(wav_nm, flux)
-
-        hover = "λ = %{x:.2f} nm<br>Flux = %{y:.4g}<extra>" + key + "</extra>"
-
-        err_key = key + "Error"
-        dis_key = key + "Dispersion"
-
-        if err_key in error_columns:
-            err = np.asarray(error_columns[err_key], dtype=float)
-            _, fy_lo = _step_xy(wav_nm, flux - err)
-            _, fy_hi = _step_xy(wav_nm, flux + err)
-            fig.add_trace(go.Scattergl(
-                x=fx, y=fy_lo, mode="lines",
-                line=dict(color="rgba(0,0,0,0)"),
-                showlegend=False, hoverinfo="skip",
-                legendgroup=f"{key}_error", visible=base_vis,
-            ), row=2, col=1)
-            fig.add_trace(go.Scattergl(
-                x=fx, y=fy_hi, mode="lines",
-                line=dict(color="rgba(0,0,0,0)"),
-                fill="tonexty", fillcolor=FILL_COLORS[key],
-                name=f"{key} ±1σ", visible=base_vis,
-                legendgroup=f"{key}_error", showlegend=True, hoverinfo="skip",
-            ), row=2, col=1)
-
-        if dis_key in dispersion_columns:
-            dis = np.asarray(dispersion_columns[dis_key], dtype=float)
-            _, fy_lo = _step_xy(wav_nm, flux - dis)
-            _, fy_hi = _step_xy(wav_nm, flux + dis)
-            fig.add_trace(go.Scattergl(
-                x=fx, y=fy_lo, mode="lines",
-                line=dict(color="rgba(0,0,0,0)"),
-                showlegend=False, hoverinfo="skip",
-                legendgroup=f"{key}_dispersion", visible="legendonly",
-            ), row=2, col=1)
-            fig.add_trace(go.Scattergl(
-                x=fx, y=fy_hi, mode="lines",
-                line=dict(color="rgba(0,0,0,0)"),
-                fill="tonexty", fillcolor=FILL_COLORS[key],
-                name=f"{key} ±dispers.", visible="legendonly",
-                legendgroup=f"{key}_dispersion", showlegend=True, hoverinfo="skip",
-            ), row=2, col=1)
-
-        fig.add_trace(go.Scattergl(
-            x=fx, y=fy, mode="lines",
-            line=dict(color=COLORS[key], width=1.5),
-            name=key, visible=base_vis,
-            legendgroup=key, showlegend=True,
-            hovertemplate=hover,
+        # Lower error bound (invisible line)
+        fig.add_trace(go.Scatter(
+            x=spectral_axis_midpoints,
+            y=flux_columns[key] - error_columns[f"{key}Error"],
+            mode='lines',
+            line=dict(color='rgba(0,0,0,0)', shape='hv'),
+            showlegend=False,
+            hoverinfo="skip",
+            #visible=error_visibility,
+            legendgroup=f"{key}_error"
         ), row=2, col=1)
 
-    # ---- Layout ----
-    x_range = [float(wav_nm[0]), float(wav_nm[-1])]
+        # Upper error bound + fill
+        fig.add_trace(go.Scatter(
+            x=spectral_axis_midpoints,
+            y=flux_columns[key] + error_columns[f"{key}Error"],
+            mode='lines',
+            line=dict(color='rgba(0,0,0,0)', shape='hv'),
+            fill='tonexty',
+            fillcolor=error_fillcolors[key],
+            name=f"{key} ± 1σ",
+            visible=error_visibility,
+            legendgroup=f"{key}_error",
+            showlegend=True,
+            hoverinfo="skip"
+        ), row=2, col=1)
+        
+        # Lower dispersion bound (invisible line)
+        fig.add_trace(go.Scatter(
+            x=spectral_axis_midpoints,
+            y=flux_columns[key] - dispersion_columns[f"{key}Dispersion"],
+            mode='lines',
+            line=dict(color='rgba(0,0,0,0)', shape='hv'),
+            showlegend=False,
+            hoverinfo="skip",
+            #visible="legendonly",
+            legendgroup=f"{key}_dispersion"
+        ), row=2, col=1)
+
+        # Upper dispersion bound + fill
+        fig.add_trace(go.Scatter(
+            x=spectral_axis_midpoints,
+            y=flux_columns[key] + dispersion_columns[f"{key}Dispersion"],
+            mode='lines',
+            line=dict(color='rgba(0,0,0,0)', shape='hv'),
+            fill='tonexty',
+            fillcolor=error_fillcolors[key],
+            name=f"{key} ± dispers.",
+            visible="legendonly",
+            legendgroup=f"{key}_dispersion",
+            showlegend=True,
+            hoverinfo="skip"
+        ), row=2, col=1)
+        
+        # Main flux line
+        fig.add_trace(go.Scatter(
+            x=spectral_axis_midpoints,
+            y=flux_columns[key],
+            mode='lines',
+            line=dict(color=colors[key], shape='hv'),
+            name=key,
+            visible=base_visibility,
+            legendgroup=key,
+            showlegend=True
+        ), row=2, col=1)
+        
+    
+    
+    # Layout
     fig.update_layout(
-        uirevision="constant",          # preserves zoom/pan on trace toggles
         xaxis2_title="Wavelength (nm)",
-        yaxis2_title=y_label,
-        xaxis=dict(range=x_range),
-        xaxis2=dict(range=x_range),
-        yaxis2=dict(range=[y_min, y_max]),
+        #yaxis_title="#Spectra",
+        yaxis2_title=f"{units}",
+        xaxis=dict(range=(spectral_axis_midpoints[0], spectral_axis_midpoints[-1])),
+        xaxis2=dict(range=(spectral_axis_midpoints[0], spectral_axis_midpoints[-1])),
+        #yaxis=dict(fixedrange=False),
+        yaxis2=dict(range=(y_min, y_max)),
+        #yaxis2=dict(fixedrange=False),
+        barmode="overlay",
         template="plotly_white",
         width=width,
         height=height,
         legend=dict(
-            orientation="v",
-            xanchor="left", x=1.02,
-            yanchor="top",  y=1,
-            bordercolor="lightgrey", borderwidth=1,
-            tracegroupgap=4,
-            groupclick="togglegroup",   # one click toggles the whole group
-            itemsizing="constant",
+        orientation="v",
+        xanchor="left",
+        x=1.02,  # Places the legend to the right of the plot area
+        y=1,
+        yanchor="top",
+        bordercolor="lightgrey",
+        borderwidth=1,
+        tracegroupgap=5,
+        groupclick="toggleitem",
+        itemsizing="trace",
         ),
-        margin=dict(r=200),
-        hoverlabel=dict(bgcolor="white", font_size=12),
-    )
+        margin=dict(r=200),  # Make space on the right side of the figure for the legend
+        )
 
-    _display_fig(fig)
-    return fig
+    fig.show()
+    
 
-
-# ---------------------------------------------------------------------------
-# FITS reading
-# ---------------------------------------------------------------------------
-
+    
 def read_fits_and_select_columns(fits_filename):
-    """Read a SpectraPyle output FITS and return column dicts."""
+    """
+    Read the FITS file and prompt the user to select the spectra columns they want.
+
+    Args:
+        fits_filename (str): Path to the FITS file.
+
+    Returns:
+        selected_columns (dict): Dictionary containing the selected columns (wavelength and others).
+    """
+       
+    # Open the FITS file
     with fits.open(fits_filename) as hdul:
-        hdu      = hdul["STACKING_RESULTS"]
-        data     = hdu.data
-        col_names = set(hdu.columns.names)
+        # Extract stacking results table and stack array (image)
+        stacking_results_hdu = hdul['STACKING_RESULTS']
+        #stackArr_hdu = hdul['STACK_ARRAY']
 
-    counts_columns = {
-        "All spectra":   np.asarray(data["initialPixelCount"], dtype=float),
-        "Used spectra":  np.asarray(data["goodPixelCount"],    dtype=float),
-        "Bad pixels":    np.asarray(data["badPixelCount"],     dtype=float),
-        "Sigma clipped": np.asarray(data["sigmaClippedCount"], dtype=float),
-    }
-
-    wavelength_column = {"wavelength": np.asarray(data["wavelength"], dtype=float)}
-
-    percentile_column_names = ["spec16th", "spec84th", "spec98th", "spec99th"]
-    percentile_columns = {
-        c: np.asarray(data[c], dtype=float)
-        for c in percentile_column_names if c in col_names
-    }
-
-    flux_columns       = {}
-    error_columns      = {}
-    dispersion_columns = {}
-
-    for col in FLUX_COLUMN_NAMES:
-        if col not in col_names:
-            continue
-        arr = np.asarray(data[col], dtype=float)
-        if np.all(~np.isfinite(arr)):
-            continue
-        flux_columns[col] = arr
-        err_key = col + "Error"
-        dis_key = col + "Dispersion"
-        if err_key in col_names:
-            error_columns[err_key] = np.asarray(data[err_key], dtype=float)
-        if dis_key in col_names:
-            dispersion_columns[dis_key] = np.asarray(data[dis_key], dtype=float)
-
-    return (counts_columns, wavelength_column,
-            flux_columns, error_columns, dispersion_columns,
-            percentile_columns)
-
+        # Extract the column names from the stacking results table
+        column_names = stacking_results_hdu.columns.names
+        #print(f"Available columns in 'STACKING_RESULTS': {column_names}")
+        
+        counts_columns = {'All spectra': stacking_results_hdu.data['initialPixelCount']}
+        counts_columns['Used spectra'] = stacking_results_hdu.data['goodPixelCount']
+        counts_columns['Bad pixels'] = stacking_results_hdu.data['badPixelCount']
+        counts_columns['Sigma clipped'] = stacking_results_hdu.data['sigmaClippedCount']
+        
+        # Mandatory wavelength column
+        wavelength_column = {'wavelength': stacking_results_hdu.data['wavelength']}
+        
+        flux_columns = {}
+        error_columns = {}
+        dispersion_columns = {}
+        percentile_columns = {}
+        
+        # Filter out columns that contain "Error" or "Dispersion"
+        filtered_columns = [col for col in column_names[5:-4] if "Error" not in col and "Dispersion" not in col]
+        for column in filtered_columns:
+            flux_columns[column] = stacking_results_hdu.data[column]
+            error_columns[column + 'Error'] = stacking_results_hdu.data[column + 'Error']
+            dispersion_columns[column + 'Dispersion'] = stacking_results_hdu.data[column + 'Dispersion']
+            
+        
+        filtered_columns = [col for col in column_names[1:5]]
+        for column in filtered_columns:
+            percentile_columns[column] = stacking_results_hdu.data[column]
+        
+    return  counts_columns, wavelength_column, flux_columns, error_columns, dispersion_columns, percentile_columns
 
 def get_header(name_stack):
+    from astropy.io import fits
     with fits.open(name_stack) as hdu:
         header = hdu[0].header
-    return header["REDSHIFT"], header["UNITS"], header["FSCALE"]
+    return header['REDSHIFT'], header['UNITS'], header['FSCALE']
 
-
-# ---------------------------------------------------------------------------
-# Spectral line markers — CONSOLIDATED: 2 traces per visibility group
-# ---------------------------------------------------------------------------
-
-def _greek(label):
-    for k, v in _GREEK.items():
-        label = label.replace(k, v)
-    return label
-
-
-def add_line_markers(fig, line_table_path, wav_nm, flux, redshift,
-                     y_min=None, row=2, col=1):
-    """
-    Add emission line markers as two consolidated trace groups (shown / hidden).
-    Each group uses a single NaN-separated Scatter for lines and a single
-    Scatter(mode='text') for labels — far fewer DOM elements than one trace
-    per line, which is critical for smooth rendering with many pixels.
-    """
-    z_term = 1.0 + redshift
+def add_line_markers(fig, line_table_path, spectral_axis_midpoints, flux, redshift, row=2, col=1):
+    z_term = (1 + redshift)
     df_lines = pd.read_csv(line_table_path)
 
-    wave_min, wave_max = wav_nm[0], wav_nm[-1]
-    df_in = df_lines[
+    wave_min, wave_max = spectral_axis_midpoints[0], spectral_axis_midpoints[-1]
+    df_active = df_lines[
+        (df_lines["show"] == 1) &
         (df_lines["wavelength_AA"] * z_term / 10 >= wave_min) &
         (df_lines["wavelength_AA"] * z_term / 10 <= wave_max)
     ].reset_index(drop=True)
 
-    if df_in.empty:
+    if len(df_active) == 0:
         return
 
-    wavs        = df_in["wavelength_AA"].values * z_term / 10
-    flux_at     = np.interp(wavs, wav_nm, flux)
-    text_offset = 0.05 * np.nanmax(np.abs(flux_at))
-    y_base      = y_min if y_min is not None else 0.85 * np.nanmin(flux)
-    text_ys     = flux_at + text_offset
-    labels      = [_greek(r) for r in df_in["formatted_ion_simple"].values]
-    show_flags  = df_in["show"].values == 1
+    flux_min = np.nanmin(flux)
+    y_min = 0.85 * flux_min
+    flux_interp = np.interp(df_active["wavelength_AA"] * z_term / 10, spectral_axis_midpoints, flux)
+    text_offset = 0.05 * np.nanmax(flux_interp)
 
-    for is_shown in (True, False):
-        mask = show_flags if is_shown else ~show_flags
-        if not np.any(mask):
-            continue
+    def _ion_label(raw):
+        for src, tgt in [(r"$\alpha$", "α"), (r"$\beta$", "β"),
+                         (r"$\gamma$", "γ"), (r"$\delta$", "δ")]:
+            raw = raw.replace(src, tgt)
+        return raw
 
-        grp_name = "Emission lines" if is_shown else "Emission lines (more)"
-        vis      = True if is_shown else "legendonly"
-        color    = "rgba(120,120,120,0.7)" if is_shown else "rgba(180,180,180,0.5)"
+    # Single trace: bottom point (no text) + top point (label) + None separator per line.
+    # mode="lines+text" keeps line and label in the same trace → legend toggle hides both.
+    x_all, y_all, texts = [], [], []
+    for i, (_, row_line) in enumerate(df_active.iterrows()):
+        wavelength = row_line["wavelength_AA"] * z_term / 10
+        ion_label = _ion_label(row_line["formatted_ion_simple"])
+        text_y = flux_interp[i] + text_offset
+        x_all.extend([wavelength, wavelength, None])
+        y_all.extend([y_min, text_y, None])
+        texts.extend(["", ion_label, ""])
 
-        sub_wavs   = wavs[mask]
-        sub_text_y = text_ys[mask]
-        sub_labels = [labels[i] for i, m in enumerate(mask) if m]
-
-        # Vertical line segments — NaN-separated, ONE trace
-        x_segs, y_segs = [], []
-        hover_segs = []
-        for w, ty, lbl in zip(sub_wavs, sub_text_y, sub_labels):
-            x_segs += [w, w, None]
-            y_segs += [y_base, ty, None]
-            hover_segs += [lbl, lbl, None]
-
-        fig.add_trace(go.Scatter(
-            x=x_segs, y=y_segs,
-            mode="lines",
-            line=dict(dash="dot", color=color, width=1),
-            name=grp_name,
-            visible=vis,
-            legendgroup=grp_name,
-            showlegend=True,
-            hoverinfo="skip",
-        ), row=row, col=col)
-
-        # Labels — ONE text trace
-        fig.add_trace(go.Scatter(
-            x=list(sub_wavs),
-            y=list(sub_text_y),
-            mode="text",
-            text=sub_labels,
-            textposition="top center",
-            textfont=dict(size=9, color=color),
-            name=grp_name,
-            visible=vis,
-            legendgroup=grp_name,
-            showlegend=False,
-            hovertemplate=[
-                f"<b>{lbl}</b><br>λ = {w:.2f} nm<extra></extra>"
-                for lbl, w in zip(sub_labels, sub_wavs)
-            ],
-        ), row=row, col=col)
+    fig.add_trace(go.Scatter(
+        x=x_all, y=y_all,
+        mode="lines+text",
+        text=texts,
+        textposition="top center",
+        textfont=dict(size=10, color="grey"),
+        line=dict(dash="dot", color="grey", width=1),
+        name="Emission lines", showlegend=True, visible=True,
+        legendgroup="em_lines", hoverinfo="skip",
+    ), row=row, col=col)
 
 
-def add_absorption_features(fig, absorption_table_path, wav_nm, flux, redshift,
-                             y_min=None, row=2, col=1):
-    """
-    Add absorption feature bands as two consolidated trace groups (shown / hidden).
-    Each group uses a single NaN-separated filled Scatter for rectangles and a
-    single Scatter(mode='text') for labels.
-    """
-    z_term = 1.0 + redshift
-    df_abs = pd.read_csv(absorption_table_path)
+def add_absorption_features(fig, absorption_table_path, spectral_axis_midpoints, flux, redshift, row=2, col=1):
+    z_term = (1 + redshift)
+    df_absorp = pd.read_csv(absorption_table_path)
 
-    wave_min, wave_max = wav_nm[0], wav_nm[-1]
-    df_in = df_abs[
-        (df_abs["Centre"] * z_term / 10 >= wave_min) &
-        (df_abs["Centre"] * z_term / 10 <= wave_max)
+    wave_min, wave_max = spectral_axis_midpoints[0], spectral_axis_midpoints[-1]
+    if "Show" in df_absorp.columns:
+        df_absorp = df_absorp[df_absorp["Show"] == 1]
+    df_active = df_absorp[
+        (df_absorp["Centre"] * z_term / 10 >= wave_min) &
+        (df_absorp["Centre"] * z_term / 10 <= wave_max)
     ].reset_index(drop=True)
 
-    if df_in.empty:
+    if len(df_active) == 0:
         return
 
-    centres     = df_in["Centre"].values * z_term / 10
-    flux_at     = np.interp(centres, wav_nm, flux)
-    text_offset = 0.05 * np.nanmax(np.abs(flux_at))
-    y_base      = y_min if y_min is not None else 0.85 * np.nanmin(flux)
-    text_ys     = flux_at + text_offset
-    labels      = df_in["Index name"].values
-    show_flags  = df_in.get("Show", pd.Series(np.ones(len(df_in)))).values == 1
+    flux_min = np.nanmin(flux)
+    y_min = 0.85 * flux_min
+    flux_interp = np.interp(df_active["Centre"] * z_term / 10, spectral_axis_midpoints, flux)
+    text_offset = 0.05 * np.nanmax(flux_interp)
 
-    # Parse x-limits once
-    x0s, x1s, valid = [], [], []
-    for _, row_feat in df_in.iterrows():
-        lims = str(row_feat["Line limits"]).replace("–", "-").split("-")
-        try:
-            x0 = float(lims[0].strip()) * z_term / 10
-            x1 = float(lims[1].strip()) * z_term / 10
-            x0s.append(x0); x1s.append(x1); valid.append(True)
-        except (ValueError, IndexError):
-            x0s.append(None); x1s.append(None); valid.append(False)
-
-    for is_shown in (True, False):
-        mask = [(show_flags[i] == is_shown) and valid[i]
-                for i in range(len(show_flags))]
-        if not any(mask):
+    # Single trace per category: pentagon polygon (rectangle + center-top anchor for the label)
+    # + None separator between features. fill="toself" fills each sub-polygon independently.
+    # mode="lines+text" keeps fill and label in one trace → legend toggle hides both.
+    x_all, y_all, texts = [], [], []
+    for i, (_, row_feat) in enumerate(df_active.iterrows()):
+        label = row_feat["Index name"]
+        text_y = flux_interp[i] + text_offset
+        parts = str(row_feat["Line limits"]).replace("–", "-").split("-")
+        if len(parts) != 2:
             continue
+        s = float(parts[0].strip()) * z_term / 10
+        e = float(parts[1].strip()) * z_term / 10
+        cx = (s + e) / 2
+        # Pentagon: bottom-left → bottom-right → top-right → center-top (label anchor)
+        #           → top-left → bottom-left, then None separator
+        x_all.extend([s, e, e, cx, s, s, None])
+        y_all.extend([y_min, y_min, text_y, text_y, text_y, y_min, None])
+        texts.extend(["", "", "", label, "", "", ""])
 
-        grp_name  = "Absorption features" if is_shown else "Absorption features (more)"
-        vis       = True if is_shown else "legendonly"
-        fillcolor = "rgba(173,216,230,0.25)"
-        linecolor = "rgba(100,149,237,0.4)"
+    if not x_all:
+        return
 
-        x_rects, y_rects = [], []
-        x_lbl, y_lbl, lbl_list = [], [], []
+    fig.add_trace(go.Scatter(
+        x=x_all, y=y_all,
+        mode="lines+text",
+        text=texts,
+        textposition="top center",
+        textfont=dict(size=10),
+        fill="toself",
+        fillcolor="rgba(173, 216, 230, 0.25)",
+        line=dict(color="rgba(100, 149, 237, 0.5)", width=1),
+        name="Absorption features", showlegend=True, visible=True,
+        legendgroup="abs_feats", hoverinfo="skip",
+    ), row=row, col=col)
 
-        for i, m in enumerate(mask):
-            if not m:
-                continue
-            x0, x1 = x0s[i], x1s[i]
-            ty = text_ys[i]
-            x_rects += [x0, x1, x1, x0, x0, None]
-            y_rects += [y_base, y_base, ty, ty, y_base, None]
-            x_lbl.append((x0 + x1) / 2)
-            y_lbl.append(ty)
-            lbl_list.append(labels[i])
-
-        fig.add_trace(go.Scatter(
-            x=x_rects, y=y_rects,
-            fill="toself", fillcolor=fillcolor,
-            line=dict(color=linecolor, width=0.5),
-            mode="lines",
-            name=grp_name,
-            visible=vis,
-            legendgroup=grp_name,
-            showlegend=True,
-            hoverinfo="skip",
-        ), row=row, col=col)
-
-        fig.add_trace(go.Scatter(
-            x=x_lbl, y=y_lbl,
-            mode="text",
-            text=lbl_list,
-            textposition="top center",
-            textfont=dict(size=9, color="steelblue"),
-            name=grp_name,
-            visible=vis,
-            legendgroup=grp_name,
-            showlegend=False,
-            hovertemplate=[
-                f"<b>{lbl}</b><br>λ = {x:.2f} nm<extra></extra>"
-                for lbl, x in zip(lbl_list, x_lbl)
-            ],
-        ), row=row, col=col)

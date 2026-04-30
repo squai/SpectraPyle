@@ -1,17 +1,17 @@
 wavelength_AA,formatted_ion,formatted_ion_simple,show
 770.409,$\mathrm{Ne}~\textsc{viii}$,Ne VIII,0
 780.324,$\mathrm{Ne}~\textsc{viii}$,Ne VIII,0
-937.814,$\mathrm{Ly}~\epsilon$,Ly$\epsilon$,1
-949.742,$\mathrm{Ly}~\delta$,Ly$\delta$,1
+937.814,$\mathrm{Ly}~\epsilon$,Ly$\epsilon$,0
+949.742,$\mathrm{Ly}~\delta$,Ly$\delta$,0
 977.03,$\mathrm{C}~\textsc{iii}$,C III,0
 989.79,$\mathrm{N}~\textsc{iii}$,N III,0
 991.514,$\mathrm{N}~\textsc{iii}$,N III,0
 991.579,$\mathrm{N}~\textsc{iii}$,N III,0
-1025.722,$\mathrm{Ly}~\beta$,Ly$\beta$,1
+1025.722,$\mathrm{Ly}~\beta$,Ly$\beta$,0
 1031.912,$\mathrm{O}~\textsc{vi}$,O VI,0
 1037.613,$\mathrm{O}~\textsc{vi}$,O VI,0
 1066.66,$\mathrm{Ar}~\textsc{i}$,Ar I,0
-1215.67,$\mathrm{Ly}~\alpha$,Ly$\alpha$,1
+1215.67,$\mathrm{Ly}~\alpha$,Ly$\alpha$,0
 1238.821,$\mathrm{N}~\textsc{v}$,N V,0
 1242.804,$\mathrm{N}~\textsc{v}$,N V,0
 1260.422,$\mathrm{Si}~\textsc{ii}$,Si II,0
@@ -26,7 +26,7 @@ wavelength_AA,formatted_ion,formatted_ion_simple,show
 1486.496,$\mathrm{N}~\textsc{iv}]$,N IV],0
 1548.187,$\mathrm{C}~\textsc{iv}$,C IV,0
 1550.772,$\mathrm{C}~\textsc{iv}$,C IV,0
-1640.42,$\mathrm{He}~\textsc{ii}$,He II,1
+1640.42,$\mathrm{He}~\textsc{ii}$,He II,0
 1660.809,$\mathrm{O}~\textsc{iii}]$,O III],0
 1666.15,$\mathrm{O}~\textsc{iii}]$,O III],0
 1746.823,$\mathrm{N}~\textsc{iii}]$,N III],0
@@ -36,7 +36,7 @@ wavelength_AA,formatted_ion,formatted_ion_simple,show
 1892.03,$\mathrm{Si}~\textsc{iii}]$,Si III],0
 1908.734,$\mathrm{C}~\textsc{iii}]$,C III],0
 2143.455,$\mathrm{N}~\textsc{ii}]$,N II],0
-2321.664,$\mathrm{[O}~\textsc{iii}]$,[O III],1
+2321.664,$\mathrm{[O}~\textsc{iii}]$,[O III],0
 2324.214,$\mathrm{C}~\textsc{ii}]$,C II],0
 2325.404,$\mathrm{C}~\textsc{ii}]$,C II],0
 2649.499,$\mathrm{[Fe}~\textsc{xi}]$,[Fe XI],0
@@ -49,17 +49,17 @@ wavelength_AA,formatted_ion,formatted_ion_simple,show
 2854.508,$\mathrm{[Ar}~\textsc{iv}]$,[Ar IV],0
 2869.052,$\mathrm{[Ar}~\textsc{iv}]$,[Ar IV],0
 2928.857,$\mathrm{[Mg}~\textsc{v}]$,[Mg V],0
-2945.967,$\mathrm{He}~\textsc{i}$,He I,1
+2945.967,$\mathrm{He}~\textsc{i}$,He I,0
 3133.702,$\mathrm{O}~\textsc{iii}$,O III,0
-3188.667,$\mathrm{He}~\textsc{i}$,He I,1
-3204.026,$\mathrm{He}~\textsc{ii}$,He II,1
+3188.667,$\mathrm{He}~\textsc{i}$,He I,0
+3204.026,$\mathrm{He}~\textsc{ii}$,He II,0
 3313.282,$\mathrm{O}~\textsc{iii}$,O III,0
-3346.783,$\mathrm{[Ne}~\textsc{v}]$,[Ne V],1
+3346.783,$\mathrm{[Ne}~\textsc{v}]$,[Ne V],0
 3426.863,$\mathrm{[Ne}~\textsc{v}]$,[Ne V],1
-3445.039,$\mathrm{O}~\textsc{iii}$,O III,1
+3445.039,$\mathrm{O}~\textsc{iii}$,O III,0
 3467.49,$\mathrm{[N}~\textsc{i}]$,[N I],0
 3467.536,$\mathrm{[N}~\textsc{i}]$,[N I],0
-3488.725,$\mathrm{He}~\textsc{i}$,He I,1
+3488.725,$\mathrm{He}~\textsc{i}$,He I,0
 3587.344,$\mathrm{[Fe}~\textsc{vii}]$,[Fe VII],0
 3663.543,$\mathrm{[Fe}~\textsc{vi}]$,[Fe VI],0
 3687.881,H19,H19,0
@@ -68,7 +68,7 @@ wavelength_AA,formatted_ion,formatted_ion_simple,show
 3704.913,H16,H16,0
 3713.033,H15,H15,0
 3723.004,H14,H14,0
-3727.092,$\mathrm{[O}~\textsc{ii}]$,[O II],1
+3727.092,$\mathrm{[O}~\textsc{ii}]$,[O II],0
 3729.875,$\mathrm{[O}~\textsc{ii}]$,[O II],1
 3735.431,H13,H13,0
 3751.224,H12,H12,0
@@ -78,16 +78,16 @@ wavelength_AA,formatted_ion,formatted_ion_simple,show
 3836.479,H9,H9,0
 3840.359,$\mathrm{[Fe}~\textsc{v}]$,[Fe V],0
 3869.857,$\mathrm{[Ne}~\textsc{iii}]$,[Ne III],1
-3889.749,$\mathrm{He}~\textsc{i}$,He I,0
+3889.749,$\mathrm{He}~\textsc{i}$,He I,1
 3890.166,H8,H8,0
 3892.383,$\mathrm{[Fe}~\textsc{v}]$,[Fe V],0
 3912.438,$\mathrm{[Fe}~\textsc{v}]$,[Fe V],0
-3968.593,$\mathrm{[Ne}~\textsc{iii}]$,[Ne III],1
-3971.202,H$\epsilon$,H$\epsilon$,1
+3968.593,$\mathrm{[Ne}~\textsc{iii}]$,[Ne III],0
+3971.202,H$\epsilon$,H$\epsilon$,0
 4027.328,$\mathrm{He}~\textsc{i}$,He I,0
 4069.749,$\mathrm{[S}~\textsc{ii}]$,[S II],0
 4072.39,$\mathrm{[Fe}~\textsc{v}]$,[Fe V],0
-4077.5,$\mathrm{[S}~\textsc{ii}]$,[S II],0
+4077.5,$\mathrm{[S}~\textsc{ii}]$,[S II],1
 4102.9,H$\delta$,H$\delta$,1
 4144.93,$\mathrm{He}~\textsc{i}$,He I,0
 4180.04,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
@@ -156,13 +156,13 @@ wavelength_AA,formatted_ion,formatted_ion_simple,show
 5756.186,$\mathrm{[N}~\textsc{ii}]$,[N II],0
 5802.939,$\mathrm{C}~\textsc{iv}$,C IV,0
 5813.592,$\mathrm{C}~\textsc{iv}$,C IV,0
-5877.253,$\mathrm{He}~\textsc{i}$,He I,1
+5877.253,$\mathrm{He}~\textsc{i}$,He I,0
 6048.114,$\mathrm{O}~\textsc{i}$,O I,0
 6088.685,$\mathrm{[Fe}~\textsc{vii}]$,[Fe VII],0
 6302.046,$\mathrm{[O}~\textsc{i}]$,[O I],1
 6313.806,$\mathrm{[S}~\textsc{iii}]$,[S III],0
 6348.855,$\mathrm{Si}~\textsc{ii}$,Si II,0
-6365.536,$\mathrm{[O}~\textsc{i}]$,[O I],0
+6365.536,$\mathrm{[O}~\textsc{i}]$,[O I],1
 6371.223,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
 6376.272,$\mathrm{[Fe}~\textsc{x}]$,[Fe X],0
 6517.881,$\mathrm{Fe}~\textsc{ii}$,Fe II,0
@@ -180,9 +180,9 @@ wavelength_AA,formatted_ion,formatted_ion_simple,show
 7173.977,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
 7238.414,$\mathrm{C}~\textsc{ii}$,C II,0
 7239.255,$\mathrm{[Ar}~\textsc{iv}]$,[Ar IV],0
-7256.447,$\mathrm{O}~\textsc{i}$,O I,1
+7256.447,$\mathrm{O}~\textsc{i}$,O I,0
 7264.761,$\mathrm{[Ar}~\textsc{iv}]$,[Ar IV],0
-7283.355,$\mathrm{He}~\textsc{i}$,He I,1
+7283.355,$\mathrm{He}~\textsc{i}$,He I,0
 7322.007,$\mathrm{[O}~\textsc{ii}]$,[O II],0
 7332.75,$\mathrm{[O}~\textsc{ii}]$,[O II],0
 7379.862,$\mathrm{[Ni}~\textsc{ii}]$,[Ni II],0
@@ -220,8 +220,8 @@ wavelength_AA,formatted_ion,formatted_ion_simple,show
 9071.089,$\mathrm{[S}~\textsc{iii}]$,[S III],1
 9231.547,Pa9,Pa9,0
 9533.715,$\mathrm{[S}~\textsc{iii}]$,[S III],1
-9548.588,Pa$\epsilon$,Pa$\epsilon$,1
-9826.824,$\mathrm{[C}~\textsc{i}]$,[C I],1
+9548.588,Pa$\epsilon$,Pa$\epsilon$,0
+9826.824,$\mathrm{[C}~\textsc{i}]$,[C I],0
 9852.961,$\mathrm{[C}~\textsc{i}]$,[C I],1
 9915.718,$\mathrm{[S}~\textsc{viii}]$,[S VIII],0
 10030.479,$\mathrm{He}~\textsc{i}$,He I,0
@@ -234,7 +234,7 @@ wavelength_AA,formatted_ion,formatted_ion_simple,show
 10833.307,$\mathrm{He}~\textsc{i}$,He I,1
 10941.082,Pa$\gamma$,Pa$\gamma$,1
 11473.14,$\mathrm{[P}~\textsc{ii}]$,[P II],0
-11889.253,$\mathrm{[P}~\textsc{ii}]$,[P II],1
+11889.253,$\mathrm{[P}~\textsc{ii}]$,[P II],0
 12570.438,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],1
 12821.6,Pa$\beta$,Pa$\beta$,1
 12953.542,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
@@ -244,12 +244,12 @@ wavelength_AA,formatted_ion,formatted_ion_simple,show
 16777.582,$\mathrm{[Fe}~\textsc{ii}]$,[Fe II],0
 16806.59,Br11,Br11,0
 17364.742,Br10,Br10,0
-18755.12,Pa$\alpha$,Pa$\alpha$,1
-19451.309,Br$\delta$,Br$\delta$,1
-19575.343,H$_2$,H$_2$,1
-20337.55,H$_2$,H$_2$,1
-20585.618,H$_2$,H$_2$,1
-21223.792,H$_2$,H$_2$,1
-21659.91,Br$\gamma$,Br$\gamma$,1
-22236.067,H$_2$,H$_2$,1
-22476.133,H$_2$,H$_2$,1
+18755.12,Pa$\alpha$,Pa$\alpha$,0
+19451.309,Br$\delta$,Br$\delta$,0
+19575.343,H$_2$,H$_2$,0
+20337.55,H$_2$,H$_2$,0
+20585.618,H$_2$,H$_2$,0
+21223.792,H$_2$,H$_2$,0
+21659.91,Br$\gamma$,Br$\gamma$,0
+22236.067,H$_2$,H$_2$,0
+22476.133,H$_2$,H$_2$,0
