@@ -200,6 +200,16 @@ def process_spectrum_parallel(args):
                 metadata_name, hdu_indx
             )
 
+            # -------- Quality Check BEFORE Normalization --------
+            finite_mask = np.isfinite(spec) & np.isfinite(err)
+            median_valid_flux = np.nanmedian(spec[finite_mask])
+            
+            if not np.isfinite(median_valid_flux) or median_valid_flux <= 0:
+                raise ValueError(
+                    f"Spectrum rejected: "
+                    f"non-positive median flux ({median_valid_flux}) -> would lead to negative/invalid normalization"
+                )
+            
             # -------- Normalization --------
             if config['spectra_normalization'] in ['no_normalization', 'template']:
                 normalization_factor = 1.0
