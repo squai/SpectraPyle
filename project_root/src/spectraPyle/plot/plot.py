@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 import pandas as pd
 from pathlib import Path
 
-def plotting(output_filename, width=550, height=550):
+def plotting(output_filename, width=950, height=550):
 
     print(f"Plotting {output_filename} stack results")
     
@@ -29,7 +29,7 @@ def plotting(output_filename, width=550, height=550):
         rows=2, cols=1,
         shared_xaxes=True,
         row_heights=[0.15, 0.85],
-        vertical_spacing=0.05
+        vertical_spacing=0.03
     )
 
     # Read stacking results

@@ -156,7 +156,7 @@ wavelength_AA,formatted_ion,formatted_ion_simple,show
 5756.186,$\mathrm{[N}~\textsc{ii}]$,[N II],0
 5802.939,$\mathrm{C}~\textsc{iv}$,C IV,0
 5813.592,$\mathrm{C}~\textsc{iv}$,C IV,0
-5877.253,$\mathrm{He}~\textsc{i}$,He I,0
+5877.253,$\mathrm{He}~\textsc{i}$,He I,1
 6048.114,$\mathrm{O}~\textsc{i}$,O I,0
 6088.685,$\mathrm{[Fe}~\textsc{vii}]$,[Fe VII],0
 6302.046,$\mathrm{[O}~\textsc{i}]$,[O I],1
