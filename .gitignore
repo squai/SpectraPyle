@@ -33,6 +33,7 @@ project_root/notebooks/my_notebooks/
 *.yaml
 !project_root/configs/**/default.*
 !project_root/src/spectraPyle/instruments/instruments_rules.json
+!.readthedocs.yaml
 
 # =========================
 # Logs & outputs
