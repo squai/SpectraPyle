@@ -1,15 +1,56 @@
+"""
+DESI instrument driver for SpectraPyle.
+
+Implements the instrument interface for DESI spectra (grism: ``merged``):
+:func:`readSpec`, :func:`readSpec_metadata`, :func:`prepare_stacking`,
+:func:`_resolve_filepath`.
+"""
+
 import numpy as np
 from astropy.io import fits
 from astropy.table import Table
 from astropy import units as u
 import sys
-from pathlib import Path        
+from pathlib import Path
 
 from spectraPyle.utils.log import get_logger
 
 logger = get_logger(__name__)
 
 def prepare_stacking(config, z_stacking, zMin, zMax, lambda_edges):
+    """Compute the wavelength grid bounds and the grism iteration list.
+
+    The wavelength range for DESI covers the merged grism wavelength range,
+    adjusted for redshift.
+
+    Parameters
+    ----------
+    config : dict
+        Flat config dict. Must contain ``'grisms'`` (List[str]),
+        ``'wavelengths'`` (merged wavelength range), ``'spectra_mode'``, ``'z_type'``.
+    z_stacking : float
+        Stacking redshift reference.
+    zMin : float
+        Minimum source redshift in sample.
+    zMax : float
+        Maximum source redshift in sample.
+    lambda_edges : tuple[float, float] or None
+        Rest-frame wavelength override (Å); if given, overrides per-grism bounds.
+
+    Returns
+    -------
+    lbd_min : float
+        Minimum wavelength for stacking (observed frame, Å).
+    lbd_max : float
+        Maximum wavelength for stacking (observed frame, Å).
+    grismList : list of str
+        List of grisms to iterate over.
+
+    Raises
+    ------
+    ValueError
+        If grism is not supported for DESI.
+    """
 
     grisms = config['grisms']          # List[str], e.g. ['merged']
     wavelengths_grism = config['wavelengths']
@@ -58,22 +99,35 @@ def int_to_bin7(mask_spec, list_bits_to_be_masked = [0,2,6]):
 """
 
 def readSpec(config, specid, grism):
-    """
-    Reads spectrum data from FITS files. Supports single-spectrum FITS files or 
-    multi-spectrum FITS files where spectra are stored in different HDUs.
+    """Read a single spectrum for the given grism.
 
-    Args:
-        config (dict): Configuration dictionary with keys:
-                       - 'pixel_mask': Pixel mask configuration (bool or list of bits to mask).
-                       - 'n_min_dithers': Minimum number of dithers for valid data.
-        specid (str): Name of the spectrum to extract.
-        grism (str): Name of the grism 
+    Supports both combined FITS (multiple spectra in one file) and
+    individual FITS (one spectrum per file).
 
-    Returns:
-        tuple: Wavelengths (lbd), flux, and error arrays.
+    Parameters
+    ----------
+    config : dict
+        Flat config dict with I/O and quality settings.
+    specid : str or int
+        Spectrum identifier.
+    grism : str
+        Grism name (``"merged"`` for DESI).
 
-    Raises:
-        NameError: If required data columns are not found or if the file format is not recognized.
+    Returns
+    -------
+    lbd : ndarray
+        Wavelength array (Å).
+    flux : ndarray
+        Flux array.
+    error : ndarray
+        Error/noise array.
+
+    Raises
+    ------
+    NameError
+        If required data columns are not found.
+    ValueError
+        If spectra_dir is not configured.
     """
     #pixel_mask = config['pixel_mask']
     #n_min_dithers = config['n_min_dithers']
@@ -147,13 +201,33 @@ def readSpec(config, specid, grism):
 
 
 def readSpec_metadata(config, specid, metadata_name, hdu_indx):
-    
-    #pixel_mask = config['pixel_mask']
-    #n_min_dithers = config['n_min_dithers']
+    """Read spectrum from a metadata-driven FITS path + HDU index.
+
+    Parameters
+    ----------
+    config : dict
+        Flat config dict with spectrum quality settings.
+    specid : str or int
+        Spectrum identifier (unused; included for interface compatibility).
+    metadata_name : str
+        Full path to FITS file.
+    hdu_indx : int
+        HDU index to read from.
+
+    Returns
+    -------
+    lbd : ndarray
+        Wavelength array (Å).
+    flux : ndarray
+        Flux array.
+    error : ndarray
+        Error/noise array.
+    """
+
     spectrum_edges = config['spectrum_edges']
 
     path_name = metadata_name
-    
+
     hdul = fits.open(path_name)
     data = hdul[hdu_indx].data
 
