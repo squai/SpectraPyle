@@ -26,7 +26,7 @@ Running via Voilà GUI
 
 .. code-block:: bash
 
-   python project_root/notebooks/run_spectraPyle.py
+   python project_root/notebooks/run_gui.py
 
 Opens a browser tab with an interactive config builder.
 
