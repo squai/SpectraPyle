@@ -1,3 +1,13 @@
+"""
+Euclid NISP instrument driver for SpectraPyle.
+
+Implements the instrument interface required by the stacking pipeline:
+:func:`readSpec`, :func:`readSpec_metadata`, :func:`prepare_stacking`,
+and the internal :func:`_resolve_filepath` for per-release filename patterns.
+
+Supported grisms: ``red``, ``blue``.
+"""
+
 import numpy as np
 from astropy.io import fits
 from astropy.table import Table
@@ -9,17 +19,33 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 
 def _resolve_filepath(spectra_dir: Path, specid, grism: str, data_release: str) -> Path:
-    """
-    Return the first matching spectrum file path for the given specid/grism/release.
+    """Return the first matching spectrum file path for the given specid/grism/release.
 
     Tries candidate filenames in order and returns the first that exists on disk.
+    Filename patterns are data-release-specific (Q1, DR1, etc.).
+
+    Parameters
+    ----------
+    spectra_dir : Path
+        Directory containing spectrum files.
+    specid : str or int
+        Spectrum identifier.
+    grism : str
+        Grism name (``"red"``, ``"blue"``).
+    data_release : str
+        Data release identifier (e.g. ``"Q1"``, ``"DR1"``).
+
+    Returns
+    -------
+    Path
+        Path to the spectrum FITS file.
 
     Raises
     ------
     ValueError
-        If data_release is not recognised. Prompt user to extend this function.
+        If data_release is not recognised.
     FileNotFoundError
-        If no candidate exists on disk.
+        If no matching file exists on disk.
     """
     spectra_dir = Path(spectra_dir)
 
@@ -64,8 +90,7 @@ def _resolve_filepath(spectra_dir: Path, specid, grism: str, data_release: str) 
 # ---------------------------------------------------------------------------
 
 def prepare_stacking(config, z_stacking, zMin, zMax, lambda_edges):
-    """
-    Compute the wavelength grid bounds and the grism iteration list.
+    """Compute the wavelength grid bounds and the grism iteration list.
 
     The wavelength range is the union over all selected grisms, so stacking
     over blue+red covers the full range.
@@ -73,16 +98,25 @@ def prepare_stacking(config, z_stacking, zMin, zMax, lambda_edges):
     Parameters
     ----------
     config : dict
-        Flat config. Must contain 'grisms' (List[str]), 'wavelengths_blue',
-        'wavelengths_red', 'spectra_mode', 'z_type'.
-    z_stacking, zMin, zMax : float
-    lambda_edges : [float, float] or None
-        Rest-frame override; if given, overrides per-grism wavelength bounds.
+        Flat config. Must contain ``'grisms'`` (List[str]), ``'wavelengths_blue'``,
+        ``'wavelengths_red'``, ``'spectra_mode'``, ``'z_type'``.
+    z_stacking : float
+        Stacking redshift reference.
+    zMin : float
+        Minimum source redshift in sample.
+    zMax : float
+        Maximum source redshift in sample.
+    lambda_edges : tuple[float, float] or None
+        Rest-frame wavelength override (Å); if given, overrides per-grism bounds.
 
     Returns
     -------
-    lbd_min, lbd_max : float
+    lbd_min : float
+        Minimum wavelength for stacking (observed frame, Å).
+    lbd_max : float
+        Maximum wavelength for stacking (observed frame, Å).
     grismList : list of str
+        List of grisms to iterate over.
     """
     grisms = config['grisms']
 
@@ -122,6 +156,25 @@ def prepare_stacking(config, z_stacking, zMin, zMax, lambda_edges):
 # ---------------------------------------------------------------------------
 
 def int_to_bin7(mask_spec, list_bits_to_be_masked=None):
+    """Convert integer bitmask to boolean array of flagged pixels.
+
+    Parameters
+    ----------
+    mask_spec : array-like
+        Array of integer bitmask values (one per pixel).
+    list_bits_to_be_masked : list[int], optional
+        Bit positions to flag as bad. Default: [0, 2, 6].
+
+    Returns
+    -------
+    ndarray
+        Boolean array; True where any flagged bit is set.
+
+    Raises
+    ------
+    ValueError
+        If mask_spec is not 1-D.
+    """
     if list_bits_to_be_masked is None:
         list_bits_to_be_masked = [0, 2, 6]
 
@@ -143,24 +196,37 @@ def int_to_bin7(mask_spec, list_bits_to_be_masked=None):
 # ---------------------------------------------------------------------------
 
 def readSpec(config, specid, grism):
-    """
-    Read a single spectrum for the given grism.
+    """Read a single spectrum for the given grism.
 
-    I/O paths are resolved per-grism from config['grism_io'][grism].
+    I/O paths are resolved per-grism from ``config['grism_io'][grism]``.
 
     Supported layouts
-    -----------------
-    combined fits  (spectra_datafile is set):
-      a) One spectrum per HDU (name == specid or specid_grism)
-      b) All spectra in a single 'SPECTRA' table HDU
+    ------------------
+    **combined fits** (``spectra_datafile`` is set):
+        a) One spectrum per HDU (name == specid or specid_grism)
+        b) All spectra in a single 'SPECTRA' table HDU
 
-    individual fits (spectra_datafile is None):
-      One FITS file per spectrum, path resolved by _resolve_filepath()
-      according to data_release.
+    **individual fits** (``spectra_datafile`` is None):
+        One FITS file per spectrum, path resolved by :func:`_resolve_filepath`
+        according to ``data_release``.
+
+    Parameters
+    ----------
+    config : dict
+        Flat config dict with instrument, I/O, and quality settings.
+    specid : str or int
+        Spectrum identifier.
+    grism : str
+        Grism name (``"red"``, ``"blue"``).
 
     Returns
     -------
-    lbd, flux, error : np.ndarray  (1-D)
+    lbd : ndarray
+        Wavelength array (Å).
+    flux : ndarray
+        Flux array (erg/s/cm²/Å or arbitrary units).
+    error : ndarray
+        Error/variance array.
     """
     pixel_mask     = config['pixel_mask']
     n_min_dithers  = config['n_min_dithers']
@@ -246,7 +312,28 @@ def readSpec(config, specid, grism):
 
 
 def readSpec_metadata(config, specid, metadata_name, hdu_indx):
-    """Read spectrum from a metadata-driven FITS path + HDU index."""
+    """Read spectrum from a metadata-driven FITS path + HDU index.
+
+    Parameters
+    ----------
+    config : dict
+        Flat config dict with instrument and quality settings.
+    specid : str or int
+        Spectrum identifier (unused; included for interface compatibility).
+    metadata_name : str
+        Full path to FITS file.
+    hdu_indx : int
+        HDU index to read from.
+
+    Returns
+    -------
+    lbd : ndarray
+        Wavelength array (Å).
+    flux : ndarray
+        Flux array.
+    error : ndarray
+        Error array.
+    """
     pixel_mask     = config['pixel_mask']
     n_min_dithers  = config['n_min_dithers']
     spectrum_edges = config['spectrum_edges']
@@ -280,7 +367,27 @@ def readSpec_metadata(config, specid, metadata_name, hdu_indx):
 # ---------------------------------------------------------------------------
 
 def _require_col(table, names, label):
-    """Return first matching column; raise NameError if none found."""
+    """Return first matching column; raise NameError if none found.
+
+    Parameters
+    ----------
+    table : astropy.table.Table
+        Table to search.
+    names : tuple of str
+        Column names to try in order.
+    label : str
+        Column label for error messages.
+
+    Returns
+    -------
+    array-like
+        Column data.
+
+    Raises
+    ------
+    NameError
+        If no matching column found.
+    """
     for name in names:
         if name in table.colnames:
             return table[name]
@@ -291,7 +398,20 @@ def _require_col(table, names, label):
 
 
 def _optional_col(table, names):
-    """Return first matching column or None if absent."""
+    """Return first matching column or None if absent.
+
+    Parameters
+    ----------
+    table : astropy.table.Table
+        Table to search.
+    names : tuple of str
+        Column names to try in order.
+
+    Returns
+    -------
+    array-like or None
+        Column data if found, None otherwise.
+    """
     for name in names:
         if name in table.colnames:
             return table[name]
@@ -299,11 +419,27 @@ def _optional_col(table, names):
 
 
 def ravel_array(arr, name):
-    """
-    Ensure a spectrum array is strictly 1-D.
+    """Ensure a spectrum array is strictly 1-D.
 
     Accepts 1-D of length N, or 2-D of shape (1, N).
     Raises ValueError for anything else.
+
+    Parameters
+    ----------
+    arr : array-like
+        Input array to validate.
+    name : str
+        Array name for error messages.
+
+    Returns
+    -------
+    ndarray
+        1-D array.
+
+    Raises
+    ------
+    ValueError
+        If array is not 1-D or of shape (1, N).
     """
     arr = np.asarray(arr)
     if arr.ndim == 2 and arr.shape[0] == 1:
