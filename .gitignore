@@ -59,3 +59,8 @@ project_root/notebooks/my_notebooks/
 # Temporary / scratch
 # =========================
 *~
+
+# =========================
+# Documentation
+# =========================
+docs/_build/
