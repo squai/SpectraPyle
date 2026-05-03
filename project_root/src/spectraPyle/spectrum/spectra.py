@@ -1,3 +1,12 @@
+"""
+Per-spectrum loading and redshift transformation.
+
+:func:`useSpec` is the main entry point: it reads a spectrum from disk
+(or from a metadata-driven path), applies Galactic extinction correction,
+optionally converts air wavelengths to vacuum, and shifts flux to the
+stacking redshift frame applying flux conservation scaling.
+"""
+
 import numpy as np
 from astropy.io import fits
 from astropy.table import Table
