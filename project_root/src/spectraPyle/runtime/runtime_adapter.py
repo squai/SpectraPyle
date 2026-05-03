@@ -39,12 +39,36 @@ with open(INSTRUMENT_RULES_PATH, "r") as f:
 # =========================================================
 
 def build_config_from_widgets(collector_func: Callable[[], Dict[str, Any]]) -> StackingConfig:
+    """Build a validated config from a Jupyter widget collector.
+
+    Parameters
+    ----------
+    collector_func : callable
+        Zero-argument function that returns a flat dict of widget values.
+
+    Returns
+    -------
+    StackingConfig
+        Validated configuration model.
+    """
     raw = collector_func()
     raw = normalize_raw_config(raw)
     return build_config_from_dict(raw)
 
 
 def build_config_from_json(path: str | Path) -> StackingConfig:
+    """Build config from a JSON file.
+
+    Parameters
+    ----------
+    path : str or Path
+        Path to JSON config file.
+
+    Returns
+    -------
+    StackingConfig
+        Validated configuration model.
+    """
     path = Path(path)
     with open(path, "r") as f:
         raw = json.load(f)
@@ -52,6 +76,18 @@ def build_config_from_json(path: str | Path) -> StackingConfig:
 
 
 def build_config_from_yaml(path: str | Path) -> StackingConfig:
+    """Build config from a YAML file.
+
+    Parameters
+    ----------
+    path : str or Path
+        Path to YAML config file.
+
+    Returns
+    -------
+    StackingConfig
+        Validated configuration model.
+    """
     path = Path(path)
     with open(path, "r") as f:
         raw = yaml.safe_load(f)
@@ -59,6 +95,18 @@ def build_config_from_yaml(path: str | Path) -> StackingConfig:
 
 
 def build_config_from_dict(raw: Dict[str, Any]) -> StackingConfig:
+    """Build config from a raw dictionary.
+
+    Parameters
+    ----------
+    raw : dict
+        Flat dict from any input source.
+
+    Returns
+    -------
+    StackingConfig
+        Validated configuration model.
+    """
     raw = normalize_raw_config(raw)
     return StackingConfig.model_validate(raw)
 
@@ -68,6 +116,22 @@ def build_config_from_dict(raw: Dict[str, Any]) -> StackingConfig:
 # =========================================================
 
 def normalize_raw_config(raw: Dict[str, Any]) -> Dict[str, Any]:
+    """Normalize a raw flat config dict before Pydantic validation.
+
+    Applies in order: empty-string→None coercion, path normalization,
+    lambda-norm unpacking, GUI→schema structural adaptation,
+    and missing-block injection.
+
+    Parameters
+    ----------
+    raw : dict
+        Flat dict from any input source (GUI, JSON, YAML, CLI).
+
+    Returns
+    -------
+    dict
+        Normalized dict ready for ``StackingConfig.model_validate()``.
+    """
     raw = normalize_empty_strings(raw)
     raw = normalize_paths(raw)
     raw = unpack_lambda_norm(raw)
@@ -319,17 +383,20 @@ def apply_version_migration(raw: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def migrate_v1_to_v2(raw: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Migrate old single-grism schema to multi-grism schema.
+    """Migrate a v1 (single-grism) config dict to the v2 multi-grism schema.
 
-    Old keys:
-      instrument.grism_type: str   (e.g. "red" | "blue" | "all")
-      io.spectra_dir: str
-      io.spectra_datafile: str
+    Converts old ``grism_type: str`` key to the ``grism_io`` nested structure
+    expected by v2. Safe to call on configs that are already v2 (no-op).
 
-    New keys:
-      instrument.grisms: List[str]
-      io.grism_io: {grism: {spectra_dir, spectra_datafile}}
+    Parameters
+    ----------
+    raw : dict
+        Raw config dict to migrate.
+
+    Returns
+    -------
+    dict
+        Migrated config dict.
     """
     inst = raw.get("instrument", {})
     io   = raw.get("io", {})
@@ -363,12 +430,30 @@ def migrate_v1_to_v2(raw: Dict[str, Any]) -> Dict[str, Any]:
 # =========================================================
 
 def export_config_to_json(cfg: StackingConfig, path: str | Path):
+    """Export a validated config to JSON file.
+
+    Parameters
+    ----------
+    cfg : StackingConfig
+        Validated configuration model.
+    path : str or Path
+        Output file path.
+    """
     path = Path(path)
     with open(path, "w") as f:
         json.dump(cfg.model_dump(mode="json"), f, indent=2)
 
 
-def export_config_to_yaml(cfg, path):
+def export_config_to_yaml(cfg: StackingConfig, path: str | Path):
+    """Export a validated config to YAML file.
+
+    Parameters
+    ----------
+    cfg : StackingConfig
+        Validated configuration model.
+    path : str or Path
+        Output file path.
+    """
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w") as f:
@@ -384,6 +469,20 @@ def export_config_to_yaml(cfg, path):
 # =========================================================
 
 def validate_raw_dict(raw: Dict[str, Any]) -> tuple[bool, str | None]:
+    """Validate a raw config dict without raising exceptions.
+
+    Parameters
+    ----------
+    raw : dict
+        Config dict to validate.
+
+    Returns
+    -------
+    bool
+        True if valid, False otherwise.
+    str or None
+        Error message if invalid, None if valid.
+    """
     try:
         build_config_from_dict(raw)
         return True, None
@@ -396,13 +495,23 @@ def validate_raw_dict(raw: Dict[str, Any]) -> tuple[bool, str | None]:
 # =========================================================
 
 def flatten_schema_model(cfg):
-    """
-    Convert a StackingConfig (or its model_dump dict) to the flat dict
-    consumed by stacking/processes/euclid.
+    """Flatten a validated StackingConfig back to a legacy flat dict.
 
-    Key outputs:
-    - flat['grisms']   : List[str]
-    - flat['grism_io'] : {grism: {'spectra_dir': Path, 'spectra_datafile': str|None}}
+    .. deprecated::
+        This function exists only for backward compatibility with the
+        :class:`~spectraPyle.stacking.stacking.Stacking` runtime, which
+        still consumes flat keys. It will be removed once the runtime
+        is refactored to consume the Pydantic model directly.
+
+    Parameters
+    ----------
+    config : StackingConfig
+        Validated config model.
+
+    Returns
+    -------
+    dict
+        Flat dict with legacy keys (e.g. ``config['grism_io']['red']['spectra_dir']``).
     """
     if isinstance(cfg, BaseModel):
         cfg = cfg.model_dump()
