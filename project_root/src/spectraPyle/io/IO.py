@@ -150,27 +150,26 @@ def z_stack(redshift, z_type, conservation):
         - z_stacking : float
             Redshift of the stacking frame
     """
-        
-            z_min, z_max, z_med = np.nanmin(redshift), np.nanmax(redshift), np.nanmedian(redshift)
-            print (f"Minimum z: {np.round(z_min,4)}, Median z: {np.round(z_med,4)}, Maximum z: {np.round(z_max,4)}")
-        
-            if z_type == 'median_z':
-                z_stacking = z_med ## median redshift
-            elif z_type == 'minimum_z':
-                z_stacking = z_min ## minimum redshift
-            elif z_type == 'maximum_z':
-                z_stacking = z_max ## maximum redshift
-            elif z_type == 'rest_frame':
-                z_stacking = 0.0 ## restframe
-                if conservation == 'luminosity':
-                    print (f"\n NOTE: When 'conservation'=='luminosity', and the stack is done at restframe, the output will be the restframe stacked LUMINOSITY spectra, in units [erg/s/AA]\n")
-            elif type(z_type) == int or type(z_type) == float:
-                z_stacking = float(z_type) ## redshift defined by the user
-                print (f"Common redshift of the stacked spectrum defined by user: z={z_stacking}")
-            else:
-                raise NameError('z_type ', z_type, ' not supported!')
-            
-            return z_min, z_max, z_stacking
+    z_min, z_max, z_med = np.nanmin(redshift), np.nanmax(redshift), np.nanmedian(redshift)
+    print (f"Minimum z: {np.round(z_min,4)}, Median z: {np.round(z_med,4)}, Maximum z: {np.round(z_max,4)}")
+
+    if z_type == 'median_z':
+        z_stacking = z_med ## median redshift
+    elif z_type == 'minimum_z':
+        z_stacking = z_min ## minimum redshift
+    elif z_type == 'maximum_z':
+        z_stacking = z_max ## maximum redshift
+    elif z_type == 'rest_frame':
+        z_stacking = 0.0 ## restframe
+        if conservation == 'luminosity':
+            print (f"\n NOTE: When 'conservation'=='luminosity', and the stack is done at restframe, the output will be the restframe stacked LUMINOSITY spectra, in units [erg/s/AA]\n")
+    elif type(z_type) == int or type(z_type) == float:
+        z_stacking = float(z_type) ## redshift defined by the user
+        print (f"Common redshift of the stacked spectrum defined by user: z={z_stacking}")
+    else:
+        raise NameError('z_type ', z_type, ' not supported!')
+
+    return z_min, z_max, z_stacking
         
 def z_sort(z_column_name, data_input):
     """Sort the input catalog by redshift.
