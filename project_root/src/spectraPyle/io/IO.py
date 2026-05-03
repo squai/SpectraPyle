@@ -1,3 +1,13 @@
+"""
+Catalog I/O, wavelength grid construction, and FITS output writer.
+
+Key functions:
+
+- :func:`read_catalog` — loads npz/fits/csv catalogs
+- :func:`build_wavelength_grid` — constructs the target resampling grid
+- :func:`save_to_file` — writes the stacked spectra to a FITS file
+"""
+
 import os
 import os.path
 import numpy as np
@@ -14,8 +24,6 @@ import spectraPyle.spectrum.normalization as snorm
 import spectraPyle.spectrum.resampling as sres
 
 from tqdm import tqdm
-
-import os
 
 '''
 def get_incremental_dir(base_path):
@@ -40,21 +48,30 @@ def get_incremental_dir(base_path):
 ''' 
 
 def read_catalog(dirIn, fname, extension, mandatory_keys):
-    """
-    Loads data from a file in the specified format, extracting mandatory keys.
+    """Load a catalog file and extract mandatory columns.
 
-    Args:
-        dirIn (str): Directory path where the file is located.
-        fname (str): Filename without extension.
-        extension (str): File extension, one of ['npz', 'fits', 'csv'].
-        mandatory_keys (list): List of keys that must be present in the file.
+    Parameters
+    ----------
+    dirIn : str
+        Directory containing the catalog file.
+    fname : str
+        Filename without extension.
+    extension : {"npz", "fits", "csv"}
+        File format.
+    mandatory_keys : list of str
+        Column names that must be present.
 
-    Returns:
-        data: A dictionary where keys are column names and values are the corresponding arrays.
+    Returns
+    -------
+    dict
+        Keys are column names, values are arrays.
 
-    Raises:
-        FileNotFoundError: If the specified file does not exist.
-        ValueError: If the file is missing mandatory keys or has format issues.
+    Raises
+    ------
+    FileNotFoundError
+        If the file does not exist at ``dirIn/fname.extension``.
+    ValueError
+        If a mandatory key is missing or the format is unsupported.
     """
     supported_extensions = ['npz', 'fits', 'csv']
     if extension not in supported_extensions:
@@ -107,17 +124,32 @@ def read_catalog(dirIn, fname, extension, mandatory_keys):
     return data
 
 def z_stack(redshift, z_type, conservation):
-            """ defining the redshift of the stacked spectrum: 
-                
-                Args:
-                    redshift (N_in,) array: redshift of the spectra to be stacked
-                    z_type (str, int, float): keyword for the redshift of the stacking, one of ['median_z', 'minimum_z', 'maximum_z', 'rest_frame', value [int, float]]
-                    conservation: spectral quantity that will be conserved, one of ['luminosity', 'flux']
-                Returns:
-                    zMin: minimum redshift of the redshift array
-                    zMax: maximum redshift of the redshift array
-                    z_stacking: redshift of the stacking
-            """
+    """Determine the redshift of the stacked spectrum.
+
+    Parameters
+    ----------
+    redshift : ndarray
+        Redshifts of the spectra to be stacked.
+    z_type : str, int, or float
+        Keyword for stacking redshift. One of:
+        - 'median_z': median of redshift array
+        - 'minimum_z': minimum of redshift array
+        - 'maximum_z': maximum of redshift array
+        - 'rest_frame': z=0
+        - float/int: user-defined redshift value
+    conservation : str
+        Spectral quantity to conserve: 'luminosity' or 'flux'.
+
+    Returns
+    -------
+    tuple
+        - z_min : float
+            Minimum redshift of the array
+        - z_max : float
+            Maximum redshift of the array
+        - z_stacking : float
+            Redshift of the stacking frame
+    """
         
             z_min, z_max, z_med = np.nanmin(redshift), np.nanmax(redshift), np.nanmedian(redshift)
             print (f"Minimum z: {np.round(z_min,4)}, Median z: {np.round(z_med,4)}, Maximum z: {np.round(z_max,4)}")
@@ -141,15 +173,19 @@ def z_stack(redshift, z_type, conservation):
             return z_min, z_max, z_stacking
         
 def z_sort(z_column_name, data_input):
-    """
-    Sort the input catalog with redshift. Only apply Francis+91 ordering
-    
-    Args:
-        z_column_name (str): name of the column of the input catalog that contains the redshift of the sources to be stacked
-        data_input (dict): input catalog
-    
-    Returns:
-        data_input (dict): input catalog sorted with redshift
+    """Sort the input catalog by redshift.
+
+    Parameters
+    ----------
+    z_column_name : str
+        Name of the column containing redshifts.
+    data_input : dict
+        Input catalog (keys=column names, values=arrays).
+
+    Returns
+    -------
+    dict
+        Input catalog sorted by increasing redshift.
     """
     
     z_key = z_column_name
@@ -255,10 +291,17 @@ def get_effective_cpu_limit():
 
 
 def get_effective_cpu_limit():
+    """Return the effective CPU count considering cgroup and affinity limits.
+
+    Accounts for cgroup v1 (cpu.cfs_quota_us/period), cgroup v2 (cpu.max),
+    and CPU affinity settings. Useful in containerized/scheduled environments.
+
+    Returns
+    -------
+    int
+        Number of effectively available CPUs (at least 1).
+    """
     import os
-    """
-    Returns the CPU effective number considering cgroups v1, v2 e CPU's affinity.
-    """
     # 1. Affinity
     try:
         affinity_count = len(os.sched_getaffinity(0))
@@ -298,6 +341,21 @@ def get_effective_cpu_limit():
 
 
 def output_units(config):
+    """Determine output physical units from configuration.
+
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary.
+
+    Returns
+    -------
+    tuple
+        - out_unit : str
+            Output unit string
+        - out_unit_scale_factor : float
+            Scaling factor for units
+    """
     if config['spectra_normalization'] == 'no_normalization':
         if config['conservation'] == 'luminosity':
             out_unit = 'erg/s/cm2'
@@ -311,13 +369,20 @@ def output_units(config):
     return out_unit, out_unit_scale_factor
         
 def save_to_file(config, data_dict):
-    """
-    Save the data to a FITS file.
+    """Save stacked spectra and metadata to a FITS file.
 
-    Args:
-        config (dict): Configuration dictionary.
-        data_dict (dict): Dictionary containing all the data to save.
-        stackArr (numpy.ndarray): 2D array containing individual spectra used for stacking.
+    Parameters
+    ----------
+    config : dict
+        Configuration dictionary containing output paths, normalization type, etc.
+    data_dict : dict
+        Dictionary containing stacking results: wavelengths, fluxes, dispersions,
+        pixel counts, etc.
+
+    Returns
+    -------
+    str
+        Path to the generated FITS file.
     """
     # Prepare the stacking parameters metadata
     if config['spectra_normalization'] == 'interval':
