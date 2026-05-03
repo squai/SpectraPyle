@@ -1,79 +1,279 @@
-##########################################################################
-To run the code, you need to provide a configuration file containing the necessary input parameters. 
-You can use provided Jupoyter notebooks to create custom configuration files (see below).
+# SpectraPyle
 
-## How to Run
-You have two options (A and B):
+**Stack thousands of astronomical spectra, uncover hidden signals.**
 
-A) One of the Jupyter notebook:
-    - stackSpec_help_ALL_IN_ONE_FITS.ipynb (if you have all the spectra stored in a single fits file.)
-    - stackSpec_help_INDIVIDUAL_FITS.ipynb (if you a fits file for each spectrum.)
-    - stackSpec_help_DATALABS_METAFILES.ipynb (it allows you to  query the EUCLID SAS and stack spectra directly from the repository without storing them. REQUIRES access to ESA SAS via login)
-     
-     Follow the instructions in the notebooks to GENERATE the config file and RUN stackSpec to generate the stacked spectra.
+![Python](https://img.shields.io/badge/python-3.9%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-5.0.2-orange)
 
-B) terminal (bash kernel):
-    1) Using the default set of values (in a bash terminal):
+SpectraPyle is a flexible, scalable tool for stacking galaxy spectra. It shifts spectra
+to a common rest frame, normalizes, resamples, sigma-clips, and combines them using median,
+mean, weighted mean, or geometric mean statistics. Output is a FITS file ready for
+scientific analysis.
 
-    > python stackingEuclid.py
+**Supported instruments:** Euclid (NISP, grisms `red`/`blue`) · DESI (`merged`)
 
-    2) Passing a set of values via a configuration file in dictionary format. For example, using the provided configuration file "config_test":
+---
 
-    > python stackingEuclid.py -c config_test
+## Quick Start
 
-    The command will run the stackSpec code, producing the stacking spectra for the provided test galaxies using the initial configuration given in the file config_test. 
+### Install
 
-## Results
-The code generates a file in .fits format in the provided output directory defined in the config file (default is ./test/results/).
+```bash
+pip install -e ".[all]"
+```
 
-The .fits file contains two HDUs:
-    - HDU[0] is the primary HDU and its header contains some info (such the redshift of the stack):
-    
-    To get the redshift of the stack:
-    from astropy.io import fits
-    with fits.open('path_to_file/name_stack.fits) as hdu:
-    header = hdu[0].header
-    redshift = header['REDSHIFT']
-    
-    - HDU[1] comtains the data generated, that can be accessed with the following keywords:
-        
-        'wavelength': Wavelength array of the stacked spectrum (in Angstroms)
-        
-        'specMedian': Stacked median spectrum
-        'specMedianDispersion': Dispersion (1 sigma) of the stacked median spectrum
-        'specMedianError': Uncertainty (1 sigma) of the stacked median spectrum
-        'specMean': Stacked mean spectrum
-        'specMeanDispersion': Dispersion (1 sigma) of the stacked mean spectrum
-        'specMeanError': Uncertainty (1 sigma) of the stacked mean spectrum
-        'specGeometricMean': Stacked geometric mean spectrum
-        'specGeometricMeanDispersion': Dispersion (1 sigma) of the stacked geometric mean spectrum
-        'specGeometricMeanError': Uncertainty (1 sigma) of the stacked geometric mean spectrum
-        'specWeightedMean': Stacked weighted spectrum
-        'specWeightedMeanDispersion': Dispersion (1 sigma) of the stacked weighted average spectrum
-        'specWeightedMeanError': Uncertainty (1 sigma) of the stacked weighted average spectrum
-        
-        'initialPixelCount': Number of spectra to be stacked (note: initialPixelCount=(2*len(sample)) when grism_type=='all')
-        'goodPixelCount': Number of good flux values per pixel actually used for stacking
-        'badPixelCount': Number of bad pixels per pixel
-        'sigmaClippedCount': Number of sigma clipped flux values per pixel
-        
-        For example, to get the mean stacked spectrum:
-        
-        from astropy.io import fits
-        with fits.open('path_to_file/name_stack.fits) as hdu:
-        data = hdu[1].data
-        wave = data.field('wavelength')
-        specMean = data.field('specMean')
-        
-## Plot 
-The plots of the generated stacked spectrum can be generated using the plotStack.ipynb notebook
+### Run via CLI
 
-**Note:** If the sample includes faint fluxes (values below or equal to zero), the geometric mean calculation may yield unreliable results, triggering a warning for the user. In cases where every pixel in the sample has faint fluxes, the resulting geometric mean stacked spectrum will contain NaN values exclusively. This scenario is exemplified by the provided test sample.
+**Option 1: Using the CLI helper script (recommended)**
 
+```bash
+python project_root/notebooks/run_cli.py --config path/to/config.yaml [--log-level INFO]
+```
 
----------------------------------------------------------------------------------------------------------------------------------------
-Feel free to contact Salvatore Quai at salvatore.quai@unibo.it for any questions or assistance.
----------------------------------------------------------------------------------------------------------------------------------------
+Features:
+- Automatic logging setup with timestamp in `output_dir`
+- Supports both YAML and JSON configs
+- Log levels: DEBUG, INFO, WARNING
+- Integrated argument validation
+
+**Option 2: Direct CLI invocation**
+
+```bash
+python project_root/src/spectraPyle/stacking/stacking.py --config path/to/config.yaml
+```
+
+Override individual config keys at runtime:
+
+```bash
+python project_root/src/spectraPyle/stacking/stacking.py --config config.yaml --instrument.grisms '["red","blue"]'
+```
+
+### Run via Voilà GUI (config builder)
+
+```bash
+python project_root/notebooks/run_gui.py
+```
+
+Opens a browser tab with an interactive config builder. No CLI output is expected.
+
+### Minimal YAML config example
+
+```yaml
+instrument:
+  instrument_name: euclid
+  grisms: ["red"]
+
+io:
+  input_dir: /path/to/catalog
+  filename_in: my_catalog
+  filename_in_extention: fits
+  output_dir: /path/to/output
+  grism_io:
+    red:
+      spectra_dir: /path/to/spectra
+
+redshift:
+  z_type: rest_frame
+
+norm:
+  norm_type: median
+  norm_range: [13000, 16000]
+
+resampling:
+  pixel_resampling_type: linear
+  pixel_size: 10.0
+
+sigmaclip:
+  sigma_clipping: true
+  sigma_lower: 3.0
+  sigma_upper: 3.0
+```
+
+---
+
+## Configuration
+
+Configs are YAML or JSON. All inputs pass through a strict validation pipeline:
+
+```
+Widgets / JSON / YAML / CLI
+    ↓
+normalize_raw_config()        runtime/runtime_adapter.py  — empty strings→None, path coercion
+    ↓
+StackingConfig (Pydantic v2)  schema/schema.py             — typed field-level validation
+    ↓
+StackingConfigResolver        schema/schema.py             — cross-field rules, instrument defaults
+    ↓
+flatten_schema_model()        runtime/runtime_adapter.py  — back to flat dict (legacy shim)
+    ↓
+Stacking(flat_dict).run()     stacking/stacking.py
+```
+
+### Key config blocks
+
+| Block | Purpose |
+|---|---|
+| `instrument` | `instrument_name` (`euclid`/`desi`), `grisms` list |
+| `io` / `grism_io` | Input catalog, output dir, per-grism spectra paths |
+| `redshift` | `z_type` (`rest_frame`, `observed_frame`, `custom`, …), `z_value` |
+| `norm` | Normalization method and wavelength range |
+| `resampling` | Pixel grid type and size |
+| `sigmaclip` | Sigma-clipping thresholds |
+| `bootstrap` | Bootstrap uncertainty estimation |
+| `parallel` | Multiprocessing CPU fraction |
+| `plot` | Plotly output options |
+
+### Multi-grism
+
+```yaml
+instrument:
+  grisms: ["red", "blue"]
+
+io:
+  grism_io:
+    red:
+      spectra_dir: /path/to/red_spectra
+    blue:
+      spectra_dir: /path/to/blue_spectra
+```
+
+Old single-grism configs (`grism_type: str`) are auto-migrated by `migrate_v1_to_v2()` in
+`runtime/runtime_adapter.py`.
+
+---
+
+## Output Format
+
+SpectraPyle writes a `.fits` file to `output_dir`.
+
+### HDU[0] — metadata header
+
+```python
+from astropy.io import fits
+
+with fits.open("result.fits") as hdu:
+    redshift = hdu[0].header["REDSHIFT"]
+```
+
+### HDU[1] — stacked spectra table
+
+```python
+with fits.open("result.fits") as hdu:
+    data = hdu[1].data
+    wave = data.field("wavelength")
+    spec = data.field("specMean")
+```
+
+| Column | Description |
+|---|---|
+| `wavelength` | Wavelength array (Å) |
+| `specMean` / `specMeanDispersion` / `specMeanError` | Mean stack + 1σ dispersion + 1σ uncertainty |
+| `specMedian` / `specMedianDispersion` / `specMedianError` | Median stack |
+| `specGeometricMean` / `specGeometricMeanDispersion` / `specGeometricMeanError` | Geometric mean — non-positive flux values are excluded per pixel; result is NaN if all pixels have non-positive flux |
+| `specWeightedMean` / `specWeightedMeanDispersion` / `specWeightedMeanError` | Inverse-variance weighted mean |
+| `initialPixelCount` | Total spectra submitted to the stack |
+| `goodPixelCount` | Good flux values used per pixel |
+| `badPixelCount` | Bad (masked) pixels per pixel |
+| `sigmaClippedCount` | Values removed by sigma-clipping per pixel |
+
+---
+
+## Supported Instruments
+
+| Instrument | Grisms | Spectra modes |
+|---|---|---|
+| Euclid (NISP) | `red`, `blue` | `individual fits`, `combined fits`, `metadata path` |
+| DESI | `merged` | `individual fits`, `combined fits`, `metadata path` |
+
+---
+
+## Architecture
+
+### Config pipeline
+
+```
+Widgets / JSON / YAML / CLI
+    ↓
+normalize_raw_config()        runtime/runtime_adapter.py
+    ↓
+StackingConfig (Pydantic v2)  schema/schema.py
+    ↓
+StackingConfigResolver        schema/schema.py
+    ↓
+flatten_schema_model()        runtime/runtime_adapter.py  ← legacy shim, to be deprecated
+    ↓
+Stacking(flat_dict).run()     stacking/stacking.py
+```
+
+### Key modules
+
+| Module | Responsibility |
+|---|---|
+| `schema/schema.py` | Pydantic models: `StackingConfig`, `StackingConfigResolver`. Instrument rules from `instruments_rules.json`. |
+| `runtime/runtime_adapter.py` | Input normalization, GUI→schema adapter, JSON/YAML loaders, version migration. |
+| `stacking/stacking.py` | `Stacking` class: orchestrates the full run. Chunks spectra (500/chunk), writes HDF5, sigma-clips, computes statistics, saves FITS. |
+| `process/processes.py` | `main_parallel()`: multiprocessing loop — read → shift → resample → normalize. |
+| `instruments/euclid.py` | `readSpec()`, `readSpec_metadata()`, `prepare_stacking()`, `_resolve_filepath()`. |
+| `instruments/desi.py` | DESI equivalent of `euclid.py`. |
+| `instruments/instruments_rules.json` | Authoritative per-instrument constants, quality defaults, grisms, data releases. |
+| `io/IO.py` | Catalog reader, wavelength grid builder, FITS output writer. |
+| `io/filename_builder.py` | Auto-generates `filename_out` from config fields. |
+| `spectrum/spectra.py` | Per-spectrum read, redshift shift, extinction correction. |
+| `spectrum/resampling.py` | Wavelength grid resampling. |
+| `spectrum/normalization.py` | Flux normalization; `francis1991_normalize` for template mode. |
+| `statistic/statistics.py` | `stack_statistics()`, `bootstrStack()` for bootstrap uncertainties. |
+| `plot/plot.py` | Plotly interactive plot of the final stack. |
+| `physics/extinction.py` | Galactic extinction correction (Gordon+23, `dust_extinction`). |
+| `utils/log.py` | Unified logging for CLI and Voilà GUI. |
+
+### Adding a new instrument
+
+1. Add an entry to `instruments/instruments_rules.json` (constants, quality defaults, surveys, grisms, data releases)
+2. Create `instruments/<name>.py` implementing `readSpec()`, `readSpec_metadata()`, `prepare_stacking()`, `_resolve_filepath()`
+3. Register per-release filename patterns inside `_resolve_filepath()`
+
+---
+
+## Development
+
+### Install (editable, all extras)
+
+```bash
+pip install -e ".[all]"
+```
+
+### Lint and format
+
+```bash
+ruff check project_root/src/
+black project_root/src/
+```
+
+### Sanity check (CLI)
+
+```bash
+python project_root/src/spectraPyle/stacking/stacking.py --config path/to/default.yaml
+```
+
+### Voilà GUI — important note
+
+After modifying `schema.py` or `runtime_adapter.py`, restart the Jupyter kernel for changes to appear in the GUI.
+
+### Generate documentation locally
+
+```bash
+cd project_root/docs
+make html
+# Output: project_root/docs/_build/html/index.html
+```
+
+---
 
 ## License
-TBD
+
+MIT — see `LICENSE`.
+
+## Contact
+
+Salvatore Quai — salvatore.quai@gmail.com
