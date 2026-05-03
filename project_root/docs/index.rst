@@ -24,4 +24,5 @@ and combines them using median, mean, weighted mean, or geometric mean statistic
    api/io
    api/spectrum
    api/statistic
+   api/plot
    api/utils
