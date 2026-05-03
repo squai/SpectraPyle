@@ -53,6 +53,26 @@ class GrismIOConfig(BaseModel):
 
 
 class IOConfig(BaseModel):
+    """Input/output paths and spectra access mode.
+
+    Parameters
+    ----------
+    spectra_mode : {"individual fits", "combined fits", "metadata path"}
+        How individual spectra are located.
+    input_dir : Path, optional
+        Directory containing the catalog file.
+    filename_in : str, optional
+        Catalog filename without extension.
+    filename_in_extention : {"fits", "csv", "npz"}, optional
+        Catalog file extension.
+    output_dir : Path, optional
+        Directory where the stacked FITS will be written.
+    grism_io : dict[str, GrismIOConfig]
+        Per-grism I/O paths keyed by grism name (e.g. ``"red"``, ``"blue"``).
+    filename_out : str
+        Output filename stem. ``"AUTO"`` triggers automatic generation via
+        :func:`~spectraPyle.io.filename_builder.build_filename`.
+    """
 
     spectra_mode: SpectraMode = "individual fits"
 
@@ -86,15 +106,26 @@ RedshiftType = Literal[
 
 
 class RedshiftConfig(BaseModel):
+    """Redshift handling and stacking reference frame.
+
+    Parameters
+    ----------
+    z_type : {"rest_frame", "observed_frame", "minimum_z", "maximum_z", "median_z", "custom"}
+        Type of stacking reference redshift.
+    z_value : float, optional
+        Explicit redshift value when ``z_type = "custom"``.
+    """
 
     z_type: RedshiftType = "rest_frame"
     z_value: Optional[float] = None
 
     def requires_catalog_column(self) -> bool:
+        """Check if this redshift type requires a redshift column in the catalog."""
         return self.z_type != "observed_frame"
 
     @model_validator(mode="after")
     def validate_redshift(self):
+        """Validate redshift configuration constraints."""
         if self.z_type == "custom":
             if self.z_value is None:
                 raise ValueError("z_value required when z_type = custom")
@@ -123,6 +154,21 @@ IntervalStatisticType = Literal["mean", "median", "maximum", "minimum"]
 
 
 class NormalizationConfig(BaseModel):
+    """Spectrum normalization method and parameters.
+
+    Parameters
+    ----------
+    spectra_normalization : {"no_normalization", "custom", "median", "interval", "integral", "template"}
+        Normalization method applied to individual spectra.
+    conservation : {"flux", "luminosity"}, optional
+        Conservation mode for ``no_normalization``.
+    lambda_norm_min : float, optional
+        Lower wavelength bound for interval normalization (rest-frame Å).
+    lambda_norm_max : float, optional
+        Upper wavelength bound for interval normalization (rest-frame Å).
+    interval_norm_statistics : {"mean", "median", "maximum", "minimum"}, optional
+        Statistic to extract from wavelength interval.
+    """
 
     spectra_normalization: NormalizationType = "median"
     conservation: Optional[ConservationType] = None
@@ -134,6 +180,7 @@ class NormalizationConfig(BaseModel):
     @field_validator("lambda_norm_min", "lambda_norm_max")
     @classmethod
     def validate_lambda(cls, v):
+        """Validate wavelength values are non-negative and finite."""
         if v is None:
             return v
         if v < 0 or not np.isfinite(v):
@@ -142,6 +189,7 @@ class NormalizationConfig(BaseModel):
 
     @model_validator(mode="after")
     def validate_norm(self):
+        """Validate normalization configuration constraints."""
 
         if self.spectra_normalization == "no_normalization":
             if self.conservation is None:
@@ -178,6 +226,19 @@ PixelModeType = Literal["manual", "instrumental"]
 
 
 class ResamplingConfig(BaseModel):
+    """Wavelength grid resampling configuration.
+
+    Parameters
+    ----------
+    pixel_resampling_type : {"lambda", "log_lambda", "lambda_shifted", "none"}
+        Type of wavelength grid spacing.
+    pixel_size_type : {"manual", "instrumental"}
+        Whether pixel size is manually set or derived from instrument resolution.
+    pixel_resampling : float, optional
+        Manual pixel size (Å) when ``pixel_size_type = "manual"``.
+    nyquist_sampling : float, optional
+        Nyquist sampling factor when ``pixel_size_type = "instrumental"``.
+    """
 
     pixel_resampling_type: ResamplingType = "lambda"
     pixel_size_type: PixelModeType = "instrumental"
@@ -186,6 +247,7 @@ class ResamplingConfig(BaseModel):
 
     @model_validator(mode="after")
     def validate_pixel(self):
+        """Validate pixel resampling configuration constraints."""
 
         if self.pixel_size_type == "manual":
             if self.pixel_resampling is None:
@@ -244,29 +306,85 @@ class CatalogColumnsConfig(BaseModel):
 # =========================================================
 
 class BootstrapConfig(BaseModel):
+    """Bootstrap resampling configuration.
+
+    Parameters
+    ----------
+    bootstrapping_R : int
+        Number of bootstrap resamples (0–1000).
+    """
     bootstrapping_R: int = Field(default=300, ge=0, le=1000)
 
 
 class SigmaClipConfig(BaseModel):
+    """Sigma-clipping outlier rejection configuration.
+
+    Parameters
+    ----------
+    sigma_clipping_conditions : float
+        Clipping threshold in units of standard deviation (0–10).
+    """
     sigma_clipping_conditions: float = Field(default=3, ge=0, le=10)
 
 
 class ParallelConfig(BaseModel):
+    """Multiprocessing configuration.
+
+    Parameters
+    ----------
+    multiprocessing : bool
+        Enable multiprocessing for spectrum processing.
+    max_cpu_fraction : float
+        Fraction of available CPUs to use (0–1).
+    """
     multiprocessing: bool = True
     max_cpu_fraction: float = Field(default=0.9, gt=0, le=1)
 
 
 class CosmologyConfig(BaseModel):
+    """Cosmology parameters.
+
+    Parameters
+    ----------
+    cosmo_H0 : float
+        Hubble constant (km/s/Mpc).
+    cosmo_Om0 : float
+        Matter density parameter (0 < Om0 < 1).
+    """
     cosmo_H0: float = Field(default=70, gt=0)
     cosmo_Om0: float = Field(default=0.3, gt=0, lt=1)
 
 
 class InstrumentQualityConfig(BaseModel):
+    """Instrument-specific quality filtering parameters.
+
+    Parameters
+    ----------
+    pixel_mask : list[int], optional
+        Pixel bitmask bits to flag as bad.
+    n_min_dithers : int, optional
+        Minimum number of dithers required for valid data.
+    """
     pixel_mask: Optional[List[int]] = None
     n_min_dithers: Optional[int] = None
 
 
 class InstrumentConfig(BaseModel):
+    """Instrument and survey configuration.
+
+    Parameters
+    ----------
+    instrument_name : str
+        Instrument name (e.g. ``"euclid"``, ``"desi"``).
+    survey_name : str
+        Survey/program name.
+    grisms : list[str]
+        List of grism names (e.g. ``["red"]``, ``["red", "blue"]``).
+    data_release : str
+        Data release identifier.
+    quality : InstrumentQualityConfig, optional
+        Quality filtering parameters.
+    """
     instrument_name: str
     survey_name: str
     grisms: List[str]           # replaces grism_type; e.g. ["red"] or ["red", "blue"]
@@ -275,6 +393,13 @@ class InstrumentConfig(BaseModel):
 
 
 class PlotConfig(BaseModel):
+    """Output plotting configuration.
+
+    Parameters
+    ----------
+    plot_results : bool
+        Generate and display Plotly interactive plot of stacked spectrum.
+    """
     plot_results: bool = True
 
 
@@ -283,6 +408,47 @@ class PlotConfig(BaseModel):
 # =========================================================
 
 class StackingConfig(BaseModel):
+    """Complete validated configuration for spectrum stacking.
+
+    This is the primary configuration model used throughout the stacking pipeline.
+    It combines instrument settings, I/O configuration, spectral processing
+    parameters, and output options.
+
+    Parameters
+    ----------
+    instrument : InstrumentConfig
+        Instrument and survey selection.
+    instrument_constants : dict[str, Any], optional
+        Instrument-specific constants (populated by resolver).
+    io : IOConfig
+        Input catalog and output spectrum paths.
+    cosmology : CosmologyConfig
+        Cosmology parameters.
+    redshift : RedshiftConfig
+        Stacking redshift reference frame.
+    norm : NormalizationConfig
+        Spectrum normalization method.
+    catalog_columns : CatalogColumnsConfig
+        Column names in the input catalog.
+    resampling : ResamplingConfig
+        Wavelength grid resampling configuration.
+    lambda_edges_rest : tuple[float, float], optional
+        Rest-frame wavelength range override (Å).
+    spectrum_edges : tuple[int, int], optional
+        Pixel range to include in spectrum.
+    bootstrap : BootstrapConfig
+        Bootstrap resampling configuration.
+    sigmaclip : SigmaClipConfig
+        Sigma-clipping configuration.
+    parallel : ParallelConfig
+        Multiprocessing configuration.
+    plot : PlotConfig
+        Output plot configuration.
+    log_level : {"DEBUG", "INFO", "WARNING"}
+        Logging verbosity level.
+    config_version : str
+        Configuration schema version.
+    """
 
     instrument: InstrumentConfig
     instrument_constants: Optional[Dict[str, Any]] = None
@@ -337,9 +503,31 @@ def compute_catalog_requirements(cfg: StackingConfig):
 
 
 class StackingConfigResolver:
+    """Resolver for cross-field validation and instrument-specific rules.
+
+    Applies constraints that depend on multiple fields and loads instrument rules
+    from the `instruments/instruments_rules.json` file.
+    """
 
     @staticmethod
     def resolve(cfg: StackingConfig) -> StackingConfig:
+        """Apply cross-field validation and instrument rules.
+
+        Parameters
+        ----------
+        cfg : StackingConfig
+            Partially validated config from Pydantic.
+
+        Returns
+        -------
+        StackingConfig
+            Fully resolved and validated configuration.
+
+        Raises
+        ------
+        ValueError
+            If cross-field constraints or instrument rules are violated.
+        """
 
         # ---------------- INSTRUMENT ----------------
         inst_name = cfg.instrument.instrument_name
