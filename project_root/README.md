@@ -270,6 +270,28 @@ make html
 
 ---
 
+## Post-stacking Analysis
+
+After running the stacking pipeline, use the Jupyter notebooks for visualization and spectral line management:
+
+### Plot Helper
+
+```bash
+jupyter notebook project_root/notebooks/plot_helper.ipynb
+```
+
+Interactive notebook to visualize the stacked spectrum with all estimators (mean, median, geometric mean, weighted mean) and pixel count information.
+
+### Spectral Line Manager
+
+```bash
+jupyter notebook project_root/notebooks/line_manager.ipynb
+```
+
+Configure which emission lines and absorption features appear in plots. Enable/disable entries via checkboxes, then save — the next `plotting()` call picks them up automatically.
+
+---
+
 ## License
 
 MIT — see `LICENSE`.

@@ -40,6 +40,25 @@ Running via Voilà GUI
 
 Opens a browser tab with an interactive config builder.
 
+Post-stacking Analysis
+----------------------
+
+**Plot Helper** — Visualize the stacked spectrum:
+
+.. code-block:: bash
+
+   jupyter notebook project_root/notebooks/plot_helper.ipynb
+
+Interactive notebook showing all estimators (mean, median, geometric mean, weighted mean) and pixel count information.
+
+**Spectral Line Manager** — Configure spectral lines in plots:
+
+.. code-block:: bash
+
+   jupyter notebook project_root/notebooks/line_manager.ipynb
+
+Enable/disable emission lines and absorption features via checkboxes. Saved settings are picked up by the next ``plotting()`` call.
+
 Configuration Pipeline
 ----------------------
 
