@@ -65,6 +65,14 @@ dev = [
     "ruff",
 ]
 
+# Documentation
+docs = [
+    "sphinx>=7.0",
+    "furo>=2024.1.29",
+    "sphinx-autodoc-typehints>=1.25",
+    "readthedocs-sphinx-ext>=2.2",
+]
+
 # Full install (everything)
 all = [
     "ipywidgets>=8.0",
@@ -72,6 +80,10 @@ all = [
     "pytest",
     "black",
     "ruff",
+    "sphinx>=7.0",
+    "furo>=2024.1.29",
+    "sphinx-autodoc-typehints>=1.25",
+    "readthedocs-sphinx-ext>=2.2",
 ]
 
 # =========================================================
