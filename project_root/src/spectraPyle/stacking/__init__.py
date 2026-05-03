@@ -1,1 +1,1 @@
-
+"""Full stacking pipeline orchestrator."""
