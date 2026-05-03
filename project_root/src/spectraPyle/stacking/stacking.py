@@ -14,6 +14,23 @@ __maintainer__ = "Salvatore Quai"
 __email__ = "salvatore.quai@unibo.it"
 __status__ = "Developement"
 
+"""
+Core stacking orchestrator for SpectraPyle.
+
+Entry point for CLI and programmatic use. The :class:`Stacking` class loads the
+configuration, chunks the catalog into batches of 500 spectra, runs per-spectrum
+processing via :func:`~spectraPyle.process.processes.main_parallel`, applies
+sigma-clipping, computes stacking statistics, and writes the result as a FITS file.
+
+Typical usage::
+
+    from spectraPyle.runtime.runtime_adapter import build_config_from_yaml, flatten_schema_model
+    from spectraPyle.stacking.stacking import Stacking
+
+    config = flatten_schema_model(build_config_from_yaml("config.yaml"))
+    Stacking(config).run()
+"""
+
 # -------------- Packages --------------
 import os
 import os.path
@@ -63,8 +80,29 @@ from spectraPyle.io.filename_builder import build_filename
 #from typing import Optional, List, Literal, Dict, Any, Tuple
 from typing import Optional, Any
 
-# -------------- Stacking ------------- 
+# -------------- Stacking -------------
 class Stacking:
+    """Orchestrates the full spectral stacking pipeline.
+
+    Loads a flat configuration dictionary (produced by
+    :func:`~spectraPyle.runtime.runtime_adapter.flatten_schema_model`), sets up
+    cosmology and multiprocessing, then calls :meth:`run` to execute the pipeline.
+
+    Parameters
+    ----------
+    config_dict : dict
+        Flat configuration dictionary. Keys follow the legacy flat-dict convention
+        (e.g. ``config['grism_io']['red']['spectra_dir']``).
+
+    Attributes
+    ----------
+    config : dict
+    inst : module
+        Dynamically loaded instrument module (e.g. ``spectraPyle.instruments.euclid``).
+    cosmology : astropy.cosmology.FlatLambdaCDM
+    num_cpus : int or None
+        Number of worker processes; ``None`` when multiprocessing is disabled.
+    """
 
     def __init__(self, config_dict):
         
@@ -111,8 +149,31 @@ class Stacking:
         self.config["air_vacuum"] = False
         self.config["save_to_file"] = True
             
-    # ------------ RUN --------------            
-    def run(self):    
+    # ------------ RUN --------------
+    def run(self):
+        """Execute the stacking pipeline end-to-end.
+
+        Pipeline steps:
+
+        1. Read catalog and build wavelength grid.
+        2. Split catalog into chunks of 500 spectra.
+        3. For each chunk: call :func:`~spectraPyle.process.processes.main_parallel`,
+           accumulate resampled spectra in an intermediate HDF5 file.
+        4. Load the full resampled array, apply sigma-clipping.
+        5. Compute stacking statistics (mean, median, geometric mean, weighted mean).
+        6. Write output FITS file via :func:`~spectraPyle.io.IO.write_stack`.
+        7. Optionally generate a Plotly plot.
+
+        Returns
+        -------
+        None
+            Results are written to disk at ``config['output_dir']``.
+
+        Side effects
+        -----------
+        Creates ``<output_dir>/<filename_out>_array.h5`` (intermediate, deleted after use)
+        and ``<output_dir>/<filename_out>.fits`` (final output).
+        """
         # --- Initialize an empty dictionary that will contain the main results ---# 
         data_dict = {}
 
@@ -440,10 +501,32 @@ class Stacking:
         return output_filename
 
 class InstrumentLoader:
+    """Dynamic loader for per-instrument driver modules.
+
+    Loads instrument-specific modules (euclid, desi) based on configuration.
+    """
+
     def __init__(self):
         self._modules_cache: dict[str, Any] = {}
     
     def get_instrument_module(self, instrument_name: str) -> Any:
+        """Load and return the instrument driver module.
+
+        Parameters
+        ----------
+        instrument_name : str
+            Instrument name ('euclid' or 'desi').
+
+        Returns
+        -------
+        module
+            Dynamically imported module containing readSpec, readSpec_metadata, prepare_stacking.
+
+        Raises
+        ------
+        ImportError
+            If the instrument module cannot be imported.
+        """
         module_name = f"spectraPyle.instruments.{instrument_name}"
         
         if module_name not in self._modules_cache:
@@ -486,48 +569,18 @@ def run_stacking(config):
     output_filename = stack.run()
     return output_filename
 
-"""
+
 def main(config):
-    # ---------------- LOAD ----------------
-    if isinstance(config, str):
+    """CLI and programmatic entry point.
 
-        print("Reading config from file")
+    Accepts a path to a YAML/JSON config file or a pre-built config dict,
+    validates it through the full pipeline, and runs :class:`Stacking`.
 
-        if config.endswith(".json"):
-            cfg = build_config_from_json(config)
-
-        elif config.endswith((".yaml", ".yml")):
-            cfg = build_config_from_yaml(config)
-
-        else:
-            raise ValueError("Unsupported config file format")
-
-    elif isinstance(config, dict):
-        print("Reading config from dict")
-        cfg = build_config_from_dict(config)
-
-    elif isinstance(config, StackingConfig):
-        print("Using pre-validated config")
-        cfg = config
-
-    else:
-        raise TypeError("Unsupported config type")
-
-    # ---------------- RESOLVE ----------------
-    cfg = StackingConfigResolver.resolve(cfg)
-
-    # ---------------- DEBUG PRINT ----------------
-    print("\n" + "*" * 80)
-    print("\nUsing the following configuration (validated + resolved):\n")
-    print(cfg.model_dump())
-
-    # ---------------- FLATTEN (temporary) ----------------
-    flat_cfg = flatten_schema_model(cfg)  # TODO: remove in future
-
-    return run_stacking(flat_cfg)
-
-"""
-def main(config):
+    Parameters
+    ----------
+    config : str, Path, or dict
+        Path to a YAML/JSON config file, or a pre-validated flat config dict.
+    """
 
     if isinstance(config, str):
         print ("Reading and validating config from file")
