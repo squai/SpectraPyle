@@ -1,4 +1,27 @@
+"""
+Auto-generation of output FITS filenames from configuration.
+
+Provides :func:`build_filename` which constructs descriptive, self-documenting
+filenames encoding instrument, grisms, redshift type, normalization, and sample size.
+"""
+
+
 def build_filename(cfg):
+    """Auto-generate the output FITS filename stem from config fields.
+
+    Constructs a descriptive name encoding instrument, grisms, redshift type,
+    normalization, and sample size so output files are self-documenting.
+
+    Parameters
+    ----------
+    config : dict
+        Flat stacking config dict.
+
+    Returns
+    -------
+    str
+        Filename stem (without ``.fits`` extension).
+    """
 
     parts = []
 
