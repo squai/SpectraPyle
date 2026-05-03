@@ -1,3 +1,10 @@
+"""
+Wavelength grid resampling.
+
+Resamples individual spectra onto the common stacking wavelength grid using
+linear or logarithmic binning, as configured by ``config['pixel_resampling_type']``.
+"""
+
 import numpy as np
 from scipy.stats import binned_statistic
 import warnings
@@ -7,16 +14,21 @@ from spectraPyle.utils.log import get_logger
 logger = get_logger(__name__)
 
 def resamplingSpecFluxCons_v0(lbd, flux, lambdaInterp):
-    """
-    Resamples a step-function spectrum (lbd, flux) onto a new grid lambdaInterp while conserving flux.
-    
-    Parameters:
-    - lbd: Original wavelength array (pixel centers)
-    - flux: Original flux array
-    - lambdaInterp: New wavelength grid (bin edges, length N+1)
+    """Resample a step-function spectrum while conserving flux.
 
-    Returns:
-    - flux_resampled: The resampled flux array (length N)
+    Parameters
+    ----------
+    lbd : ndarray
+        Original wavelength array (pixel centers).
+    flux : ndarray
+        Original flux array.
+    lambdaInterp : ndarray
+        New wavelength grid (bin edges, length N+1).
+
+    Returns
+    -------
+    ndarray
+        Resampled flux array (length N).
     """
     
     # Step 1: Compute pixel edges from pixel centers

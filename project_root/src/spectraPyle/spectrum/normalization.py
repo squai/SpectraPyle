@@ -1,3 +1,11 @@
+"""
+Flux normalization for stacking.
+
+Provides multiple normalization strategies controlled by ``config['norm_type']``,
+including median-flux normalization over a wavelength range, and the
+:func:`francis1991_normalize` template-based method (Francis et al. 1991).
+"""
+
 import numpy as np
 
 from spectraPyle.utils.log import get_logger
@@ -5,7 +13,41 @@ from spectraPyle.utils.log import get_logger
 logger = get_logger(__name__)
 
 def normSpecInterv(specid, lbd, flux, error, lambdamin_norm, lambdamax_norm, norm_stat):
-        
+    """Normalize spectrum over a wavelength interval.
+
+    Parameters
+    ----------
+    specid : str or int
+        Spectrum identifier (for error messages).
+    lbd : ndarray
+        Wavelength array.
+    flux : ndarray
+        Flux array.
+    error : ndarray
+        Flux error array.
+    lambdamin_norm : float
+        Minimum wavelength of normalization interval (Å).
+    lambdamax_norm : float
+        Maximum wavelength of normalization interval (Å).
+    norm_stat : {'median', 'mean', 'maximum', 'minimum'}
+        Statistic to compute over the interval.
+
+    Returns
+    -------
+    tuple
+        - fluxNorm : ndarray
+            Normalized flux
+        - errNorm : ndarray
+            Normalized error
+        - norm : float
+            Normalization value used
+
+    Raises
+    ------
+    ValueError
+        If normalization interval is outside wavelength range or contains no valid data.
+    """
+
     vecnorm = flux[(lbd >= lambdamin_norm) & (lbd <= lambdamax_norm)]
     
     if (lambdamin_norm < np.nanmin(lbd)) or (lambdamax_norm > np.nanmax(lbd)):
@@ -38,7 +80,28 @@ def normSpecInterv(specid, lbd, flux, error, lambdamin_norm, lambdamax_norm, nor
     return fluxNorm, errNorm, norm
 
 
-def normSpecMed (lbd, flux, error):
+def normSpecMed(lbd, flux, error):
+    """Normalize spectrum by median flux.
+
+    Parameters
+    ----------
+    lbd : ndarray
+        Wavelength array (unused, for API consistency).
+    flux : ndarray
+        Flux array.
+    error : ndarray
+        Flux error array.
+
+    Returns
+    -------
+    tuple
+        - fluxNorm : ndarray
+            Normalized flux
+        - errNorm : ndarray
+            Normalized error
+        - norm : float
+            Median flux value used for normalization
+    """
     norm = np.nanmedian(flux)
 
     if (not np.isfinite(norm)) or (norm <= 0):
@@ -50,7 +113,28 @@ def normSpecMed (lbd, flux, error):
     errorNorm = error / norm
     return fluxNorm, errorNorm, norm
 
-def normSpecIntegrMean (lbd, flux, error):
+def normSpecIntegrMean(lbd, flux, error):
+    """Normalize spectrum by integrated mean flux.
+
+    Parameters
+    ----------
+    lbd : ndarray
+        Wavelength array.
+    flux : ndarray
+        Flux array.
+    error : ndarray
+        Flux error array.
+
+    Returns
+    -------
+    tuple
+        - fluxNorm : ndarray
+            Normalized flux
+        - errNorm : ndarray
+            Normalized error
+        - norm : float
+            Integrated mean flux value
+    """
     diff = np.full_like(lbd, 0, dtype=float)
     diff[:-1] = np.diff(lbd)
     diff[-1] = diff[-2]
