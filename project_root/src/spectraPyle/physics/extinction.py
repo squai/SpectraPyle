@@ -3,6 +3,10 @@ import numpy as np
 from dust_extinction.parameter_averages import G23
 import astropy.units as u
 
+from spectraPyle.utils.log import get_logger
+
+logger = get_logger(__name__)
+
 def AA_to_micron(lbd_A):
     ## transform wavelengths from Angrstrom to micrometers
     return lbd_A / 1e4

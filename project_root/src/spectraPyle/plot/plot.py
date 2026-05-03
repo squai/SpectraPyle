@@ -8,6 +8,10 @@ import plotly.graph_objects as go
 import pandas as pd
 from pathlib import Path
 
+from spectraPyle.utils.log import get_logger
+
+logger = get_logger(__name__)
+
 def plotting(output_filename, width=950, height=550):
 
     print(f"Plotting {output_filename} stack results")

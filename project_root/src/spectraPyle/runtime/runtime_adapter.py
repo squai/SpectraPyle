@@ -520,4 +520,7 @@ def flatten_schema_model(cfg):
     plot = cfg.get("plot", {})
     flat["plot_results"] = plot.get("plot_results")
 
+    # ---------------- LOGGING ----------------
+    flat["log_level"] = cfg.get("log_level", "INFO")
+
     return flat

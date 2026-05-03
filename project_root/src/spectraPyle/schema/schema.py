@@ -305,6 +305,8 @@ class StackingConfig(BaseModel):
 
     plot: PlotConfig = PlotConfig()
 
+    log_level: Literal["DEBUG", "INFO", "WARNING"] = "INFO"
+
     config_version: str = "1.0.0"
 
     class Config:

@@ -46,8 +46,6 @@ from spectraPyle.runtime.runtime_adapter import (
     )
 from spectraPyle.utils.log import setup_logging, get_logger
 
-logger = get_logger(__name__)
-
 import spectraPyle.io.IO as sio
 import spectraPyle.process.processes as spr
 import spectraPyle.statistic.statistics as sstat
@@ -126,8 +124,8 @@ class Stacking:
         if self.config['galactic_extinction']:
             keys_input.append(self.config['gal_ext_column_name'])
 
-            logger.info("-" * self.width_print + "\n")
-            logger.info("Galactic Extinction Correction:\n")
+            print("-" * self.width_print + "\n")
+            print("Galactic Extinction Correction:\n")
             print(
                 "This code uses the Gordon+23 extinction curve via the "
                 "'dust_extinction' Python package:\n"
@@ -136,7 +134,7 @@ class Stacking:
                 "for the G23 model, available here:\n"
                 "https://dust-extinction.readthedocs.io/en/latest/dust_extinction/references.html\n"
             )
-            logger.info("-" * self.width_print + "\n")
+            print("-" * self.width_print + "\n")
 
         if self.config['spectra_normalization'] == 'custom':
             keys_input.append(self.config['custom_column_name'])
@@ -197,7 +195,7 @@ class Stacking:
             if self.config['pixel_resampling_type'] in ['lambda', 'lambda_shifted']:
                 print ("Δλ[AA] (constant) = {:.2e}".format(data_dict['pixelResampling']))
             elif self.config['pixel_resampling_type'] == 'log_lambda':
-                logger.debug("Δlog λ (constant) = {:.2e}".format(data_dict['pixelResampling']))
+                print("Δlog λ (constant) = {:.2e}".format(data_dict['pixelResampling']))
 
         else:
             inst = importlib.import_module(
@@ -284,7 +282,7 @@ class Stacking:
 
 
             for i in range(num_chunks):
-                logger.info(f"Processing chunk {i+1}/{num_chunks}...")
+                print(f"Processing chunk {i+1}/{num_chunks}...")
 
                 start_idx = i * chunk_size
                 end_idx = min((i + 1) * chunk_size, len(specIDs))
@@ -377,7 +375,7 @@ class Stacking:
                 f.create_dataset("stackArrErr_norm", data=stackArrErr, compression="gzip")
             # -----------------------------------------------
 
-        logger.info(f"Processing complete. The array containing the processed spectra has been stored in the HDF5 file {hdf5_path}.")
+        print(f"Processing complete. The array containing the processed spectra has been stored in the HDF5 file {hdf5_path}.")
 
         #################################################################################################################
         """ statistics: """
@@ -547,3 +545,85 @@ def main(config):
     cfg = flatten_schema_model(cfg) # to be deprecated. 
 
     return run_stacking(cfg)
+
+"""
+def main(config):
+
+    from spectraPyle.schema.schema import StackingConfig
+
+    if isinstance(config, str):
+        print("Reading config from file")
+        cfg = build_config_from_json(config)
+
+    elif isinstance(config, dict):
+        print("Reading config from dict")
+        cfg = build_config_from_dict(config)
+
+    elif isinstance(config, StackingConfig):
+        cfg = config
+
+    else:
+        raise TypeError("Unsupported config type")
+    
+    cfg = flatten_schema_model(cfg) # to be deprecated. 
+    #print("Configuration validated")
+    print("\n" + "*" * 80)
+    print(f"\nUsing the following configuration:")
+    print(f"\n{cfg}")
+
+    return run_stacking(cfg)
+"""
+
+if __name__ == "__main__":
+    import argparse
+    import yaml
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", required=True)
+    
+    def set_nested(config, key, value):
+        keys = key.split(".")
+        d = config
+        for k in keys[:-1]:
+            d = d.setdefault(k, {})
+        d[keys[-1]] = value
+
+    args, unknown = parser.parse_known_args()
+
+    raw = load_config_file(args.config)
+
+    for i in range(0, len(unknown), 2):
+        key = unknown[i].lstrip("-")
+        value = yaml.safe_load(unknown[i + 1])
+        set_nested(raw, key, value)
+
+    output_filename = main(config=raw)
+
+    if raw.get('plot_results', True) and output_filename:
+        spl.plotting(output_filename=output_filename, width=950, height=550)
+    
+    
+    """
+    args, unknown = parser.parse_known_args()
+
+    # Load YAML manually
+    raw = load_config_file(args.config)
+
+    # Convert CLI overrides into dict
+    overrides = {}
+    for i in range(0, len(unknown), 2):
+        key = unknown[i].lstrip("-")
+        value = yaml.safe_load(unknown[i + 1])
+        overrides[key] = value
+
+    # Override YAML values
+    raw.update(overrides)
+
+    # Pass dictionary to main()
+    main(config=raw)
+    """
+# ------------- README -------------    
+    # from shell: python path-to-file.stacking.py --config path-to-config/YAML/prova.yaml
+    # from Jupyter notebook: 
+    # import spectraPyle.stacking.stacking as smain
+    # stack = smain.main(config)

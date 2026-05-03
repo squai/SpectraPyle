@@ -2,6 +2,10 @@ import numpy as np
 from scipy.stats import binned_statistic
 import warnings
 
+from spectraPyle.utils.log import get_logger
+
+logger = get_logger(__name__)
+
 def resamplingSpecFluxCons_v0(lbd, flux, lambdaInterp):
     """
     Resamples a step-function spectrum (lbd, flux) onto a new grid lambdaInterp while conserving flux.

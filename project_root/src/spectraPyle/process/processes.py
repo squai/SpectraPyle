@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 from astropy.io import fits
 from multiprocessing import Pool
+import logging
+import logging.handlers
 
 
 import spectraPyle.spectrum.spectra as sspec
@@ -11,6 +13,18 @@ import spectraPyle.spectrum.normalization as snorm
 import spectraPyle.spectrum.resampling as sres
 
 from tqdm import tqdm
+
+from spectraPyle.utils.log import get_logger
+
+logger = get_logger(__name__)
+
+
+def _worker_logging_init(queue):
+    """Configure logging in worker process via QueueHandler."""
+    root = logging.getLogger("spectraPyle")
+    root.setLevel(logging.DEBUG)
+    root.handlers.clear()
+    root.addHandler(logging.handlers.QueueHandler(queue))
 
 def main_parallel(
     self,
@@ -68,6 +82,7 @@ def main_parallel(
     # -------- Metadata preparation --------
     if use_metadata:
         if data_input is None:
+            logger.error("data_input must be provided when spectra_datafile='metadata'")
             raise ValueError(
                 "data_input must be provided when spectra_datafile='metadata'"
             )
@@ -100,10 +115,34 @@ def main_parallel(
     ]
 
     # -------- Multiprocessing --------
-    with Pool(processes=self.num_cpus) as pool:
+    parent_handlers = logging.getLogger("spectraPyle").handlers[:]
+
+    if config.get('multiprocessing', True):
+        import multiprocessing
+        log_queue = multiprocessing.Queue()
+        listener = logging.handlers.QueueListener(
+            log_queue, *parent_handlers, respect_handler_level=True
+        )
+        listener.start()
+        try:
+            with Pool(
+                processes=self.num_cpus,
+                initializer=_worker_logging_init,
+                initargs=(log_queue,)
+            ) as pool:
+                results = list(
+                    tqdm(
+                        pool.imap(process_spectrum_parallel, args),
+                        total=len(args),
+                        desc="Processing Files"
+                    )
+                )
+        finally:
+            listener.stop()
+    else:
         results = list(
             tqdm(
-                pool.imap(process_spectrum_parallel, args),
+                map(process_spectrum_parallel, args),
                 total=len(args),
                 desc="Processing Files"
             )
@@ -205,6 +244,7 @@ def process_spectrum_parallel(args):
             median_valid_flux = np.nanmedian(spec[finite_mask])
             
             if not np.isfinite(median_valid_flux) or median_valid_flux <= 0:
+                logger.error("grism not found in catalog or instruments")
                 raise ValueError(
                     f"Spectrum rejected: "
                     f"non-positive median flux ({median_valid_flux}) -> would lead to negative/invalid normalization"
@@ -241,6 +281,7 @@ def process_spectrum_parallel(args):
                 )
 
             else:
+                logger.error(f"Required column not found for grism {grism}")
                 raise NameError(
                     f"Normalization type {config['spectra_normalization']} not supported!"
                 )
@@ -258,7 +299,7 @@ def process_spectrum_parallel(args):
             spectra_not_found = np.nan
 
         except Exception as e:
-            print(f"Error processing spectrum {specid} (grism={grism}): {e}", flush=True)
+            logger.error(f"Error processing spectrum {specid} (grism={grism}): {e}")
 
             specResampled = np.full_like(wavelength_stacking_bins[:-1], np.inf)
             errResampled = np.full_like(wavelength_stacking_bins[:-1], np.inf)

@@ -1,5 +1,9 @@
 import numpy as np
 
+from spectraPyle.utils.log import get_logger
+
+logger = get_logger(__name__)
+
 def normSpecInterv(specid, lbd, flux, error, lambdamin_norm, lambdamax_norm, norm_stat):
         
     vecnorm = flux[(lbd >= lambdamin_norm) & (lbd <= lambdamax_norm)]

@@ -5,6 +5,10 @@ import pandas as pd
 from astropy.io import fits
 from multiprocessing import Pool
 
+from spectraPyle.utils.log import get_logger
+
+logger = get_logger(__name__)
+
 import spectraPyle.spectrum.spectra as sspec
 import spectraPyle.spectrum.normalization as snorm
 import spectraPyle.spectrum.resampling as sres

@@ -5,6 +5,10 @@ from astropy import units as u
 import sys
 from pathlib import Path        
 
+from spectraPyle.utils.log import get_logger
+
+logger = get_logger(__name__)
+
 def prepare_stacking(config, z_stacking, zMin, zMax, lambda_edges):
 
     grisms = config['grisms']          # List[str], e.g. ['merged']

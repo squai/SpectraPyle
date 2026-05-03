@@ -5,6 +5,10 @@ from functools import partial
 import warnings
 from tqdm import tqdm
 
+from spectraPyle.utils.log import get_logger
+
+logger = get_logger(__name__)
+
 ###################################################
 def stack_statistics(stackArr, stackArrErr):
     """

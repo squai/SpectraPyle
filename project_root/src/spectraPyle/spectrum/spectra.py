@@ -5,6 +5,10 @@ from astropy import units as u
 import importlib
 import spectraPyle.physics.extinction as sext
 
+from spectraPyle.utils.log import get_logger
+
+logger = get_logger(__name__)
+
 def useSpec(
     config,
     specid,
