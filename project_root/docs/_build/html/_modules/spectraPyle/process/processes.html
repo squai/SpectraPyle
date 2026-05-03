@@ -1,0 +1,615 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>spectraPyle.process.processes - SpectraPyle 5.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">SpectraPyle 5.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <span class="sidebar-brand-text">SpectraPyle 5.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/stacking.html">stacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/schema.html">schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/processes.html">process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/instruments.html">instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/io.html">io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/spectrum.html">spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/statistic.html">statistic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">utils</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for spectraPyle.process.processes</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Multiprocessing driver for per-spectrum processing.</span>
+
+<span class="sd">:func:`main_parallel` splits spectrum IDs across CPUs and runs the</span>
+<span class="sd">read → redshift-shift → resample → normalize pipeline for each spectrum.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging.handlers</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.spectrum.spectra</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sspec</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.spectrum.normalization</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">snorm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.spectrum.resampling</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sres</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_worker_logging_init</span><span class="p">(</span><span class="n">queue</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure logging in worker process via QueueHandler.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    queue : multiprocessing.Queue</span>
+<span class="sd">        Queue to send log records to the main process.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;spectraPyle&quot;</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">QueueHandler</span><span class="p">(</span><span class="n">queue</span><span class="p">))</span>
+
+<div class="viewcode-block" id="main_parallel">
+<a class="viewcode-back" href="../../../api/processes.html#spectraPyle.process.processes.main_parallel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main_parallel</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">specIDs</span><span class="p">,</span>
+    <span class="n">redshift</span><span class="p">,</span>
+    <span class="n">ebv_galactic</span><span class="p">,</span>
+    <span class="n">custom_norm_param</span><span class="p">,</span>
+    <span class="n">wavelength_stacking_bins</span><span class="p">,</span>
+    <span class="n">pixelResampling</span><span class="p">,</span>
+    <span class="n">z_stacking</span><span class="p">,</span>
+    <span class="n">grismList</span><span class="p">,</span>
+    <span class="n">data_input</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parallel processing driver for spectrum stacking.</span>
+
+<span class="sd">    This function prepares multiprocessing inputs and runs spectrum processing</span>
+<span class="sd">    across CPUs. It supports both standard spectrum loading and metadata-driven</span>
+<span class="sd">    loading depending on config[&#39;spectra_datafile&#39;].</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    self : object</span>
+<span class="sd">        Parent class instance containing config, cosmology, and num_cpus.</span>
+<span class="sd">    specIDs : array-like</span>
+<span class="sd">        Spectrum identifiers.</span>
+<span class="sd">    redshift : array-like</span>
+<span class="sd">        Source redshifts.</span>
+<span class="sd">    ebv_galactic : array-like</span>
+<span class="sd">        Galactic extinction values.</span>
+<span class="sd">    custom_norm_param : array-like</span>
+<span class="sd">        Custom normalization parameters (if used).</span>
+<span class="sd">    wavelength_stacking_bins : ndarray, or &#39;none&#39; (only if pixel_resampling_type=&#39;none&#39;)</span>
+<span class="sd">        Target wavelength grid.</span>
+<span class="sd">    pixelResampling : any, or &#39;none&#39; (only if pixel_resampling_type=&#39;none&#39;)</span>
+<span class="sd">        Resampling configuration.</span>
+<span class="sd">    z_stacking : float, or &#39;observed&#39; (only if z_type=&#39;observed_frame&#39;)</span>
+<span class="sd">        Stacking reference redshift.</span>
+<span class="sd">    grismList : list</span>
+<span class="sd">        List of grisms to process.</span>
+<span class="sd">    data_input : pandas.DataFrame, optional</span>
+<span class="sd">        Required only if spectra_datafile=&#39;metadata&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        specResampledArr, errResampledArr, normalization_factors,</span>
+<span class="sd">        spectra_not_found, specid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+    <span class="n">cosmology</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cosmology</span>
+    <span class="n">use_metadata</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;spectra_mode&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;metadata path&#39;</span>
+
+    <span class="c1"># -------- Metadata preparation --------</span>
+    <span class="k">if</span> <span class="n">use_metadata</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data_input</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;data_input must be provided when spectra_datafile=&#39;metadata&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;data_input must be provided when spectra_datafile=&#39;metadata&#39;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">metadata_name</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">data_input</span><span class="p">[</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;metadata_path_column_name&#39;</span><span class="p">]]</span>
+            <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+            <span class="o">+</span> <span class="n">data_input</span><span class="p">[</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;metadata_file_column_name&#39;</span><span class="p">]]</span>
+        <span class="p">)</span>
+
+        <span class="n">metadata_indx</span> <span class="o">=</span> <span class="n">data_input</span><span class="p">[</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;metadata_indx_column_name&#39;</span><span class="p">]]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">metadata_name</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">specIDs</span><span class="p">)</span>
+        <span class="n">metadata_indx</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">specIDs</span><span class="p">)</span>
+
+    <span class="c1"># -------- Argument packing --------</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span>
+            <span class="n">specid</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">ebv_g</span><span class="p">,</span> <span class="n">norm_param</span><span class="p">,</span>
+            <span class="n">mname</span><span class="p">,</span> <span class="n">mindx</span><span class="p">,</span>
+            <span class="n">config</span><span class="p">,</span> <span class="n">cosmology</span><span class="p">,</span>
+            <span class="n">wavelength_stacking_bins</span><span class="p">,</span> <span class="n">pixelResampling</span><span class="p">,</span>
+            <span class="n">z_stacking</span><span class="p">,</span> <span class="n">grismList</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">specid</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">ebv_g</span><span class="p">,</span> <span class="n">norm_param</span><span class="p">,</span> <span class="n">mname</span><span class="p">,</span> <span class="n">mindx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">specIDs</span><span class="p">,</span> <span class="n">redshift</span><span class="p">,</span> <span class="n">ebv_galactic</span><span class="p">,</span>
+            <span class="n">custom_norm_param</span><span class="p">,</span> <span class="n">metadata_name</span><span class="p">,</span> <span class="n">metadata_indx</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="c1"># -------- Multiprocessing --------</span>
+    <span class="n">parent_handlers</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;spectraPyle&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">handlers</span><span class="p">[:]</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;multiprocessing&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
+        <span class="n">log_queue</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+        <span class="n">listener</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">QueueListener</span><span class="p">(</span>
+            <span class="n">log_queue</span><span class="p">,</span> <span class="o">*</span><span class="n">parent_handlers</span><span class="p">,</span> <span class="n">respect_handler_level</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">listener</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span>
+                <span class="n">processes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_cpus</span><span class="p">,</span>
+                <span class="n">initializer</span><span class="o">=</span><span class="n">_worker_logging_init</span><span class="p">,</span>
+                <span class="n">initargs</span><span class="o">=</span><span class="p">(</span><span class="n">log_queue</span><span class="p">,)</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="n">tqdm</span><span class="p">(</span>
+                        <span class="n">pool</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span><span class="n">process_spectrum_parallel</span><span class="p">,</span> <span class="n">args</span><span class="p">),</span>
+                        <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">),</span>
+                        <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Processing Files&quot;</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">listener</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">tqdm</span><span class="p">(</span>
+                <span class="nb">map</span><span class="p">(</span><span class="n">process_spectrum_parallel</span><span class="p">,</span> <span class="n">args</span><span class="p">),</span>
+                <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">),</span>
+                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Processing Files&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    
+    <span class="c1"># Flatten results </span>
+    <span class="n">flat_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+    
+    <span class="c1"># -------- Unpack results --------</span>
+    <span class="n">specid_result</span><span class="p">,</span> <span class="n">specResampledArr</span><span class="p">,</span> <span class="n">errResampledArr</span><span class="p">,</span> <span class="n">normalization_factors</span><span class="p">,</span> <span class="n">spectra_not_found</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">flat_results</span><span class="p">)</span>
+    
+    <span class="c1"># Convert to arrays</span>
+    <span class="n">specid_result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">specid_result</span><span class="p">)</span>
+    
+    <span class="n">specResampledArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">specResampledArr</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">errResampledArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">errResampledArr</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    
+    <span class="n">normalization_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">normalization_factors</span><span class="p">)</span>
+    <span class="n">spectra_not_found</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spectra_not_found</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">specResampledArr</span><span class="p">,</span>
+        <span class="n">errResampledArr</span><span class="p">,</span>
+        <span class="n">normalization_factors</span><span class="p">,</span>
+        <span class="n">spectra_not_found</span><span class="p">,</span>
+        <span class="n">specid_result</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="process_spectrum_parallel">
+<a class="viewcode-back" href="../../../api/processes.html#spectraPyle.process.processes.process_spectrum_parallel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_spectrum_parallel</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process a single spectrum for stacking using multiprocessing.</span>
+
+<span class="sd">    This function:</span>
+<span class="sd">    - Loads the spectrum using either standard or metadata-based I/O depending on</span>
+<span class="sd">      config[&#39;spectra_datafile&#39;].</span>
+<span class="sd">    - Applies the selected normalization method.</span>
+<span class="sd">    - Resamples the spectrum to the stacking wavelength grid.</span>
+<span class="sd">    - Returns resampled flux, error, normalization factor, and failure flag.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : tuple</span>
+<span class="sd">        Contains:</span>
+<span class="sd">            specid : str or int</span>
+<span class="sd">                Spectrum identifier.</span>
+<span class="sd">            z : float</span>
+<span class="sd">                Source redshift.</span>
+<span class="sd">            ebv_g : float</span>
+<span class="sd">                Galactic extinction value.</span>
+<span class="sd">            norm_param : any</span>
+<span class="sd">                Custom normalization parameter if using &#39;custom&#39; normalization.</span>
+<span class="sd">            metadata_name : str or None</span>
+<span class="sd">                Metadata filename/path (only used if spectra_datafile=&#39;metadata&#39;).</span>
+<span class="sd">            hdu_indx : int or None</span>
+<span class="sd">                HDU index in metadata FITS file (only used if metadata mode).</span>
+<span class="sd">            config : dict</span>
+<span class="sd">                Global configuration dictionary.</span>
+<span class="sd">            cosmology : astropy.cosmology</span>
+<span class="sd">                Cosmology object.</span>
+<span class="sd">            wavelength_stacking_bins : ndarray</span>
+<span class="sd">                Target wavelength grid for stacking.</span>
+<span class="sd">            pixelResampling : any</span>
+<span class="sd">                Resampling configuration (kept for compatibility).</span>
+<span class="sd">            z_stacking : float</span>
+<span class="sd">                Stacking redshift reference.</span>
+<span class="sd">            grismList : list</span>
+<span class="sd">                List of grisms to process.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        (specid_grism, specResampled, errResampled, normalization_factor, spectra_not_found)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - If spectrum loading or processing fails, returns arrays filled with inf and</span>
+<span class="sd">      marks the spectrum as not found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">(</span>
+        <span class="n">specid</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">ebv_g</span><span class="p">,</span> <span class="n">norm_param</span><span class="p">,</span>
+        <span class="n">metadata_name</span><span class="p">,</span> <span class="n">hdu_indx</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">,</span> <span class="n">cosmology</span><span class="p">,</span>
+        <span class="n">wavelength_stacking_bins</span><span class="p">,</span> <span class="n">pixelResampling</span><span class="p">,</span>
+        <span class="n">z_stacking</span><span class="p">,</span> <span class="n">grismList</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">args</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">grism</span> <span class="ow">in</span> <span class="n">grismList</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># -------- Spectrum Loading --------</span>
+            <span class="n">wavelength</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">sspec</span><span class="o">.</span><span class="n">useSpec</span><span class="p">(</span>
+                <span class="n">config</span><span class="p">,</span> <span class="n">specid</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z_stacking</span><span class="p">,</span> <span class="n">ebv_g</span><span class="p">,</span> <span class="n">cosmology</span><span class="p">,</span> <span class="n">grism</span><span class="p">,</span>
+                <span class="n">metadata_name</span><span class="p">,</span> <span class="n">hdu_indx</span>
+            <span class="p">)</span>
+
+            <span class="c1"># -------- Quality Check BEFORE Normalization --------</span>
+            <span class="n">finite_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">median_valid_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="n">finite_mask</span><span class="p">])</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">median_valid_flux</span><span class="p">)</span> <span class="ow">or</span> <span class="n">median_valid_flux</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;grism not found in catalog or instruments&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Spectrum rejected: &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;non-positive median flux (</span><span class="si">{</span><span class="n">median_valid_flux</span><span class="si">}</span><span class="s2">) -&gt; would lead to negative/invalid normalization&quot;</span>
+                <span class="p">)</span>
+            
+            <span class="c1"># -------- Normalization --------</span>
+            <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;no_normalization&#39;</span><span class="p">,</span> <span class="s1">&#39;template&#39;</span><span class="p">]:</span>
+                <span class="n">normalization_factor</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+            <span class="k">elif</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;integral&#39;</span><span class="p">:</span>
+                <span class="n">spec</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">normalization_factor</span> <span class="o">=</span> <span class="n">snorm</span><span class="o">.</span><span class="n">normSpecIntegrMean</span><span class="p">(</span>
+                    <span class="n">wavelength</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">err</span>
+                <span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
+                <span class="n">spec</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">normalization_factor</span> <span class="o">=</span> <span class="n">snorm</span><span class="o">.</span><span class="n">normSpecMed</span><span class="p">(</span>
+                    <span class="n">wavelength</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">err</span>
+                <span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;interval&#39;</span><span class="p">:</span>
+                <span class="n">z_st</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;z_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;observed_frame&#39;</span> <span class="k">else</span> <span class="n">z_stacking</span>
+
+                <span class="n">spec</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">normalization_factor</span> <span class="o">=</span> <span class="n">snorm</span><span class="o">.</span><span class="n">normSpecInterv</span><span class="p">(</span>
+                    <span class="n">specid</span><span class="p">,</span>
+                    <span class="n">wavelength</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span>
+                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;lambda_norm_rest&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">z_st</span><span class="p">),</span>
+                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;lambda_norm_rest&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">z_st</span><span class="p">),</span>
+                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;interval_norm_statistics&#39;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;custom&#39;</span><span class="p">:</span>
+                <span class="n">spec</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">normalization_factor</span> <span class="o">=</span> <span class="n">snorm</span><span class="o">.</span><span class="n">normSpecCustom</span><span class="p">(</span>
+                    <span class="n">wavelength</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">norm_param</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Required column not found for grism </span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Normalization type </span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> not supported!&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># -------- Resampling --------</span>
+            <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;pixel_resampling_type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+                <span class="n">specResampled</span><span class="p">,</span> <span class="n">errResampled</span> <span class="o">=</span> <span class="n">sres</span><span class="o">.</span><span class="n">resamplingSpecFluxCons</span><span class="p">(</span>
+                    <span class="n">wavelength</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">err</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">lambdaInterp</span><span class="o">=</span><span class="n">wavelength_stacking_bins</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">specResampled</span> <span class="o">=</span> <span class="n">spec</span>
+                <span class="n">errResampled</span> <span class="o">=</span> <span class="n">err</span>
+
+            <span class="n">spectra_not_found</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing spectrum </span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2"> (grism=</span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">specResampled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">wavelength_stacking_bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+            <span class="n">errResampled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">wavelength_stacking_bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+            <span class="n">normalization_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">spectra_not_found</span> <span class="o">=</span> <span class="n">specid</span>
+
+        <span class="c1"># append ONE result per grism</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span>
+            <span class="n">specid</span><span class="p">,</span>  
+            <span class="n">specResampled</span><span class="p">,</span>
+            <span class="n">errResampled</span><span class="p">,</span>
+            <span class="n">normalization_factor</span><span class="p">,</span>
+            <span class="n">spectra_not_found</span>
+        <span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+        
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Salvatore Quai
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=5df4c8d1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

@@ -1,0 +1,673 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="statistic" href="statistic.html"><link rel="prev" title="io" href="io.html">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>spectrum - SpectraPyle 5.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">SpectraPyle 5.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <span class="sidebar-brand-text">SpectraPyle 5.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="stacking.html">stacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema.html">schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processes.html">process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="instruments.html">instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">io</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statistic.html">statistic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/api/spectrum.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="spectrum">
+<h1>spectrum<a class="headerlink" href="#spectrum" title="Link to this heading">¶</a></h1>
+<section id="module-spectraPyle.spectrum.spectra">
+<span id="spectra"></span><h2>Spectra<a class="headerlink" href="#module-spectraPyle.spectrum.spectra" title="Link to this heading">¶</a></h2>
+<p>Per-spectrum loading and redshift transformation.</p>
+<p><a class="reference internal" href="#spectraPyle.spectrum.spectra.useSpec" title="spectraPyle.spectrum.spectra.useSpec"><code class="xref py py-func docutils literal notranslate"><span class="pre">useSpec()</span></code></a> is the main entry point: it reads a spectrum from disk
+(or from a metadata-driven path), applies Galactic extinction correction,
+optionally converts air wavelengths to vacuum, and shifts flux to the
+stacking redshift frame applying flux conservation scaling.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.spectrum.spectra.useSpec">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.spectra.</span></span><span class="sig-name descname"><span class="pre">useSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zStack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebv_gal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grism</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdu_indx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/spectra.html#useSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.spectra.useSpec" title="Link to this definition">¶</a></dt>
+<dd><p>Load and transform a spectrum to the stacking redshift frame.</p>
+<p>This function reads a spectrum using either standard or metadata-driven
+I/O depending on <cite>config[‘spectra_datafile’]</cite>, then applies optional
+Galactic extinction correction, air-to-vacuum conversion, and flux /
+luminosity conservation scaling to a target stacking redshift.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Configuration dictionary containing instrument and processing options.</p></li>
+<li><p><strong>specid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Spectrum identifier.</p></li>
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Source redshift.</p></li>
+<li><p><strong>zStack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Target stacking redshift.</p></li>
+<li><p><strong>ebv_gal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Galactic extinction E(B-V).</p></li>
+<li><p><strong>cosmo</strong> (<em>astropy.cosmology</em>) – Cosmology object used for luminosity distance calculations.</p></li>
+<li><p><strong>grism</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Grism identifier</p></li>
+<li><p><strong>metadata_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Metadata file path (required if spectra_datafile=’metadata’).</p></li>
+<li><p><strong>hdu_indx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – FITS HDU index (required if metadata mode).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>lbd_zStack<span class="classifier">ndarray</span></dt><dd><p>Wavelengths shifted to stacking redshift frame.</p>
+</dd>
+<dt>flux_zStack<span class="classifier">ndarray</span></dt><dd><p>Flux scaled to stacking redshift frame.</p>
+</dd>
+<dt>error_zStack<span class="classifier">ndarray</span></dt><dd><p>Flux error scaled to stacking redshift frame.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NameError" title="(in Python v3.14)"><strong>NameError</strong></a> – If unsupported conservation mode is requested.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If metadata mode is enabled but metadata inputs are missing.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Conservation modes:
+- ‘luminosity’ : converts flux preserving luminosity
+- ‘flux’       : rescales flux by redshift factor only
+- ‘none’       : leaves flux unchanged</p>
+</dd></dl>
+
+</section>
+<section id="module-spectraPyle.spectrum.normalization">
+<span id="normalization"></span><h2>Normalization<a class="headerlink" href="#module-spectraPyle.spectrum.normalization" title="Link to this heading">¶</a></h2>
+<p>Flux normalization for stacking.</p>
+<p>Provides multiple normalization strategies controlled by <code class="docutils literal notranslate"><span class="pre">config['norm_type']</span></code>,
+including median-flux normalization over a wavelength range, and the
+<a class="reference internal" href="#spectraPyle.spectrum.normalization.francis1991_normalize" title="spectraPyle.spectrum.normalization.francis1991_normalize"><code class="xref py py-func docutils literal notranslate"><span class="pre">francis1991_normalize()</span></code></a> template-based method (Francis et al. 1991).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.spectrum.normalization.francis1991_normalize">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.normalization.</span></span><span class="sig-name descname"><span class="pre">francis1991_normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stackArr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stackArrErr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_stat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter_clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/normalization.html#francis1991_normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.normalization.francis1991_normalize" title="Link to this definition">¶</a></dt>
+<dd><p>Robust Francis-style normalization with sigma-clipped overlap scaling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stackArr</strong> (<em>ndarray</em><em> (</em><em>Npix</em><em>, </em><em>Nspec</em><em>)</em>) – Flux array</p></li>
+<li><p><strong>stackArrErr</strong> (<em>ndarray</em><em> (</em><em>Npix</em><em>, </em><em>Nspec</em><em>)</em>) – 1-sigma errors</p></li>
+<li><p><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Minimum overlap for normalization</p></li>
+<li><p><strong>norm_stat</strong> (<em>{'median'</em><em>, </em><em>'mean'}</em>) – Statistic used after clipping</p></li>
+<li><p><strong>feature_mask</strong> (<em>ndarray</em><em> (</em><em>Npix</em><em>,</em><em>) or </em><em>None</em>) – True = exclude from normalization</p></li>
+<li><p><strong>sigma_clip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Sigma clipping threshold (default: 3)</p></li>
+<li><p><strong>max_iter_clip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Max iterations for clipping</p></li>
+<li><p><strong>eps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Small value to avoid division issues</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>norm_flux</strong> (<em>ndarray</em>)</p></li>
+<li><p><strong>norm_err</strong> (<em>ndarray</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.spectrum.normalization.normSpecCustom">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.normalization.</span></span><span class="sig-name descname"><span class="pre">normSpecCustom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lbd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/normalization.html#normSpecCustom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.normalization.normSpecCustom" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.spectrum.normalization.normSpecIntegrMean">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.normalization.</span></span><span class="sig-name descname"><span class="pre">normSpecIntegrMean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lbd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/normalization.html#normSpecIntegrMean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.normalization.normSpecIntegrMean" title="Link to this definition">¶</a></dt>
+<dd><p>Normalize spectrum by integrated mean flux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lbd</strong> (<em>ndarray</em>) – Wavelength array.</p></li>
+<li><p><strong>flux</strong> (<em>ndarray</em>) – Flux array.</p></li>
+<li><p><strong>error</strong> (<em>ndarray</em>) – Flux error array.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><dl class="simple">
+<dt>fluxNorm<span class="classifier">ndarray</span></dt><dd><p>Normalized flux</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>errNorm<span class="classifier">ndarray</span></dt><dd><p>Normalized error</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>norm<span class="classifier">float</span></dt><dd><p>Integrated mean flux value</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.spectrum.normalization.normSpecInterv">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.normalization.</span></span><span class="sig-name descname"><span class="pre">normSpecInterv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lbd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambdamin_norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambdamax_norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_stat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/normalization.html#normSpecInterv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.normalization.normSpecInterv" title="Link to this definition">¶</a></dt>
+<dd><p>Normalize spectrum over a wavelength interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>specid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Spectrum identifier (for error messages).</p></li>
+<li><p><strong>lbd</strong> (<em>ndarray</em>) – Wavelength array.</p></li>
+<li><p><strong>flux</strong> (<em>ndarray</em>) – Flux array.</p></li>
+<li><p><strong>error</strong> (<em>ndarray</em>) – Flux error array.</p></li>
+<li><p><strong>lambdamin_norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Minimum wavelength of normalization interval (Å).</p></li>
+<li><p><strong>lambdamax_norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Maximum wavelength of normalization interval (Å).</p></li>
+<li><p><strong>norm_stat</strong> (<em>{'median'</em><em>, </em><em>'mean'</em><em>, </em><em>'maximum'</em><em>, </em><em>'minimum'}</em>) – Statistic to compute over the interval.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><dl class="simple">
+<dt>fluxNorm<span class="classifier">ndarray</span></dt><dd><p>Normalized flux</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>errNorm<span class="classifier">ndarray</span></dt><dd><p>Normalized error</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>norm<span class="classifier">float</span></dt><dd><p>Normalization value used</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If normalization interval is outside wavelength range or contains no valid data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.spectrum.normalization.normSpecMed">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.normalization.</span></span><span class="sig-name descname"><span class="pre">normSpecMed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lbd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/normalization.html#normSpecMed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.normalization.normSpecMed" title="Link to this definition">¶</a></dt>
+<dd><p>Normalize spectrum by median flux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lbd</strong> (<em>ndarray</em>) – Wavelength array (unused, for API consistency).</p></li>
+<li><p><strong>flux</strong> (<em>ndarray</em>) – Flux array.</p></li>
+<li><p><strong>error</strong> (<em>ndarray</em>) – Flux error array.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><dl class="simple">
+<dt>fluxNorm<span class="classifier">ndarray</span></dt><dd><p>Normalized flux</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>errNorm<span class="classifier">ndarray</span></dt><dd><p>Normalized error</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>norm<span class="classifier">float</span></dt><dd><p>Median flux value used for normalization</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-spectraPyle.spectrum.resampling">
+<span id="resampling"></span><h2>Resampling<a class="headerlink" href="#module-spectraPyle.spectrum.resampling" title="Link to this heading">¶</a></h2>
+<p>Wavelength grid resampling.</p>
+<p>Resamples individual spectra onto the common stacking wavelength grid using
+linear or logarithmic binning, as configured by <code class="docutils literal notranslate"><span class="pre">config['pixel_resampling_type']</span></code>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.spectrum.resampling.dlam_from_R">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.resampling.</span></span><span class="sig-name descname"><span class="pre">dlam_from_R</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/resampling.html#dlam_from_R"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.resampling.dlam_from_R" title="Link to this definition">¶</a></dt>
+<dd><p>Δλ (Å) from resolving power at a reference wavelength.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>R</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Spectral resolving power (λ / Δλ_FWHM)</p></li>
+<li><p><strong>lambda_ref</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Reference wavelength (Å)</p></li>
+<li><p><strong>nsamp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Number of pixels per resolution element (default: 5)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>dlam</strong> – Linear wavelength step (Å)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.spectrum.resampling.dloglam_from_R">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.resampling.</span></span><span class="sig-name descname"><span class="pre">dloglam_from_R</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/resampling.html#dloglam_from_R"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.resampling.dloglam_from_R" title="Link to this definition">¶</a></dt>
+<dd><p>Compute logarithmic wavelength step Δlog10(λ) from resolving power.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>R</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Spectral resolving power (λ / Δλ_FWHM)</p></li>
+<li><p><strong>nsamp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Number of pixels per resolution element (default: 5)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>dloglam</strong> – Logarithmic wavelength step Δlog10(λ)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.spectrum.resampling.dloglam_from_dlam">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.resampling.</span></span><span class="sig-name descname"><span class="pre">dloglam_from_dlam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dlam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/resampling.html#dloglam_from_dlam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.resampling.dloglam_from_dlam" title="Link to this definition">¶</a></dt>
+<dd><p>Compute logarithmic wavelength step Δlog10(λ) from resolving power.</p>
+<p>Δlog10𝜆=Δ𝜆/𝜆_ref*ln10</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dlam</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Linear wavelength step (Å)</p></li>
+<li><p><strong>lambda_ref</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Reference wavelength (Å)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>dloglam</strong> – Logarithmic wavelength step Δlog10(λ)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.spectrum.resampling.resamplingSpecFluxCons">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.resampling.</span></span><span class="sig-name descname"><span class="pre">resamplingSpecFluxCons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lbd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambdaInterp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/resampling.html#resamplingSpecFluxCons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.resampling.resamplingSpecFluxCons" title="Link to this definition">¶</a></dt>
+<dd><p>Fully vectorized 1D resampling with variance propagation. Adapted from Fruchter &amp; Hook 2002
+Produces flux density per unit wavelength.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lbd</strong> (<em>(</em><em>N_in</em><em>,</em><em>) </em><em>array</em>) – Input wavelength pixel centers</p></li>
+<li><p><strong>flux</strong> (<em>(</em><em>N_in</em><em>,</em><em>) </em><em>array</em>) – Flux density per input pixel</p></li>
+<li><p><strong>var</strong> (<em>(</em><em>N_in</em><em>,</em><em>) </em><em>array</em>) – Variance per input pixel</p></li>
+<li><p><strong>lambdaInterp</strong> (<em>(</em><em>N_out+1</em><em>,</em><em>) </em><em>array</em>) – Output wavelength bin edges</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>flux_out</strong> (<em>(N_out,) array</em>) – flux density (per unit wavelength) over the new common wavelength grid</p></li>
+<li><p><strong>err_out</strong> (<em>(N_out,) array</em>) – error density (per unit wavelength) over the new common wavelength grid</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.spectrum.resampling.resamplingSpecFluxCons_v0">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.resampling.</span></span><span class="sig-name descname"><span class="pre">resamplingSpecFluxCons_v0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lbd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambdaInterp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/resampling.html#resamplingSpecFluxCons_v0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.resampling.resamplingSpecFluxCons_v0" title="Link to this definition">¶</a></dt>
+<dd><p>Resample a step-function spectrum while conserving flux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lbd</strong> (<em>ndarray</em>) – Original wavelength array (pixel centers).</p></li>
+<li><p><strong>flux</strong> (<em>ndarray</em>) – Original flux array.</p></li>
+<li><p><strong>lambdaInterp</strong> (<em>ndarray</em>) – New wavelength grid (bin edges, length N+1).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resampled flux array (length N).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="statistic.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">statistic</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="io.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">io</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Salvatore Quai
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">spectrum</a><ul>
+<li><a class="reference internal" href="#module-spectraPyle.spectrum.spectra">Spectra</a><ul>
+<li><a class="reference internal" href="#spectraPyle.spectrum.spectra.useSpec"><code class="docutils literal notranslate"><span class="pre">useSpec()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-spectraPyle.spectrum.normalization">Normalization</a><ul>
+<li><a class="reference internal" href="#spectraPyle.spectrum.normalization.francis1991_normalize"><code class="docutils literal notranslate"><span class="pre">francis1991_normalize()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.spectrum.normalization.normSpecCustom"><code class="docutils literal notranslate"><span class="pre">normSpecCustom()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.spectrum.normalization.normSpecIntegrMean"><code class="docutils literal notranslate"><span class="pre">normSpecIntegrMean()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.spectrum.normalization.normSpecInterv"><code class="docutils literal notranslate"><span class="pre">normSpecInterv()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.spectrum.normalization.normSpecMed"><code class="docutils literal notranslate"><span class="pre">normSpecMed()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-spectraPyle.spectrum.resampling">Resampling</a><ul>
+<li><a class="reference internal" href="#spectraPyle.spectrum.resampling.dlam_from_R"><code class="docutils literal notranslate"><span class="pre">dlam_from_R()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.spectrum.resampling.dloglam_from_R"><code class="docutils literal notranslate"><span class="pre">dloglam_from_R()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.spectrum.resampling.dloglam_from_dlam"><code class="docutils literal notranslate"><span class="pre">dloglam_from_dlam()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.spectrum.resampling.resamplingSpecFluxCons"><code class="docutils literal notranslate"><span class="pre">resamplingSpecFluxCons()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.spectrum.resampling.resamplingSpecFluxCons_v0"><code class="docutils literal notranslate"><span class="pre">resamplingSpecFluxCons_v0()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5df4c8d1"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

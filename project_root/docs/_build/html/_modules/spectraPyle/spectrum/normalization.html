@@ -1,0 +1,644 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>spectraPyle.spectrum.normalization - SpectraPyle 5.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">SpectraPyle 5.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <span class="sidebar-brand-text">SpectraPyle 5.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/stacking.html">stacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/schema.html">schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/processes.html">process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/instruments.html">instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/io.html">io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/spectrum.html">spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/statistic.html">statistic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">utils</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for spectraPyle.spectrum.normalization</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Flux normalization for stacking.</span>
+
+<span class="sd">Provides multiple normalization strategies controlled by ``config[&#39;norm_type&#39;]``,</span>
+<span class="sd">including median-flux normalization over a wavelength range, and the</span>
+<span class="sd">:func:`francis1991_normalize` template-based method (Francis et al. 1991).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="normSpecInterv">
+<a class="viewcode-back" href="../../../api/spectrum.html#spectraPyle.spectrum.normalization.normSpecInterv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normSpecInterv</span><span class="p">(</span><span class="n">specid</span><span class="p">,</span> <span class="n">lbd</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">lambdamin_norm</span><span class="p">,</span> <span class="n">lambdamax_norm</span><span class="p">,</span> <span class="n">norm_stat</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize spectrum over a wavelength interval.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    specid : str or int</span>
+<span class="sd">        Spectrum identifier (for error messages).</span>
+<span class="sd">    lbd : ndarray</span>
+<span class="sd">        Wavelength array.</span>
+<span class="sd">    flux : ndarray</span>
+<span class="sd">        Flux array.</span>
+<span class="sd">    error : ndarray</span>
+<span class="sd">        Flux error array.</span>
+<span class="sd">    lambdamin_norm : float</span>
+<span class="sd">        Minimum wavelength of normalization interval (Å).</span>
+<span class="sd">    lambdamax_norm : float</span>
+<span class="sd">        Maximum wavelength of normalization interval (Å).</span>
+<span class="sd">    norm_stat : {&#39;median&#39;, &#39;mean&#39;, &#39;maximum&#39;, &#39;minimum&#39;}</span>
+<span class="sd">        Statistic to compute over the interval.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        - fluxNorm : ndarray</span>
+<span class="sd">            Normalized flux</span>
+<span class="sd">        - errNorm : ndarray</span>
+<span class="sd">            Normalized error</span>
+<span class="sd">        - norm : float</span>
+<span class="sd">            Normalization value used</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If normalization interval is outside wavelength range or contains no valid data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">vecnorm</span> <span class="o">=</span> <span class="n">flux</span><span class="p">[(</span><span class="n">lbd</span> <span class="o">&gt;=</span> <span class="n">lambdamin_norm</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lbd</span> <span class="o">&lt;=</span> <span class="n">lambdamax_norm</span><span class="p">)]</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">lambdamin_norm</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">lbd</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">lambdamax_norm</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">lbd</span><span class="p">)):</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING normalization interval [</span><span class="si">{</span><span class="n">lambdamin_norm</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">lambdamax_norm</span><span class="si">}</span><span class="s2">] [$\AA$] partially outside the wavelength range of the spectrum [</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lbd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lbd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">] [$\AA$].&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vecnorm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;Normalization failure for </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span><span class="si">}</span><span class="s2">: normalization interval [</span><span class="si">{</span><span class="n">lambdamin_norm</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">lambdamax_norm</span><span class="si">}</span><span class="s2">] [$\AA$] outside the wavelength range of the spectrum [</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lbd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lbd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">] [$\AA$].&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vecnorm</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;Normalization failure for </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span><span class="si">}</span><span class="s2">: no valid flux values in the normalization interval [ </span><span class="si">{</span><span class="n">lambdamin_norm</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">lambdamax_norm</span><span class="si">}</span><span class="s2">] [$\AA$].&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">norm_stat</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">vecnorm</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">norm_stat</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">vecnorm</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">norm_stat</span> <span class="o">==</span> <span class="s1">&#39;maximum&#39;</span><span class="p">:</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">vecnorm</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">norm_stat</span> <span class="o">==</span> <span class="s1">&#39;minimum&#39;</span><span class="p">:</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">vecnorm</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Normalization failure: statistics &#39;</span><span class="si">{</span><span class="n">norm_stat</span><span class="si">}</span><span class="s2">&#39; to be applied to the normalization interval not understood or implemented yet.&quot;</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">norm</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">norm</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">fr</span><span class="s2">&quot;Normalization failure: invalid normalization value (</span><span class="si">{</span><span class="n">norm</span><span class="si">}</span><span class="s2">) &quot;</span>
+            <span class="sa">fr</span><span class="s2">&quot;in interval [</span><span class="si">{</span><span class="n">lambdamin_norm</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">lambdamax_norm</span><span class="si">}</span><span class="s2">] [$\AA$].&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">fluxNorm</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="n">errNorm</span> <span class="o">=</span> <span class="n">error</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="k">return</span> <span class="n">fluxNorm</span><span class="p">,</span> <span class="n">errNorm</span><span class="p">,</span> <span class="n">norm</span></div>
+
+
+
+<div class="viewcode-block" id="normSpecMed">
+<a class="viewcode-back" href="../../../api/spectrum.html#spectraPyle.spectrum.normalization.normSpecMed">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normSpecMed</span><span class="p">(</span><span class="n">lbd</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize spectrum by median flux.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lbd : ndarray</span>
+<span class="sd">        Wavelength array (unused, for API consistency).</span>
+<span class="sd">    flux : ndarray</span>
+<span class="sd">        Flux array.</span>
+<span class="sd">    error : ndarray</span>
+<span class="sd">        Flux error array.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        - fluxNorm : ndarray</span>
+<span class="sd">            Normalized flux</span>
+<span class="sd">        - errNorm : ndarray</span>
+<span class="sd">            Normalized error</span>
+<span class="sd">        - norm : float</span>
+<span class="sd">            Median flux value used for normalization</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">norm</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">norm</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">fr</span><span class="s2">&quot;Normalization failure: invalid normalization value (</span><span class="si">{</span><span class="n">norm</span><span class="si">}</span><span class="s2">) &quot;</span>
+            <span class="p">)</span>
+    
+    <span class="n">fluxNorm</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="n">errorNorm</span> <span class="o">=</span> <span class="n">error</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="k">return</span> <span class="n">fluxNorm</span><span class="p">,</span> <span class="n">errorNorm</span><span class="p">,</span> <span class="n">norm</span></div>
+
+
+<div class="viewcode-block" id="normSpecIntegrMean">
+<a class="viewcode-back" href="../../../api/spectrum.html#spectraPyle.spectrum.normalization.normSpecIntegrMean">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normSpecIntegrMean</span><span class="p">(</span><span class="n">lbd</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize spectrum by integrated mean flux.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lbd : ndarray</span>
+<span class="sd">        Wavelength array.</span>
+<span class="sd">    flux : ndarray</span>
+<span class="sd">        Flux array.</span>
+<span class="sd">    error : ndarray</span>
+<span class="sd">        Flux error array.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        - fluxNorm : ndarray</span>
+<span class="sd">            Normalized flux</span>
+<span class="sd">        - errNorm : ndarray</span>
+<span class="sd">            Normalized error</span>
+<span class="sd">        - norm : float</span>
+<span class="sd">            Integrated mean flux value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">lbd</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">diff</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">lbd</span><span class="p">)</span>
+    <span class="n">diff</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">diff</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">flux</span><span class="o">*</span><span class="n">diff</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">lbd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">lbd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">## option n.1 </span>
+    <span class="c1">#norm = np.nansum(flux) / len(lbd) ## option n.2 equivalent to option n1</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">norm</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">norm</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">fr</span><span class="s2">&quot;Normalization failure: invalid normalization value (</span><span class="si">{</span><span class="n">norm</span><span class="si">}</span><span class="s2">) &quot;</span>
+            <span class="p">)</span>
+        
+    <span class="n">fluxNorm</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="n">errorNorm</span> <span class="o">=</span> <span class="n">error</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="k">return</span> <span class="n">fluxNorm</span><span class="p">,</span> <span class="n">errorNorm</span><span class="p">,</span> <span class="n">norm</span></div>
+
+    
+<div class="viewcode-block" id="normSpecCustom">
+<a class="viewcode-back" href="../../../api/spectrum.html#spectraPyle.spectrum.normalization.normSpecCustom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normSpecCustom</span> <span class="p">(</span><span class="n">lbd</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">norm</span><span class="p">):</span>
+    <span class="c1">## it requires a custom normalization parameter to be provided in the catalogue datafile</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">norm</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">norm</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">fr</span><span class="s2">&quot;Normalization failure: invalid normalization value (</span><span class="si">{</span><span class="n">norm</span><span class="si">}</span><span class="s2">) &quot;</span>
+            <span class="p">)</span>
+        
+    <span class="n">fluxNorm</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="n">errorNorm</span> <span class="o">=</span> <span class="n">error</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="k">return</span> <span class="n">fluxNorm</span><span class="p">,</span> <span class="n">errorNorm</span><span class="p">,</span> <span class="n">norm</span></div>
+
+
+<div class="viewcode-block" id="francis1991_normalize">
+<a class="viewcode-back" href="../../../api/spectrum.html#spectraPyle.spectrum.normalization.francis1991_normalize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">francis1991_normalize</span><span class="p">(</span>
+    <span class="n">stackArr</span><span class="p">,</span>
+    <span class="n">stackArrErr</span><span class="p">,</span>
+    <span class="n">min_overlap</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">norm_stat</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">,</span>
+    <span class="n">sigma_clip</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">max_iter_clip</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">feature_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">eps</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Robust Francis-style normalization with sigma-clipped overlap scaling.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stackArr : ndarray (Npix, Nspec)</span>
+<span class="sd">        Flux array</span>
+<span class="sd">    stackArrErr : ndarray (Npix, Nspec)</span>
+<span class="sd">        1-sigma errors</span>
+<span class="sd">    min_overlap : int</span>
+<span class="sd">        Minimum overlap for normalization</span>
+<span class="sd">    norm_stat : {&#39;median&#39;, &#39;mean&#39;}</span>
+<span class="sd">        Statistic used after clipping</span>
+<span class="sd">    feature_mask : ndarray (Npix,) or None</span>
+<span class="sd">        True = exclude from normalization</span>
+<span class="sd">    sigma_clip : float</span>
+<span class="sd">        Sigma clipping threshold (default: 3)</span>
+<span class="sd">    max_iter_clip : int</span>
+<span class="sd">        Max iterations for clipping</span>
+<span class="sd">    eps : float</span>
+<span class="sd">        Small value to avoid division issues</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    norm_flux : ndarray</span>
+<span class="sd">    norm_err : ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Starting stacking Francis 1991-like&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">stat_func</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span> <span class="k">if</span> <span class="n">norm_stat</span> <span class="o">==</span> <span class="s2">&quot;median&quot;</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span>
+
+    <span class="n">Npix</span><span class="p">,</span> <span class="n">Nspec</span> <span class="o">=</span> <span class="n">stackArr</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">norm_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">norm_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">stackArrErr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="c1"># Feature mask</span>
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="k">if</span> <span class="n">feature_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">feature_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Npix</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">usable</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">stackArr</span><span class="p">)</span>
+        <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">stackArrErr</span><span class="p">)</span>
+        <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">feature_mask</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span>
+    <span class="p">)</span>
+
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">usable</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="c1"># anchor = first (lowest-z) spectrum with enough pixels</span>
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="n">anchor</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nspec</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">min_overlap</span><span class="p">:</span>
+            <span class="n">anchor</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">anchor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No valid anchor spectrum found&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Francis 1991-like stacked: Anchor spectrum index: </span><span class="si">{</span><span class="n">anchor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="c1"># Initialize reference</span>
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="n">f0</span> <span class="o">=</span> <span class="n">stackArr</span><span class="p">[:,</span> <span class="n">anchor</span><span class="p">]</span>
+    <span class="n">e0</span> <span class="o">=</span> <span class="n">stackArrErr</span><span class="p">[:,</span> <span class="n">anchor</span><span class="p">]</span>
+
+    <span class="n">valid0</span> <span class="o">=</span> <span class="n">usable</span><span class="p">[:,</span> <span class="n">anchor</span><span class="p">]</span>
+
+    <span class="n">alpha0</span> <span class="o">=</span> <span class="n">stat_func</span><span class="p">(</span><span class="n">f0</span><span class="p">[</span><span class="n">valid0</span><span class="p">])</span>
+
+    <span class="n">norm_flux</span><span class="p">[:,</span> <span class="n">anchor</span><span class="p">]</span> <span class="o">=</span> <span class="n">f0</span> <span class="o">/</span> <span class="n">alpha0</span>
+    <span class="n">norm_err</span><span class="p">[:,</span> <span class="n">anchor</span><span class="p">]</span> <span class="o">=</span> <span class="n">e0</span> <span class="o">/</span> <span class="n">alpha0</span>
+
+    <span class="n">ref_flux</span> <span class="o">=</span> <span class="n">norm_flux</span><span class="p">[:,</span> <span class="n">anchor</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">ref_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Npix</span><span class="p">)</span>
+    <span class="n">ref_count</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ref_flux</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="c1"># Robust alpha estimator</span>
+    <span class="c1"># --------------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">sig_clip_alpha</span><span class="p">(</span><span class="n">vals</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter_clip</span><span class="p">):</span>
+            <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+            <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">std</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">std</span><span class="p">):</span>
+                <span class="k">break</span>
+
+            <span class="n">good</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vals</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">sigma_clip</span> <span class="o">*</span> <span class="n">std</span>
+
+            <span class="k">if</span> <span class="n">good</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">):</span>
+                <span class="k">break</span>
+
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="n">good</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="n">vals</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">min_overlap</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="n">vals</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">robust_alpha</span><span class="p">(</span><span class="n">ref_vals</span><span class="p">,</span> <span class="n">cur_vals</span><span class="p">):</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ref_vals</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">cur_vals</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cur_vals</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">eps</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">min_overlap</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="c1">## median of ratio</span>
+        <span class="c1">#ratio = ref_vals[mask] / cur_vals[mask]</span>
+        <span class="c1">#vals = ratio.copy()</span>
+        <span class="c1">#vals = sig_clip_alpha(vals)</span>
+        <span class="c1">#return stat_func(vals)</span>
+
+        <span class="c1">## ratio of medians</span>
+        <span class="n">ref_vals_sc</span> <span class="o">=</span> <span class="n">sig_clip_alpha</span><span class="p">(</span><span class="n">ref_vals</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
+        <span class="n">cur_vals_sc</span> <span class="o">=</span> <span class="n">sig_clip_alpha</span><span class="p">(</span><span class="n">cur_vals</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
+
+        <span class="c1">## with sigma clipping</span>
+        <span class="c1">#return stat_func(ref_vals_sc) / stat_func(cur_vals_sc)</span>
+
+        <span class="c1">## no sigma clipping</span>
+        <span class="k">return</span> <span class="n">stat_func</span><span class="p">(</span><span class="n">ref_vals</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="o">/</span> <span class="n">stat_func</span><span class="p">(</span><span class="n">cur_vals</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
+    
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="c1"># Incremental normalization</span>
+    <span class="c1"># --------------------------------------------------</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">anchor</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Nspec</span><span class="p">):</span>
+
+        <span class="n">fi</span> <span class="o">=</span> <span class="n">stackArr</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">ei</span> <span class="o">=</span> <span class="n">stackArrErr</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+
+        <span class="n">valid_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">fi</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ei</span><span class="p">)</span>
+        <span class="n">valid_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ref_flux</span><span class="p">)</span>
+
+        <span class="n">overlap</span> <span class="o">=</span> <span class="n">valid_i</span> <span class="o">&amp;</span> <span class="n">valid_r</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">feature_mask</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">overlap</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">min_overlap</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">ref_vals</span> <span class="o">=</span> <span class="n">ref_flux</span><span class="p">[</span><span class="n">overlap</span><span class="p">]</span>
+        <span class="n">cur_vals</span> <span class="o">=</span> <span class="n">fi</span><span class="p">[</span><span class="n">overlap</span><span class="p">]</span>
+
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">robust_alpha</span><span class="p">(</span><span class="n">ref_vals</span><span class="p">,</span> <span class="n">cur_vals</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">):</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;Normalization failure for spectrum N.</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2">: invalid normalization value (</span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># normalize</span>
+        <span class="n">norm_flux</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">fi</span>
+        <span class="n">norm_err</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">ei</span>
+
+        <span class="c1"># update reference (count-weighted)</span>
+        <span class="n">both</span> <span class="o">=</span> <span class="n">overlap</span>
+
+        <span class="n">ref_flux</span><span class="p">[</span><span class="n">both</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">ref_flux</span><span class="p">[</span><span class="n">both</span><span class="p">]</span> <span class="o">*</span> <span class="n">ref_count</span><span class="p">[</span><span class="n">both</span><span class="p">]</span> <span class="o">+</span> <span class="n">norm_flux</span><span class="p">[</span><span class="n">both</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ref_count</span><span class="p">[</span><span class="n">both</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">ref_count</span><span class="p">[</span><span class="n">both</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># add new pixels</span>
+        <span class="n">new_only</span> <span class="o">=</span> <span class="n">valid_i</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">valid_r</span><span class="p">)</span>
+
+        <span class="n">ref_flux</span><span class="p">[</span><span class="n">new_only</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm_flux</span><span class="p">[</span><span class="n">new_only</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">ref_count</span><span class="p">[</span><span class="n">new_only</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">norm_flux</span><span class="p">,</span> <span class="n">norm_err</span></div>
+
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Salvatore Quai
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=5df4c8d1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

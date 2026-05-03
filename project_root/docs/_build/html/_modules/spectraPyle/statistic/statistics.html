@@ -1,0 +1,733 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>spectraPyle.statistic.statistics - SpectraPyle 5.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">SpectraPyle 5.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <span class="sidebar-brand-text">SpectraPyle 5.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/stacking.html">stacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/schema.html">schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/processes.html">process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/instruments.html">instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/io.html">io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/spectrum.html">spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/statistic.html">statistic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">utils</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for spectraPyle.statistic.statistics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Stacking statistics: mean, median, geometric mean, weighted mean, and bootstrap.</span>
+
+<span class="sd">:func:`stack_statistics` computes all four stacking estimators and their</span>
+<span class="sd">dispersions/errors from the sigma-clipped resampled array.</span>
+<span class="sd">:func:`bootstrStack` estimates uncertainties via bootstrap resampling.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<div class="viewcode-block" id="stack_statistics">
+<a class="viewcode-back" href="../../../api/statistic.html#spectraPyle.statistic.statistics.stack_statistics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stack_statistics</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">stackArrErr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute a suite of stacking statistics for spectra.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stackArr : ndarray</span>
+<span class="sd">        Array of shape (N_pixels, N_spectra) containing the spectra</span>
+<span class="sd">        to be stacked. NaNs are allowed and ignored where appropriate.</span>
+<span class="sd">    stackArrErr : ndarray</span>
+<span class="sd">        Array of the same shape containing 1-sigma uncertainties</span>
+<span class="sd">        associated with `stackArr`. Used for weighted statistics.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    stackSPmean : ndarray</span>
+<span class="sd">        Arithmetic mean spectrum (NaN-ignoring).</span>
+<span class="sd">    stackDISPmean : ndarray</span>
+<span class="sd">        RMS scatter of spectra around the arithmetic mean.</span>
+<span class="sd">    stackSPmed : ndarray</span>
+<span class="sd">        Median spectrum.</span>
+<span class="sd">    stackDISPmed : ndarray</span>
+<span class="sd">        Robust scatter estimate based on MAD, scaled to Gaussian sigma</span>
+<span class="sd">        (1.4826 * MAD).</span>
+<span class="sd">    stackSPgeomMean : ndarray</span>
+<span class="sd">        Geometric mean spectrum (computed only where all values are positive).</span>
+<span class="sd">    stackDISPgeomMean : ndarray</span>
+<span class="sd">        Intrinsic dispersion around the geometric mean (log-space RMS).</span>
+<span class="sd">    stackSPmeanWeighted : ndarray</span>
+<span class="sd">        Weighted mean spectrum (weights = 1 / err^2).</span>
+<span class="sd">    stackDISPmeanWeighted : ndarray</span>
+<span class="sd">        Intrinsic weighted dispersion (scatter of spectra around the</span>
+<span class="sd">        weighted mean).</span>
+<span class="sd">    stackERmeanWeighted : ndarray</span>
+<span class="sd">        1-sigma uncertainty on the weighted mean spectrum.</span>
+<span class="sd">    stackPERC16th : ndarray</span>
+<span class="sd">        16th percentile of the distribution at each pixel.</span>
+<span class="sd">    stackPERC84th : ndarray</span>
+<span class="sd">        84th percentile of the distribution at each pixel.</span>
+<span class="sd">    stackPERC98th : ndarray</span>
+<span class="sd">        97.73th percentile (~2 sigma for a Gaussian).</span>
+<span class="sd">    stackPERC99th : ndarray</span>
+<span class="sd">        99.73th percentile (~3 sigma for a Gaussian).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ---------- Arithmetic statistics ----------</span>
+    <span class="n">stackSPmean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">stackDISPmean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># ---------- Median and robust dispersion ----------</span>
+    <span class="n">stackSPmed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">MAD</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">stackArr</span> <span class="o">-</span> <span class="n">stackSPmed</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">stackDISPmed</span> <span class="o">=</span> <span class="mf">1.4826</span> <span class="o">*</span> <span class="n">MAD</span>  <span class="c1"># Gaussian-equivalent sigma</span>
+
+    <span class="c1"># ---------- Geometric mean ----------</span>
+    <span class="n">stackSPgeomMean</span><span class="p">,</span> <span class="n">stackDISPgeomMean</span> <span class="o">=</span> <span class="n">geomMean</span><span class="p">(</span><span class="n">stackArr</span><span class="p">)</span>
+
+    <span class="c1"># ---------- Weighted mean ----------</span>
+    <span class="p">(</span><span class="n">stackSPmeanWeighted</span><span class="p">,</span>
+     <span class="n">stackDISPmeanWeighted</span><span class="p">,</span>
+     <span class="n">stackERmeanWeighted</span><span class="p">)</span> <span class="o">=</span> <span class="n">weighted_average</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">stackArrErr</span><span class="p">)</span>
+
+    <span class="c1"># ---------- Percentiles ----------</span>
+    <span class="n">stackPERC16th</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="mf">15.87</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">stackPERC84th</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="mf">84.14</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">stackPERC98th</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="mf">97.73</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">stackPERC99th</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="mf">99.73</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">stackSPmean</span><span class="p">,</span>
+        <span class="n">stackDISPmean</span><span class="p">,</span>
+        <span class="n">stackSPmed</span><span class="p">,</span>
+        <span class="n">stackDISPmed</span><span class="p">,</span>
+        <span class="n">stackSPgeomMean</span><span class="p">,</span>
+        <span class="n">stackDISPgeomMean</span><span class="p">,</span>
+        <span class="n">stackSPmeanWeighted</span><span class="p">,</span>
+        <span class="n">stackDISPmeanWeighted</span><span class="p">,</span>
+        <span class="n">stackERmeanWeighted</span><span class="p">,</span>
+        <span class="n">stackPERC16th</span><span class="p">,</span>
+        <span class="n">stackPERC84th</span><span class="p">,</span>
+        <span class="n">stackPERC98th</span><span class="p">,</span>
+        <span class="n">stackPERC99th</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">def geomMean(arr, axis=1):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Compute geometric mean and intrinsic scatter (log-space RMS).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : array_like</span>
+<span class="sd">        Input array. Must be strictly positive.</span>
+<span class="sd">    axis : int or None</span>
+<span class="sd">        Axis along which to compute the statistics.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    meanGeo : ndarray</span>
+<span class="sd">        Geometric mean.</span>
+<span class="sd">    sigma_ln : ndarray</span>
+<span class="sd">        RMS scatter in ln-space (intrinsic dispersion).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="sd">    arr = np.asarray(arr)</span>
+
+<span class="sd">    # pixels where all spectra are positive</span>
+<span class="sd">    good = np.all(arr &gt; 0, axis=1)</span>
+
+<span class="sd">    meanGeo = np.full(arr.shape[0], np.nan)</span>
+<span class="sd">    sigma_ln = np.full(arr.shape[0], np.nan)</span>
+
+<span class="sd">    if not np.any(good):</span>
+<span class="sd">        return meanGeo, sigma_ln</span>
+
+<span class="sd">    log_arr = np.log(arr[good, :])</span>
+
+<span class="sd">    mean_log = np.mean(log_arr, axis=1)</span>
+<span class="sd">    meanGeo[good] = np.exp(mean_log)</span>
+
+<span class="sd">    sigma_ln[good] = np.sqrt(</span>
+<span class="sd">        np.mean((log_arr - mean_log[:, None])**2, axis=1)</span>
+<span class="sd">    )</span>
+
+<span class="sd">    return meanGeo, sigma_ln</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="geomMean">
+<a class="viewcode-back" href="../../../api/statistic.html#spectraPyle.statistic.statistics.geomMean">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">geomMean</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute robust geometric mean and log-space scatter.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : ndarray</span>
+<span class="sd">        Input array (can contain NaN, zero, and negative values).</span>
+<span class="sd">    axis : int, optional</span>
+<span class="sd">        Axis along which to compute (default: 1).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    gm : ndarray</span>
+<span class="sd">        Geometric mean.</span>
+<span class="sd">    sigma_ln : ndarray</span>
+<span class="sd">        Log-space RMS scatter (intrinsic dispersion).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+    <span class="c1"># Valid values only</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">arr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+    <span class="c1"># Replace invalid with NaN</span>
+    <span class="n">safe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="c1"># Log transform</span>
+    <span class="n">log_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">safe</span><span class="p">)</span>
+
+    <span class="c1"># Mean log</span>
+    <span class="n">mean_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">log_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+    <span class="c1"># Scatter in log space</span>
+    <span class="n">sigma_ln</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">log_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+    <span class="c1"># Back to linear space</span>
+    <span class="n">gm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">mean_log</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gm</span><span class="p">,</span> <span class="n">sigma_ln</span></div>
+
+    
+    
+<div class="viewcode-block" id="weighted_average">
+<a class="viewcode-back" href="../../../api/statistic.html#spectraPyle.statistic.statistics.weighted_average">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_average</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">stackArrErr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute weighted mean, dispersion, and 1-sigma uncertainty.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stackArr : ndarray (N_pixels, N_spectra)</span>
+<span class="sd">        Spectra array.</span>
+<span class="sd">    stackArrErr : ndarray (N_pixels, N_spectra)</span>
+<span class="sd">        Error spectra array (weights = 1/err^2).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mean_w : ndarray</span>
+<span class="sd">        Weighted mean spectrum.</span>
+<span class="sd">    disp_w : ndarray</span>
+<span class="sd">        Intrinsic weighted dispersion.</span>
+<span class="sd">    err_mean_w : ndarray</span>
+<span class="sd">        1-sigma uncertainty on the weighted mean.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">stackArr</span><span class="p">)</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">stackArrErr</span><span class="p">)</span>
+
+    <span class="c1"># mask invalid values</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">|</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">err</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">ma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">err</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+
+    <span class="c1"># weighted mean</span>
+    <span class="n">mean_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">ma</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="c1"># intrinsic weighted dispersion</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">ma</span> <span class="o">-</span> <span class="n">mean_w</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">disp_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">diff</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="c1"># uncertainty on the mean</span>
+    <span class="n">err_mean_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mean_w</span><span class="p">,</span> <span class="n">disp_w</span><span class="p">,</span> <span class="n">err_mean_w</span></div>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">def bootstrap_iteration(args):</span>
+<span class="sd">    &quot;&quot;&quot;Single iteration of the bootstrap.&quot;&quot;&quot;</span>
+<span class="sd">    arr, M, repl, weight = args</span>
+<span class="sd">    sample = np.random.choice(a=M, size=M, replace=repl, p=weight)</span>
+<span class="sd">    arrSample = arr[:, sample]</span>
+<span class="sd">    sumArr = np.nansum(arrSample, axis=1)</span>
+<span class="sd">    meanArr = np.nanmean(arrSample, axis=1)</span>
+<span class="sd">    medArr = np.nanmedian(arrSample, axis=1)</span>
+<span class="sd">    geometricMeanArr, _ = geomMean(arrSample)</span>
+<span class="sd">    return sumArr, meanArr, medArr, geometricMeanArr</span>
+
+<span class="sd">def bootstrStack(arr, R=250, repl=True, weight=None, n_processes=None):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Bootstrapping function with multiprocessing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    print(f&#39;Running bootstrap ({R} times) with multiprocessing...&#39;)</span>
+<span class="sd">    N, M = np.size(arr, 0), np.size(arr, 1)</span>
+<span class="sd">    </span>
+<span class="sd">    # Prepare arguments for each bootstrap iteration</span>
+<span class="sd">    args = [(arr, M, repl, weight) for _ in range(R)]</span>
+<span class="sd">    </span>
+<span class="sd">    # Use multiprocessing Pool</span>
+<span class="sd">    with Pool(processes=n_processes) as pool:</span>
+<span class="sd">        results = list(tqdm(pool.imap(bootstrap_iteration, args), </span>
+<span class="sd">                            total=R, desc=&quot;Bootstrap sampled&quot;))</span>
+<span class="sd">    </span>
+<span class="sd">    # Combine results</span>
+<span class="sd">    sumArr = np.array([result[0] for result in results]).T</span>
+<span class="sd">    meanArr = np.array([result[1] for result in results]).T</span>
+<span class="sd">    medArr = np.array([result[2] for result in results]).T</span>
+<span class="sd">    geometricMeanArr = np.array([result[3] for result in results]).T</span>
+
+<span class="sd">    # Calculate statistics</span>
+<span class="sd">    bootstrMeanSpec = np.nanmean(meanArr, axis=1)</span>
+<span class="sd">    bootstrMeanSpecSig = np.nanstd(meanArr, axis=1)</span>
+
+<span class="sd">    bootstrMedSpec = np.nanmedian(medArr, axis=1)</span>
+<span class="sd">    MAD = np.nanmedian(np.abs((medArr.T - bootstrMedSpec).T), axis=1)</span>
+<span class="sd">    bootstrMedSpecSig = 1.482 * MAD</span>
+
+<span class="sd">    bootstrGeomMeanSpec, bootstrGeomMeanSpecSig = geomMean(geometricMeanArr)</span>
+
+<span class="sd">    print(&#39;Bootstrap completed!&#39;)</span>
+<span class="sd">    return bootstrMeanSpec, bootstrMeanSpecSig, bootstrMedSpec, bootstrMedSpecSig, bootstrGeomMeanSpec, bootstrGeomMeanSpecSig</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+
+<span class="c1"># =========================================================</span>
+<span class="c1"># SINGLE BOOTSTRAP ITERATION</span>
+<span class="c1"># =========================================================</span>
+
+<div class="viewcode-block" id="bootstrap_iteration">
+<a class="viewcode-back" href="../../../api/statistic.html#spectraPyle.statistic.statistics.bootstrap_iteration">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bootstrap_iteration</span><span class="p">(</span><span class="n">idx_sample</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform a single bootstrap resampling iteration.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    idx_sample : ndarray</span>
+<span class="sd">        Indices of selected spectra (size M).</span>
+<span class="sd">    arr : ndarray (Npix, Nspec)</span>
+<span class="sd">        Input spectra array.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        Four arrays: (sum_arr, mean_arr, med_arr, geom_arr)</span>
+
+<span class="sd">        - sum_arr : ndarray</span>
+<span class="sd">            Sum of resampled spectra</span>
+<span class="sd">        - mean_arr : ndarray</span>
+<span class="sd">            Mean of resampled spectra</span>
+<span class="sd">        - med_arr : ndarray</span>
+<span class="sd">            Median of resampled spectra</span>
+<span class="sd">        - geom_arr : ndarray</span>
+<span class="sd">            Geometric mean of resampled spectra</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">arr_sample</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[:,</span> <span class="n">idx_sample</span><span class="p">]</span>
+
+    <span class="n">sum_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">arr_sample</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mean_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">arr_sample</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">med_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">arr_sample</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">geom_arr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">geomMean</span><span class="p">(</span><span class="n">arr_sample</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sum_arr</span><span class="p">,</span> <span class="n">mean_arr</span><span class="p">,</span> <span class="n">med_arr</span><span class="p">,</span> <span class="n">geom_arr</span></div>
+
+
+
+<span class="c1"># =========================================================</span>
+<span class="c1"># MAIN BOOTSTRAP FUNCTION</span>
+<span class="c1"># =========================================================</span>
+
+<div class="viewcode-block" id="bootstrStack">
+<a class="viewcode-back" href="../../../api/statistic.html#spectraPyle.statistic.statistics.bootstrStack">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bootstrStack</span><span class="p">(</span>
+    <span class="n">arr</span><span class="p">,</span>
+    <span class="n">R</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span>
+    <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_processes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Bootstrap resampling of stacked spectra.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : ndarray (Npix, Nspec)</span>
+<span class="sd">        Input spectra array.</span>
+<span class="sd">    R : int, optional</span>
+<span class="sd">        Number of bootstrap realizations (default: 250).</span>
+<span class="sd">    replace : bool, optional</span>
+<span class="sd">        Sampling with replacement (default: True).</span>
+<span class="sd">    weights : ndarray or None, optional</span>
+<span class="sd">        Sampling probabilities for each spectrum.</span>
+<span class="sd">    n_processes : int or None, optional</span>
+<span class="sd">        Number of processes for parallelization (None = serial).</span>
+<span class="sd">    random_state : int or None, optional</span>
+<span class="sd">        Seed for reproducibility.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        Six arrays: (mean_spec, mean_err, med_spec, med_err, geom_spec, geom_err)</span>
+
+<span class="sd">        - mean_spec : ndarray</span>
+<span class="sd">            Mean spectrum from bootstrap samples</span>
+<span class="sd">        - mean_err : ndarray</span>
+<span class="sd">            Uncertainty on mean spectrum</span>
+<span class="sd">        - med_spec : ndarray</span>
+<span class="sd">            Median spectrum from bootstrap samples</span>
+<span class="sd">        - med_err : ndarray</span>
+<span class="sd">            Uncertainty on median spectrum</span>
+<span class="sd">        - geom_spec : ndarray</span>
+<span class="sd">            Geometric mean spectrum from bootstrap samples</span>
+<span class="sd">        - geom_err : ndarray</span>
+<span class="sd">            Uncertainty on geometric mean spectrum</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running bootstrap (R=</span><span class="si">{</span><span class="n">R</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="n">Npix</span><span class="p">,</span> <span class="n">Nspec</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">random_state</span><span class="p">)</span>
+
+    <span class="c1"># -----------------------------------------------------</span>
+    <span class="c1"># Generate bootstrap indices ONCE (important!)</span>
+    <span class="c1"># -----------------------------------------------------</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">Nspec</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">Nspec</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="c1"># -----------------------------------------------------</span>
+    <span class="c1"># Run iterations</span>
+    <span class="c1"># -----------------------------------------------------</span>
+    <span class="k">if</span> <span class="n">n_processes</span> <span class="ow">and</span> <span class="n">n_processes</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using multiprocessing (</span><span class="si">{</span><span class="n">n_processes</span><span class="si">}</span><span class="s2"> CPUs)&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">n_processes</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">tqdm</span><span class="p">(</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">imap</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">bootstrap_iteration</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">arr</span><span class="p">),</span> <span class="n">indices</span><span class="p">),</span>
+                    <span class="n">total</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Bootstrap&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">bootstrap_iteration</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Bootstrap&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="c1"># -----------------------------------------------------</span>
+    <span class="c1"># Collect results</span>
+    <span class="c1"># -----------------------------------------------------</span>
+    <span class="n">sumArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">meanArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">medArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">geomArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># -----------------------------------------------------</span>
+    <span class="c1"># Final statistics</span>
+    <span class="c1"># -----------------------------------------------------</span>
+
+    <span class="c1"># ---- MEAN ----</span>
+    <span class="n">mean_spec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">meanArr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mean_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">meanArr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># ---- MEDIAN ----</span>
+    <span class="n">med_spec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">medArr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">med_p16</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">medArr</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">med_p84</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">medArr</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1">#med_err_low = med_spec - med_p16</span>
+    <span class="c1">#med_err_high = med_p84 - med_spec</span>
+    
+    <span class="n">med_err</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">med_p84</span> <span class="o">-</span> <span class="n">med_p16</span><span class="p">)</span>
+    
+    <span class="c1"># ---- GEOMETRIC MEAN ----</span>
+    <span class="n">geom_p16</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">geomArr</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">geom_p84</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">geomArr</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">geom_spec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">geomArr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1">#geom_err_low = geom_spec - geom_p16</span>
+    <span class="c1">#geom_err_high = geom_p84 - geom_spec</span>
+    
+    <span class="n">geom_err</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">geom_p84</span> <span class="o">-</span> <span class="n">geom_p16</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bootstrap completed&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mean_spec</span><span class="p">,</span><span class="n">mean_err</span><span class="p">,</span><span class="n">med_spec</span><span class="p">,</span><span class="n">med_err</span><span class="p">,</span><span class="n">geom_spec</span><span class="p">,</span><span class="n">geom_err</span></div>
+
+
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Salvatore Quai
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=5df4c8d1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

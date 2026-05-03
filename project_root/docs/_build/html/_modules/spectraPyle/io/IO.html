@@ -1,0 +1,740 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>spectraPyle.io.IO - SpectraPyle 5.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">SpectraPyle 5.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <span class="sidebar-brand-text">SpectraPyle 5.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/stacking.html">stacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/schema.html">schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/processes.html">process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/instruments.html">instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/io.html">io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/spectrum.html">spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/statistic.html">statistic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">utils</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for spectraPyle.io.IO</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Catalog I/O, wavelength grid construction, and FITS output writer.</span>
+
+<span class="sd">Key functions:</span>
+
+<span class="sd">- :func:`read_catalog` — loads npz/fits/csv catalogs</span>
+<span class="sd">- :func:`build_wavelength_grid` — constructs the target resampling grid</span>
+<span class="sd">- :func:`save_to_file` — writes the stacked spectra to a FITS file</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.spectrum.spectra</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sspec</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.spectrum.normalization</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">snorm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.spectrum.resampling</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sres</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">def get_incremental_dir(base_path):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Incremental output directory</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        base_path: output directory from the configuration file</span>
+
+<span class="sd">    Returns: </span>
+<span class="sd">        new_path: incremental {base_path}_i (i=1,2,...), if base_path exists. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    if not os.path.exists(base_path):</span>
+<span class="sd">        return base_path</span>
+
+<span class="sd">    i = 1</span>
+<span class="sd">    while True:</span>
+<span class="sd">        new_path = f&quot;{base_path}_{i}&quot;</span>
+<span class="sd">        if not os.path.exists(new_path):</span>
+<span class="sd">            return new_path</span>
+<span class="sd">        i += 1</span>
+<span class="sd">&#39;&#39;&#39;</span> 
+
+<div class="viewcode-block" id="read_catalog">
+<a class="viewcode-back" href="../../../api/io.html#spectraPyle.io.IO.read_catalog">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_catalog</span><span class="p">(</span><span class="n">dirIn</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">extension</span><span class="p">,</span> <span class="n">mandatory_keys</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a catalog file and extract mandatory columns.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dirIn : str</span>
+<span class="sd">        Directory containing the catalog file.</span>
+<span class="sd">    fname : str</span>
+<span class="sd">        Filename without extension.</span>
+<span class="sd">    extension : {&quot;npz&quot;, &quot;fits&quot;, &quot;csv&quot;}</span>
+<span class="sd">        File format.</span>
+<span class="sd">    mandatory_keys : list of str</span>
+<span class="sd">        Column names that must be present.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Keys are column names, values are arrays.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FileNotFoundError</span>
+<span class="sd">        If the file does not exist at ``dirIn/fname.extension``.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If a mandatory key is missing or the format is unsupported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">supported_extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;npz&#39;</span><span class="p">,</span> <span class="s1">&#39;fits&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">extension</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_extensions</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unsupported file extension: </span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">. Supported extensions are: </span><span class="si">{</span><span class="n">supported_extensions</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirIn</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;File &#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&#39; not found in directory &#39;</span><span class="si">{</span><span class="n">dirIn</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Initialize the result dictionary</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Read the file based on its extension</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;npz&#39;</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">stackFiles</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mandatory_keys</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stackFiles</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mandatory key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; is missing in &#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">stackFiles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        
+        <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;fits&#39;</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
+                <span class="n">table_data</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># Assuming the data is in the first extension</span>
+                <span class="n">all_keys</span> <span class="o">=</span> <span class="n">table_data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mandatory_keys</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mandatory key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; is missing in &#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">table_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        
+        <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;csv&#39;</span><span class="p">:</span>
+            <span class="n">csv_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="n">all_keys</span> <span class="o">=</span> <span class="n">csv_data</span><span class="o">.</span><span class="n">columns</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mandatory_keys</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mandatory key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; is missing in &#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">csv_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file extension: </span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error reading file &#39;</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File successfully read: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="z_stack">
+<a class="viewcode-back" href="../../../api/io.html#spectraPyle.io.IO.z_stack">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">z_stack</span><span class="p">(</span><span class="n">redshift</span><span class="p">,</span> <span class="n">z_type</span><span class="p">,</span> <span class="n">conservation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine the redshift of the stacked spectrum.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    redshift : ndarray</span>
+<span class="sd">        Redshifts of the spectra to be stacked.</span>
+<span class="sd">    z_type : str, int, or float</span>
+<span class="sd">        Keyword for stacking redshift. One of:</span>
+<span class="sd">        - &#39;median_z&#39;: median of redshift array</span>
+<span class="sd">        - &#39;minimum_z&#39;: minimum of redshift array</span>
+<span class="sd">        - &#39;maximum_z&#39;: maximum of redshift array</span>
+<span class="sd">        - &#39;rest_frame&#39;: z=0</span>
+<span class="sd">        - float/int: user-defined redshift value</span>
+<span class="sd">    conservation : str</span>
+<span class="sd">        Spectral quantity to conserve: &#39;luminosity&#39; or &#39;flux&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        - z_min : float</span>
+<span class="sd">            Minimum redshift of the array</span>
+<span class="sd">        - z_max : float</span>
+<span class="sd">            Maximum redshift of the array</span>
+<span class="sd">        - z_stacking : float</span>
+<span class="sd">            Redshift of the stacking frame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z_min</span><span class="p">,</span> <span class="n">z_max</span><span class="p">,</span> <span class="n">z_med</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">redshift</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">redshift</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">redshift</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Minimum z: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">z_min</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">, Median z: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">z_med</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">, Maximum z: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">z_max</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">z_type</span> <span class="o">==</span> <span class="s1">&#39;median_z&#39;</span><span class="p">:</span>
+        <span class="n">z_stacking</span> <span class="o">=</span> <span class="n">z_med</span> <span class="c1">## median redshift</span>
+    <span class="k">elif</span> <span class="n">z_type</span> <span class="o">==</span> <span class="s1">&#39;minimum_z&#39;</span><span class="p">:</span>
+        <span class="n">z_stacking</span> <span class="o">=</span> <span class="n">z_min</span> <span class="c1">## minimum redshift</span>
+    <span class="k">elif</span> <span class="n">z_type</span> <span class="o">==</span> <span class="s1">&#39;maximum_z&#39;</span><span class="p">:</span>
+        <span class="n">z_stacking</span> <span class="o">=</span> <span class="n">z_max</span> <span class="c1">## maximum redshift</span>
+    <span class="k">elif</span> <span class="n">z_type</span> <span class="o">==</span> <span class="s1">&#39;rest_frame&#39;</span><span class="p">:</span>
+        <span class="n">z_stacking</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1">## restframe</span>
+        <span class="k">if</span> <span class="n">conservation</span> <span class="o">==</span> <span class="s1">&#39;luminosity&#39;</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> NOTE: When &#39;conservation&#39;==&#39;luminosity&#39;, and the stack is done at restframe, the output will be the restframe stacked LUMINOSITY spectra, in units [erg/s/AA]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">z_type</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">z_type</span><span class="p">)</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">z_stacking</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">z_type</span><span class="p">)</span> <span class="c1">## redshift defined by the user</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Common redshift of the stacked spectrum defined by user: z=</span><span class="si">{</span><span class="n">z_stacking</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s1">&#39;z_type &#39;</span><span class="p">,</span> <span class="n">z_type</span><span class="p">,</span> <span class="s1">&#39; not supported!&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">z_min</span><span class="p">,</span> <span class="n">z_max</span><span class="p">,</span> <span class="n">z_stacking</span></div>
+
+        
+<div class="viewcode-block" id="z_sort">
+<a class="viewcode-back" href="../../../api/io.html#spectraPyle.io.IO.z_sort">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">z_sort</span><span class="p">(</span><span class="n">z_column_name</span><span class="p">,</span> <span class="n">data_input</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sort the input catalog by redshift.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z_column_name : str</span>
+<span class="sd">        Name of the column containing redshifts.</span>
+<span class="sd">    data_input : dict</span>
+<span class="sd">        Input catalog (keys=column names, values=arrays).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Input catalog sorted by increasing redshift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">z_key</span> <span class="o">=</span> <span class="n">z_column_name</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data_input</span><span class="p">[</span><span class="n">z_key</span><span class="p">])</span>
+
+    <span class="c1"># permutation that sorts by increasing redshift</span>
+    <span class="n">sort_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="c1"># apply permutation to all entries</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data_input</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">data_input</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">)[</span><span class="n">sort_idx</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">data_input</span></div>
+
+
+
+<div class="viewcode-block" id="build_wavelength_grid">
+<a class="viewcode-back" href="../../../api/io.html#spectraPyle.io.IO.build_wavelength_grid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_wavelength_grid</span><span class="p">(</span><span class="n">wavelMin</span><span class="p">,</span> <span class="n">wavelMax</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">z_stacking</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build wavelength grid (centers and bin edges) for stacking.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wavelMin, wavelMax : float</span>
+<span class="sd">        Wavelength range (Å)</span>
+<span class="sd">    config : dict</span>
+<span class="sd">        Configuration dictionary containing:</span>
+<span class="sd">        - pixel_resampling_type : &#39;lambda&#39;, &#39;lambda_shifted&#39;, or &#39;log_lambda&#39;</span>
+<span class="sd">        - pixel_resampling      : Δλ (Å) or Δlog10(λ)</span>
+<span class="sd">    z_stacking : float</span>
+<span class="sd">        Reference redshift for stacking</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    wavelength_centers : ndarray</span>
+<span class="sd">    wavelength_bins    : ndarray</span>
+<span class="sd">    pixel_size         : float</span>
+<span class="sd">        Δλ (Å) or Δlog10(λ), depending on sampling</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">pixel_type</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;pixel_resampling_type&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">pixel_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">,</span> <span class="s1">&#39;lambda_shifted&#39;</span><span class="p">]:</span>
+        
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;pixel_size_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;manual&#39;</span><span class="p">:</span>
+            <span class="n">pixel_size</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;pixel_resampling&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pixel_size</span> <span class="o">=</span> <span class="n">sres</span><span class="o">.</span><span class="n">dlam_from_R</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">],</span> <span class="n">lambda_ref</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;reference_lambda&#39;</span><span class="p">],</span> <span class="n">nsamp</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;nyquist_sampling&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">pixel_type</span> <span class="o">==</span> <span class="s1">&#39;lambda_shifted&#39;</span><span class="p">:</span>
+            <span class="n">pixel_size</span> <span class="o">/=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z_stacking</span><span class="p">)</span>
+
+        <span class="n">npix</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">wavelMax</span> <span class="o">-</span> <span class="n">wavelMin</span><span class="p">)</span> <span class="o">/</span> <span class="n">pixel_size</span><span class="p">))</span>
+        <span class="n">wavelMax</span> <span class="o">=</span> <span class="n">wavelMin</span> <span class="o">+</span> <span class="n">npix</span> <span class="o">*</span> <span class="n">pixel_size</span>
+
+        <span class="n">wavelength_bins</span> <span class="o">=</span> <span class="n">wavelMin</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">npix</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">pixel_size</span>
+        <span class="n">wavelength_centers</span> <span class="o">=</span> <span class="n">wavelength_bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">pixel_size</span>
+
+    <span class="k">elif</span> <span class="n">pixel_type</span> <span class="o">==</span> <span class="s1">&#39;log_lambda&#39;</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;pixel_size_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;manual&#39;</span><span class="p">:</span>
+            <span class="n">dloglam</span> <span class="o">=</span> <span class="n">sres</span><span class="o">.</span><span class="n">dloglam_from_dlam</span><span class="p">(</span><span class="n">dlam</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;pixel_resampling&#39;</span><span class="p">],</span> <span class="n">lambda_ref</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;reference_lambda&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dloglam</span> <span class="o">=</span> <span class="n">sres</span><span class="o">.</span><span class="n">dloglam_from_R</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">],</span> <span class="n">nsamp</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;nyquist_sampling&#39;</span><span class="p">])</span>
+
+        <span class="n">loglam_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">wavelMin</span><span class="p">)</span>
+        <span class="n">loglam_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">wavelMax</span><span class="p">)</span>
+
+        <span class="n">npix</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">loglam_max</span> <span class="o">-</span> <span class="n">loglam_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">dloglam</span><span class="p">))</span>
+        <span class="n">loglam_max</span> <span class="o">=</span> <span class="n">loglam_min</span> <span class="o">+</span> <span class="n">npix</span> <span class="o">*</span> <span class="n">dloglam</span>
+
+        <span class="n">loglam_bins</span> <span class="o">=</span> <span class="n">loglam_min</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">npix</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dloglam</span>
+        <span class="n">loglam_centers</span> <span class="o">=</span> <span class="n">loglam_bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dloglam</span>
+
+        <span class="n">wavelength_bins</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">loglam_bins</span>
+        <span class="n">wavelength_centers</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">loglam_centers</span>
+
+        <span class="n">pixel_size</span> <span class="o">=</span> <span class="n">dloglam</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown pixel_resampling_type: </span><span class="si">{</span><span class="n">pixel_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wavelength_centers</span><span class="p">,</span> <span class="n">wavelength_bins</span><span class="p">,</span> <span class="n">pixel_size</span></div>
+
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">def get_effective_cpu_limit():</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Returns the number of CPUs effectively available to this process,</span>
+<span class="sd">    accounting for cgroup limits (useful in containerized or scheduled environments).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    try:</span>
+<span class="sd">        with open(&#39;/sys/fs/cgroup/cpu/cpu.cfs_quota_us&#39;, &#39;r&#39;) as f:</span>
+<span class="sd">            quota = int(f.read())</span>
+<span class="sd">        with open(&#39;/sys/fs/cgroup/cpu/cpu.cfs_period_us&#39;, &#39;r&#39;) as f:</span>
+<span class="sd">            period = int(f.read())</span>
+
+<span class="sd">        if quota &gt; 0 and period &gt; 0:</span>
+<span class="sd">            return max(1, quota // period)</span>
+<span class="sd">        else:</span>
+<span class="sd">            return os.cpu_count()  # No CPU limit set</span>
+<span class="sd">    except Exception:</span>
+<span class="sd">        return os.cpu_count()  # Default to full count if detection fails</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="get_effective_cpu_limit">
+<a class="viewcode-back" href="../../../api/io.html#spectraPyle.io.IO.get_effective_cpu_limit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_effective_cpu_limit</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the effective CPU count considering cgroup and affinity limits.</span>
+
+<span class="sd">    Accounts for cgroup v1 (cpu.cfs_quota_us/period), cgroup v2 (cpu.max),</span>
+<span class="sd">    and CPU affinity settings. Useful in containerized/scheduled environments.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Number of effectively available CPUs (at least 1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+    <span class="c1"># 1. Affinity</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">affinity_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sched_getaffinity</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+        <span class="n">affinity_count</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="ow">or</span> <span class="mi">1</span>
+
+    <span class="n">limit</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+
+    <span class="c1"># 2. check cgroup v2 (cpu.max)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/sys/fs/cgroup/cpu.max&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">max_val</span><span class="p">,</span> <span class="n">period</span> <span class="o">=</span> <span class="n">data</span>
+                <span class="k">if</span> <span class="n">max_val</span> <span class="o">!=</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span>
+                    <span class="n">limit</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_val</span><span class="p">)</span> <span class="o">/</span> <span class="nb">int</span><span class="p">(</span><span class="n">period</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">ZeroDivisionError</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># 3. check cgroup v1 (quota/period)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/sys/fs/cgroup/cpu/cpu.cfs_quota_us&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">q</span><span class="p">,</span> \
+             <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/sys/fs/cgroup/cpu/cpu.cfs_period_us&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+            <span class="n">quota</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="n">period</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">quota</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">period</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">limit</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">quota</span> <span class="o">/</span> <span class="n">period</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># Result: minimum between cgroup limit, affinity and physical total available</span>
+    <span class="n">final_cpus</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">affinity_count</span><span class="p">)</span>
+    
+    <span class="c1"># Returns at least one core</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">final_cpus</span><span class="p">))</span></div>
+
+
+
+
+<div class="viewcode-block" id="output_units">
+<a class="viewcode-back" href="../../../api/io.html#spectraPyle.io.IO.output_units">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">output_units</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine output physical units from configuration.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config : dict</span>
+<span class="sd">        Configuration dictionary.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        - out_unit : str</span>
+<span class="sd">            Output unit string</span>
+<span class="sd">        - out_unit_scale_factor : float</span>
+<span class="sd">            Scaling factor for units</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;no_normalization&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;conservation&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;luminosity&#39;</span><span class="p">:</span>
+            <span class="n">out_unit</span> <span class="o">=</span> <span class="s1">&#39;erg/s/cm2&#39;</span>
+            <span class="n">out_unit_scale_factor</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;conservation&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;flux&#39;</span><span class="p">:</span>
+            <span class="n">out_unit</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+            <span class="n">out_unit_scale_factor</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;units_scale_factor&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">out_unit</span> <span class="o">=</span> <span class="s1">&#39;arbitrary units&#39;</span>
+        <span class="n">out_unit_scale_factor</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">out_unit</span><span class="p">,</span> <span class="n">out_unit_scale_factor</span></div>
+
+        
+<div class="viewcode-block" id="save_to_file">
+<a class="viewcode-back" href="../../../api/io.html#spectraPyle.io.IO.save_to_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_to_file</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save stacked spectra and metadata to a FITS file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config : dict</span>
+<span class="sd">        Configuration dictionary containing output paths, normalization type, etc.</span>
+<span class="sd">    data_dict : dict</span>
+<span class="sd">        Dictionary containing stacking results: wavelengths, fluxes, dispersions,</span>
+<span class="sd">        pixel counts, etc.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Path to the generated FITS file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Prepare the stacking parameters metadata</span>
+    <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;interval&#39;</span><span class="p">:</span>
+        <span class="n">norm_interv_out</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;lambda_norm_rest&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">norm_interv_out</span> <span class="o">=</span> <span class="s1">&#39;NOT APPLIED&#39;</span>
+    
+    <span class="n">out_unit</span><span class="p">,</span> <span class="n">out_unit_scale_factor</span> <span class="o">=</span> <span class="n">output_units</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    
+    <span class="c1"># Primary HDU: metadata only</span>
+    <span class="n">primary_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">()</span>
+    <span class="n">primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;INSTR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;instrument_name&#39;</span><span class="p">]</span>
+    <span class="n">primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;SURVEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;survey_name&#39;</span><span class="p">]</span>
+    <span class="n">primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;GRISM&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;grisms&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+    <span class="n">primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;REDSHIFT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;z_stacking&#39;</span><span class="p">],</span> <span class="s1">&#39;z of the stacked spectrum&#39;</span><span class="p">)</span>
+    <span class="n">primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;NORMTYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">],</span> <span class="s1">&#39;type of spectra normalization&#39;</span><span class="p">)</span>
+    <span class="n">primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;NORMINTR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">norm_interv_out</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;lamda normalization&#39;</span><span class="p">)</span>
+    <span class="n">primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;RES_PIX&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;pixelResampling&#39;</span><span class="p">],</span> <span class="s1">&#39;pixel size [Angstrom]&#39;</span><span class="p">)</span>
+    <span class="n">primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;R_BOOT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;bootstrapping_R&#39;</span><span class="p">],</span> <span class="s1">&#39;R bootstrapping samples for err spec.&#39;</span><span class="p">)</span>
+    <span class="n">primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;UNITS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">out_unit</span><span class="p">,</span><span class="s1">&#39;physical unit of field&#39;</span><span class="p">)</span>
+    <span class="n">primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;FSCALE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">out_unit_scale_factor</span><span class="p">,</span> <span class="s1">&#39;Scaling factor&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Stacking results table</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">ColDefs</span><span class="p">([</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;wavelength&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;wavelength_stacking&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;spec16th&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackPERC16th&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;spec84th&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackPERC84th&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;spec98th&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackPERC98th&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;spec99th&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackPERC99th&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specMedian&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackSPmed&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specMedianDispersion&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackDISPmed&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specMedianError&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackERmed&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specMean&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackSPmean&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specMeanDispersion&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackDISPmean&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specMeanError&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackERmean&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specGeometricMean&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackSPgeomMean&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specGeometricMeanDispersion&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackDISPgeomMean&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specGeometricMeanError&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackERgeomMean&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specWeightedMean&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackSPmeanWeighted&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specWeightedMeanDispersion&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackDISPmeanWeighted&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;specWeightedMeanError&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackERmeanWeighted&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;initialPixelCount&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;initialPixelCount&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;goodPixelCount&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;goodPixelCount&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;badPixelCount&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;badPixelCount&#39;</span><span class="p">]),</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;sigmaClippedCount&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;sigmaClippedCount&#39;</span><span class="p">]),</span>
+    <span class="p">])</span>
+
+    <span class="n">stacking_results_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">BinTableHDU</span><span class="o">.</span><span class="n">from_columns</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;STACKING_RESULTS&quot;</span><span class="p">)</span>
+    <span class="c1"># Save to FITS file</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;config[&#39;output_dir&#39;]: </span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, config[&#39;filename_out&#39;]:</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;filename_out&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">output_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;filename_out&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.fits&quot;</span>
+    <span class="n">hdul</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">HDUList</span><span class="p">([</span><span class="n">primary_hdu</span><span class="p">,</span> <span class="n">stacking_results_hdu</span><span class="p">])</span>
+    <span class="n">hdul</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">output_filename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FITS file &#39;</span><span class="si">{</span><span class="n">output_filename</span><span class="si">}</span><span class="s2">&#39; has been saved.&quot;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">output_filename</span></div>
+
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Salvatore Quai
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=5df4c8d1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

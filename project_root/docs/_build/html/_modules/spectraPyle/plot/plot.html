@@ -1,0 +1,747 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>spectraPyle.plot.plot - SpectraPyle 5.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">SpectraPyle 5.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <span class="sidebar-brand-text">SpectraPyle 5.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/stacking.html">stacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/schema.html">schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/processes.html">process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/instruments.html">instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/io.html">io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/spectrum.html">spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/statistic.html">statistic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">utils</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for spectraPyle.plot.plot</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Interactive Plotly visualization of the stacked spectrum.</span>
+
+<span class="sd">:func:`plotting` reads the output FITS file and generates a two-panel</span>
+<span class="sd">Plotly figure (pixel counts panel + spectrum panel) with all stacking</span>
+<span class="sd">estimators overlaid.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">plotly.subplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_subplots</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="plotting">
+<a class="viewcode-back" href="../../../api/plot.html#spectraPyle.plot.plot.plotting">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotting</span><span class="p">(</span><span class="n">output_filename</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">950</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">550</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate an interactive Plotly figure from a stacked FITS file.</span>
+
+<span class="sd">    Produces a two-panel figure: the top panel shows pixel counts</span>
+<span class="sd">    (good, bad, sigma-clipped), the bottom panel overlays all stacking</span>
+<span class="sd">    estimators (mean, median, geometric mean, weighted mean).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    output_filename : str or Path</span>
+<span class="sd">        Path to the stacked FITS file produced by :class:`~spectraPyle.stacking.stacking.Stacking`.</span>
+<span class="sd">    width : int, optional</span>
+<span class="sd">        Figure width in pixels. Default 950.</span>
+<span class="sd">    height : int, optional</span>
+<span class="sd">        Figure height in pixels. Default 550.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    plotly.graph_objects.Figure</span>
+<span class="sd">        A Plotly figure with two rows: pixel counts and spectrum flux.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plotting </span><span class="si">{</span><span class="n">output_filename</span><span class="si">}</span><span class="s2"> stack results&quot;</span><span class="p">)</span>
+    
+    <span class="n">redshift</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">units_fscale</span> <span class="o">=</span> <span class="n">get_header</span><span class="p">(</span><span class="n">name_stack</span><span class="o">=</span><span class="n">output_filename</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">units_fscale</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;erg/s/cm2&quot;</span><span class="p">:</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Luminosity [</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">]&quot;</span>
+        <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;arbitrary units&quot;</span><span class="p">:</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Flux [</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">]&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;units &#39;</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="s1">&#39; not understood!&#39;</span><span class="p">)</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Flux (units not understood!)&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Flux [</span><span class="si">{</span><span class="n">units_fscale</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">]&quot;</span>
+    
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span>
+        <span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">shared_xaxes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">row_heights</span><span class="o">=</span><span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">],</span>
+        <span class="n">vertical_spacing</span><span class="o">=</span><span class="mf">0.03</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Read stacking results</span>
+    <span class="c1">#(counts_columns, wavelength_column, flux_columns, error_columns,</span>
+    <span class="c1"># dispersion_columns, percentile_columns) = ploti.read_fits_and_select_columns(output_filename)</span>
+    <span class="p">(</span><span class="n">counts_columns</span><span class="p">,</span> <span class="n">wavelength_column</span><span class="p">,</span> <span class="n">flux_columns</span><span class="p">,</span> <span class="n">error_columns</span><span class="p">,</span>
+     <span class="n">dispersion_columns</span><span class="p">,</span> <span class="n">percentile_columns</span><span class="p">)</span> <span class="o">=</span> <span class="n">read_fits_and_select_columns</span><span class="p">(</span><span class="n">output_filename</span><span class="p">)</span>
+
+    <span class="c1"># Wavelength bin midpoints</span>
+    <span class="n">wavelength_nanom</span> <span class="o">=</span> <span class="n">wavelength_column</span><span class="p">[</span><span class="s1">&#39;wavelength&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span>
+    <span class="n">bin_width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wavelength_nanom</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">spectral_axis_midpoints</span> <span class="o">=</span> <span class="n">wavelength_nanom</span> <span class="o">-</span> <span class="p">(</span><span class="n">bin_width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Define display order and colors</span>
+    <span class="n">display_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;All spectra&quot;</span><span class="p">,</span> <span class="s2">&quot;Used spectra&quot;</span><span class="p">,</span> <span class="s2">&quot;Bad pixels&quot;</span><span class="p">,</span> <span class="s2">&quot;Sigma clipped&quot;</span><span class="p">]</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;grey&#39;</span><span class="p">]</span>
+    
+    <span class="c1"># show the count statistics in the top panel:</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">display_order</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="n">is_visible</span> <span class="o">=</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;All spectra&quot;</span><span class="p">,</span> <span class="s2">&quot;Used spectra&quot;</span><span class="p">]</span>  <span class="c1"># Show only these by default</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">spectral_axis_midpoints</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">counts_columns</span><span class="p">[</span><span class="n">key</span><span class="p">],</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+            <span class="n">visible</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="n">is_visible</span> <span class="k">else</span> <span class="s1">&#39;legendonly&#39;</span><span class="p">,</span>
+            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;hv&#39;</span><span class="p">),</span>
+            <span class="n">legendgroup</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>  <span class="c1"># Individual toggle groups</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># show the stacked spectra:</span>
+    <span class="n">display_order</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;specMean&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;specMedian&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;specWeightedMean&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;specGeometricMean&quot;</span>
+    <span class="p">]</span>
+
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;specMean&quot;</span><span class="p">:</span> <span class="s2">&quot;orange&quot;</span><span class="p">,</span>                 <span class="c1"># RGB(255, 165, 0)</span>
+        <span class="s2">&quot;specMedian&quot;</span><span class="p">:</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>                  <span class="c1"># RGB(0, 255, 255)</span>
+        <span class="s2">&quot;specWeightedMean&quot;</span><span class="p">:</span> <span class="s2">&quot;purple&quot;</span><span class="p">,</span>          <span class="c1"># RGB(128, 0, 128)</span>
+        <span class="s2">&quot;specGeometricMean&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span>           <span class="c1"># RGB(0, 128, 0)</span>
+    <span class="p">}</span>
+
+    <span class="n">error_fillcolors</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;specMean&quot;</span><span class="p">:</span> <span class="s2">&quot;rgba(255, 165, 0, 0.2)&quot;</span><span class="p">,</span>      <span class="c1"># transparent orange</span>
+        <span class="s2">&quot;specMedian&quot;</span><span class="p">:</span> <span class="s2">&quot;rgba(0, 255, 255, 0.2)&quot;</span><span class="p">,</span>    <span class="c1"># transparent cyan</span>
+        <span class="s2">&quot;specWeightedMean&quot;</span><span class="p">:</span> <span class="s2">&quot;rgba(128, 0, 128, 0.2)&quot;</span><span class="p">,</span>  <span class="c1"># transparent purple</span>
+        <span class="s2">&quot;specGeometricMean&quot;</span><span class="p">:</span> <span class="s2">&quot;rgba(0, 128, 0, 0.2)&quot;</span>    <span class="c1"># transparent green</span>
+    <span class="p">}</span>
+    
+    <span class="n">y_min</span> <span class="o">=</span> <span class="mf">0.9</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">flux_columns</span><span class="p">[</span><span class="s2">&quot;specMean&quot;</span><span class="p">]),</span> 
+                      <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">flux_columns</span><span class="p">[</span><span class="s2">&quot;specMedian&quot;</span><span class="p">])))</span>
+    
+    <span class="n">y_max</span> <span class="o">=</span> <span class="mf">1.1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">flux_columns</span><span class="p">[</span><span class="s2">&quot;specMean&quot;</span><span class="p">]),</span> 
+                      <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">flux_columns</span><span class="p">[</span><span class="s2">&quot;specMedian&quot;</span><span class="p">])))</span>
+    
+    <span class="c1"># add emission lines:</span>
+    <span class="n">main_flux</span> <span class="o">=</span> <span class="n">flux_columns</span><span class="p">[</span><span class="s2">&quot;specMedian&quot;</span><span class="p">]</span>  
+    
+    <span class="k">if</span> <span class="n">redshift</span> <span class="o">!=</span> <span class="s1">&#39;observed_frame&#39;</span><span class="p">:</span>
+        <span class="c1">#module_dir = os.path.dirname(spectraPyle.__file__)</span>
+        <span class="c1">#em_line_table_path = os.path.join(module_dir, &quot;tables&quot;, &quot;emission_lines_vacuum_table.csv&quot;)</span>
+        <span class="n">project_root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">spectraPyle</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">em_line_table_path</span> <span class="o">=</span> <span class="n">project_root</span> <span class="o">/</span> <span class="s2">&quot;tables&quot;</span> <span class="o">/</span> <span class="s2">&quot;emission_lines_vacuum_table.csv&quot;</span>
+        <span class="n">add_line_markers</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">em_line_table_path</span><span class="p">,</span> <span class="n">spectral_axis_midpoints</span><span class="p">,</span> <span class="n">main_flux</span><span class="p">,</span> <span class="n">redshift</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># addabsorption features:</span>
+        <span class="c1">#abs_feat_table_path = os.path.join(module_dir, &quot;tables&quot;, &quot;absorptions_table.csv&quot;)</span>
+        <span class="n">abs_feat_table_path</span> <span class="o">=</span> <span class="n">project_root</span> <span class="o">/</span> <span class="s2">&quot;tables&quot;</span> <span class="o">/</span> <span class="s2">&quot;absorptions_table.csv&quot;</span>
+        <span class="n">add_absorption_features</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">abs_feat_table_path</span><span class="p">,</span> <span class="n">spectral_axis_midpoints</span><span class="p">,</span> <span class="n">main_flux</span><span class="p">,</span> <span class="n">redshift</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">display_order</span><span class="p">:</span>
+        <span class="n">is_visible</span> <span class="o">=</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;specMedian&quot;</span>
+        <span class="n">base_visibility</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">is_visible</span> <span class="k">else</span> <span class="s2">&quot;legendonly&quot;</span>
+        <span class="n">error_visibility</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">is_visible</span> <span class="k">else</span> <span class="s2">&quot;legendonly&quot;</span>
+
+        <span class="c1"># Lower error bound (invisible line)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">spectral_axis_midpoints</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">flux_columns</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">-</span> <span class="n">error_columns</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">Error&quot;</span><span class="p">],</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;rgba(0,0,0,0)&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;hv&#39;</span><span class="p">),</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">hoverinfo</span><span class="o">=</span><span class="s2">&quot;skip&quot;</span><span class="p">,</span>
+            <span class="c1">#visible=error_visibility,</span>
+            <span class="n">legendgroup</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_error&quot;</span>
+        <span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Upper error bound + fill</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">spectral_axis_midpoints</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">flux_columns</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="n">error_columns</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">Error&quot;</span><span class="p">],</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;rgba(0,0,0,0)&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;hv&#39;</span><span class="p">),</span>
+            <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;tonexty&#39;</span><span class="p">,</span>
+            <span class="n">fillcolor</span><span class="o">=</span><span class="n">error_fillcolors</span><span class="p">[</span><span class="n">key</span><span class="p">],</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> ± 1σ&quot;</span><span class="p">,</span>
+            <span class="n">visible</span><span class="o">=</span><span class="n">error_visibility</span><span class="p">,</span>
+            <span class="n">legendgroup</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_error&quot;</span><span class="p">,</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">hoverinfo</span><span class="o">=</span><span class="s2">&quot;skip&quot;</span>
+        <span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1"># Lower dispersion bound (invisible line)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">spectral_axis_midpoints</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">flux_columns</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">-</span> <span class="n">dispersion_columns</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">Dispersion&quot;</span><span class="p">],</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;rgba(0,0,0,0)&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;hv&#39;</span><span class="p">),</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">hoverinfo</span><span class="o">=</span><span class="s2">&quot;skip&quot;</span><span class="p">,</span>
+            <span class="c1">#visible=&quot;legendonly&quot;,</span>
+            <span class="n">legendgroup</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_dispersion&quot;</span>
+        <span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Upper dispersion bound + fill</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">spectral_axis_midpoints</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">flux_columns</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="n">dispersion_columns</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">Dispersion&quot;</span><span class="p">],</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;rgba(0,0,0,0)&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;hv&#39;</span><span class="p">),</span>
+            <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;tonexty&#39;</span><span class="p">,</span>
+            <span class="n">fillcolor</span><span class="o">=</span><span class="n">error_fillcolors</span><span class="p">[</span><span class="n">key</span><span class="p">],</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> ± dispers.&quot;</span><span class="p">,</span>
+            <span class="n">visible</span><span class="o">=</span><span class="s2">&quot;legendonly&quot;</span><span class="p">,</span>
+            <span class="n">legendgroup</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_dispersion&quot;</span><span class="p">,</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">hoverinfo</span><span class="o">=</span><span class="s2">&quot;skip&quot;</span>
+        <span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1"># Main flux line</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">spectral_axis_midpoints</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">flux_columns</span><span class="p">[</span><span class="n">key</span><span class="p">],</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;hv&#39;</span><span class="p">),</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+            <span class="n">visible</span><span class="o">=</span><span class="n">base_visibility</span><span class="p">,</span>
+            <span class="n">legendgroup</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+            <span class="n">showlegend</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+    
+    
+    <span class="c1"># Layout</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+        <span class="n">xaxis2_title</span><span class="o">=</span><span class="s2">&quot;Wavelength (nm)&quot;</span><span class="p">,</span>
+        <span class="c1">#yaxis_title=&quot;#Spectra&quot;,</span>
+        <span class="n">yaxis2_title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="n">spectral_axis_midpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">spectral_axis_midpoints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])),</span>
+        <span class="n">xaxis2</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="n">spectral_axis_midpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">spectral_axis_midpoints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])),</span>
+        <span class="c1">#yaxis=dict(fixedrange=False),</span>
+        <span class="n">yaxis2</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">)),</span>
+        <span class="c1">#yaxis2=dict(fixedrange=False),</span>
+        <span class="n">barmode</span><span class="o">=</span><span class="s2">&quot;overlay&quot;</span><span class="p">,</span>
+        <span class="n">template</span><span class="o">=</span><span class="s2">&quot;plotly_white&quot;</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+        <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+        <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">,</span>
+        <span class="n">xanchor</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="mf">1.02</span><span class="p">,</span>  <span class="c1"># Places the legend to the right of the plot area</span>
+        <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">yanchor</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span>
+        <span class="n">bordercolor</span><span class="o">=</span><span class="s2">&quot;lightgrey&quot;</span><span class="p">,</span>
+        <span class="n">borderwidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">tracegroupgap</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">groupclick</span><span class="o">=</span><span class="s2">&quot;toggleitem&quot;</span><span class="p">,</span>
+        <span class="n">itemsizing</span><span class="o">=</span><span class="s2">&quot;trace&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mi">200</span><span class="p">),</span>  <span class="c1"># Make space on the right side of the figure for the legend</span>
+        <span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+    
+
+    
+<div class="viewcode-block" id="read_fits_and_select_columns">
+<a class="viewcode-back" href="../../../api/plot.html#spectraPyle.plot.plot.read_fits_and_select_columns">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_fits_and_select_columns</span><span class="p">(</span><span class="n">fits_filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract data columns from stacked FITS output.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fits_filename : str or Path</span>
+<span class="sd">        Path to the FITS file containing stacking results.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        (counts_columns, wavelength_column, flux_columns, error_columns,</span>
+<span class="sd">        dispersion_columns, percentile_columns) — all as dicts keyed by column name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+       
+    <span class="c1"># Open the FITS file</span>
+    <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fits_filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
+        <span class="c1"># Extract stacking results table and stack array (image)</span>
+        <span class="n">stacking_results_hdu</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="s1">&#39;STACKING_RESULTS&#39;</span><span class="p">]</span>
+        <span class="c1">#stackArr_hdu = hdul[&#39;STACK_ARRAY&#39;]</span>
+
+        <span class="c1"># Extract the column names from the stacking results table</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="n">stacking_results_hdu</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span>
+        <span class="c1">#print(f&quot;Available columns in &#39;STACKING_RESULTS&#39;: {column_names}&quot;)</span>
+        
+        <span class="n">counts_columns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;All spectra&#39;</span><span class="p">:</span> <span class="n">stacking_results_hdu</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;initialPixelCount&#39;</span><span class="p">]}</span>
+        <span class="n">counts_columns</span><span class="p">[</span><span class="s1">&#39;Used spectra&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stacking_results_hdu</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;goodPixelCount&#39;</span><span class="p">]</span>
+        <span class="n">counts_columns</span><span class="p">[</span><span class="s1">&#39;Bad pixels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stacking_results_hdu</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;badPixelCount&#39;</span><span class="p">]</span>
+        <span class="n">counts_columns</span><span class="p">[</span><span class="s1">&#39;Sigma clipped&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stacking_results_hdu</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;sigmaClippedCount&#39;</span><span class="p">]</span>
+        
+        <span class="c1"># Mandatory wavelength column</span>
+        <span class="n">wavelength_column</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wavelength&#39;</span><span class="p">:</span> <span class="n">stacking_results_hdu</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;wavelength&#39;</span><span class="p">]}</span>
+        
+        <span class="n">flux_columns</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">error_columns</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">dispersion_columns</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">percentile_columns</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="c1"># Filter out columns that contain &quot;Error&quot; or &quot;Dispersion&quot;</span>
+        <span class="n">filtered_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;Error&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">col</span> <span class="ow">and</span> <span class="s2">&quot;Dispersion&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">filtered_columns</span><span class="p">:</span>
+            <span class="n">flux_columns</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">stacking_results_hdu</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+            <span class="n">error_columns</span><span class="p">[</span><span class="n">column</span> <span class="o">+</span> <span class="s1">&#39;Error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stacking_results_hdu</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">column</span> <span class="o">+</span> <span class="s1">&#39;Error&#39;</span><span class="p">]</span>
+            <span class="n">dispersion_columns</span><span class="p">[</span><span class="n">column</span> <span class="o">+</span> <span class="s1">&#39;Dispersion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stacking_results_hdu</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">column</span> <span class="o">+</span> <span class="s1">&#39;Dispersion&#39;</span><span class="p">]</span>
+            
+        
+        <span class="n">filtered_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">]]</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">filtered_columns</span><span class="p">:</span>
+            <span class="n">percentile_columns</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">stacking_results_hdu</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+        
+    <span class="k">return</span>  <span class="n">counts_columns</span><span class="p">,</span> <span class="n">wavelength_column</span><span class="p">,</span> <span class="n">flux_columns</span><span class="p">,</span> <span class="n">error_columns</span><span class="p">,</span> <span class="n">dispersion_columns</span><span class="p">,</span> <span class="n">percentile_columns</span></div>
+
+
+<div class="viewcode-block" id="get_header">
+<a class="viewcode-back" href="../../../api/plot.html#spectraPyle.plot.plot.get_header">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_header</span><span class="p">(</span><span class="n">name_stack</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract metadata from FITS header.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name_stack : str or Path</span>
+<span class="sd">        Path to the FITS file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        (redshift, units, fscale) — values from FITS header keywords.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+    <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">name_stack</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdu</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">hdu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+    <span class="k">return</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;REDSHIFT&#39;</span><span class="p">],</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;UNITS&#39;</span><span class="p">],</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;FSCALE&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="add_line_markers">
+<a class="viewcode-back" href="../../../api/plot.html#spectraPyle.plot.plot.add_line_markers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_line_markers</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">line_table_path</span><span class="p">,</span> <span class="n">spectral_axis_midpoints</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">redshift</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add emission line markers to the figure.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fig : plotly.graph_objects.Figure</span>
+<span class="sd">        The figure to add traces to.</span>
+<span class="sd">    line_table_path : str or Path</span>
+<span class="sd">        Path to CSV table of emission lines.</span>
+<span class="sd">    spectral_axis_midpoints : ndarray</span>
+<span class="sd">        Wavelength array (nanometers).</span>
+<span class="sd">    flux : ndarray</span>
+<span class="sd">        Flux array for text offset calculation.</span>
+<span class="sd">    redshift : float</span>
+<span class="sd">        Redshift to apply to line rest wavelengths.</span>
+<span class="sd">    row : int, optional</span>
+<span class="sd">        Figure row for the trace. Default 2.</span>
+<span class="sd">    col : int, optional</span>
+<span class="sd">        Figure column for the trace. Default 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z_term</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">redshift</span><span class="p">)</span>
+    <span class="n">df_lines</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">line_table_path</span><span class="p">)</span>
+
+    <span class="n">wave_min</span><span class="p">,</span> <span class="n">wave_max</span> <span class="o">=</span> <span class="n">spectral_axis_midpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">spectral_axis_midpoints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">df_active</span> <span class="o">=</span> <span class="n">df_lines</span><span class="p">[</span>
+        <span class="p">(</span><span class="n">df_lines</span><span class="p">[</span><span class="s2">&quot;show&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span>
+        <span class="p">(</span><span class="n">df_lines</span><span class="p">[</span><span class="s2">&quot;wavelength_AA&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">z_term</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">&gt;=</span> <span class="n">wave_min</span><span class="p">)</span> <span class="o">&amp;</span>
+        <span class="p">(</span><span class="n">df_lines</span><span class="p">[</span><span class="s2">&quot;wavelength_AA&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">z_term</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">&lt;=</span> <span class="n">wave_max</span><span class="p">)</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_active</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">flux_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
+    <span class="n">y_min</span> <span class="o">=</span> <span class="mf">0.85</span> <span class="o">*</span> <span class="n">flux_min</span>
+    <span class="n">flux_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">df_active</span><span class="p">[</span><span class="s2">&quot;wavelength_AA&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">z_term</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">spectral_axis_midpoints</span><span class="p">,</span> <span class="n">flux</span><span class="p">)</span>
+    <span class="n">text_offset</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">flux_interp</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ion_label</span><span class="p">(</span><span class="n">raw</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">src</span><span class="p">,</span> <span class="n">tgt</span> <span class="ow">in</span> <span class="p">[(</span><span class="sa">r</span><span class="s2">&quot;$\alpha$&quot;</span><span class="p">,</span> <span class="s2">&quot;α&quot;</span><span class="p">),</span> <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\beta$&quot;</span><span class="p">,</span> <span class="s2">&quot;β&quot;</span><span class="p">),</span>
+                         <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\gamma$&quot;</span><span class="p">,</span> <span class="s2">&quot;γ&quot;</span><span class="p">),</span> <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\delta$&quot;</span><span class="p">,</span> <span class="s2">&quot;δ&quot;</span><span class="p">)]:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">raw</span>
+
+    <span class="c1"># Single trace: bottom point (no text) + top point (label) + None separator per line.</span>
+    <span class="c1"># mode=&quot;lines+text&quot; keeps line and label in the same trace → legend toggle hides both.</span>
+    <span class="n">x_all</span><span class="p">,</span> <span class="n">y_all</span><span class="p">,</span> <span class="n">texts</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">row_line</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df_active</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+        <span class="n">wavelength</span> <span class="o">=</span> <span class="n">row_line</span><span class="p">[</span><span class="s2">&quot;wavelength_AA&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">z_term</span> <span class="o">/</span> <span class="mi">10</span>
+        <span class="n">ion_label</span> <span class="o">=</span> <span class="n">_ion_label</span><span class="p">(</span><span class="n">row_line</span><span class="p">[</span><span class="s2">&quot;formatted_ion_simple&quot;</span><span class="p">])</span>
+        <span class="n">text_y</span> <span class="o">=</span> <span class="n">flux_interp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">text_offset</span>
+        <span class="n">x_all</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">wavelength</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="n">y_all</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">y_min</span><span class="p">,</span> <span class="n">text_y</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="n">texts</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ion_label</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">])</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">x_all</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_all</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lines+text&quot;</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="n">texts</span><span class="p">,</span>
+        <span class="n">textposition</span><span class="o">=</span><span class="s2">&quot;top center&quot;</span><span class="p">,</span>
+        <span class="n">textfont</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">),</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">dash</span><span class="o">=</span><span class="s2">&quot;dot&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Emission lines&quot;</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">legendgroup</span><span class="o">=</span><span class="s2">&quot;em_lines&quot;</span><span class="p">,</span> <span class="n">hoverinfo</span><span class="o">=</span><span class="s2">&quot;skip&quot;</span><span class="p">,</span>
+    <span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_absorption_features">
+<a class="viewcode-back" href="../../../api/plot.html#spectraPyle.plot.plot.add_absorption_features">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_absorption_features</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">absorption_table_path</span><span class="p">,</span> <span class="n">spectral_axis_midpoints</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">redshift</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add absorption feature markers to the figure.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fig : plotly.graph_objects.Figure</span>
+<span class="sd">        The figure to add traces to.</span>
+<span class="sd">    absorption_table_path : str or Path</span>
+<span class="sd">        Path to CSV table of absorption features.</span>
+<span class="sd">    spectral_axis_midpoints : ndarray</span>
+<span class="sd">        Wavelength array (nanometers).</span>
+<span class="sd">    flux : ndarray</span>
+<span class="sd">        Flux array for text offset calculation.</span>
+<span class="sd">    redshift : float</span>
+<span class="sd">        Redshift to apply to feature rest wavelengths.</span>
+<span class="sd">    row : int, optional</span>
+<span class="sd">        Figure row for the trace. Default 2.</span>
+<span class="sd">    col : int, optional</span>
+<span class="sd">        Figure column for the trace. Default 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z_term</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">redshift</span><span class="p">)</span>
+    <span class="n">df_absorp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">absorption_table_path</span><span class="p">)</span>
+
+    <span class="n">wave_min</span><span class="p">,</span> <span class="n">wave_max</span> <span class="o">=</span> <span class="n">spectral_axis_midpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">spectral_axis_midpoints</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s2">&quot;Show&quot;</span> <span class="ow">in</span> <span class="n">df_absorp</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df_absorp</span> <span class="o">=</span> <span class="n">df_absorp</span><span class="p">[</span><span class="n">df_absorp</span><span class="p">[</span><span class="s2">&quot;Show&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">df_active</span> <span class="o">=</span> <span class="n">df_absorp</span><span class="p">[</span>
+        <span class="p">(</span><span class="n">df_absorp</span><span class="p">[</span><span class="s2">&quot;Centre&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">z_term</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">&gt;=</span> <span class="n">wave_min</span><span class="p">)</span> <span class="o">&amp;</span>
+        <span class="p">(</span><span class="n">df_absorp</span><span class="p">[</span><span class="s2">&quot;Centre&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">z_term</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">&lt;=</span> <span class="n">wave_max</span><span class="p">)</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_active</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">flux_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
+    <span class="n">y_min</span> <span class="o">=</span> <span class="mf">0.85</span> <span class="o">*</span> <span class="n">flux_min</span>
+    <span class="n">flux_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">df_active</span><span class="p">[</span><span class="s2">&quot;Centre&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">z_term</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">spectral_axis_midpoints</span><span class="p">,</span> <span class="n">flux</span><span class="p">)</span>
+    <span class="n">text_offset</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">flux_interp</span><span class="p">)</span>
+
+    <span class="c1"># Single trace per category: pentagon polygon (rectangle + center-top anchor for the label)</span>
+    <span class="c1"># + None separator between features. fill=&quot;toself&quot; fills each sub-polygon independently.</span>
+    <span class="c1"># mode=&quot;lines+text&quot; keeps fill and label in one trace → legend toggle hides both.</span>
+    <span class="n">x_all</span><span class="p">,</span> <span class="n">y_all</span><span class="p">,</span> <span class="n">texts</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">row_feat</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df_active</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">row_feat</span><span class="p">[</span><span class="s2">&quot;Index name&quot;</span><span class="p">]</span>
+        <span class="n">text_y</span> <span class="o">=</span> <span class="n">flux_interp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">text_offset</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row_feat</span><span class="p">[</span><span class="s2">&quot;Line limits&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;–&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">*</span> <span class="n">z_term</span> <span class="o">/</span> <span class="mi">10</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">*</span> <span class="n">z_term</span> <span class="o">/</span> <span class="mi">10</span>
+        <span class="n">cx</span> <span class="o">=</span> <span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="c1"># Pentagon: bottom-left → bottom-right → top-right → center-top (label anchor)</span>
+        <span class="c1">#           → top-left → bottom-left, then None separator</span>
+        <span class="n">x_all</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">s</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="n">y_all</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">text_y</span><span class="p">,</span> <span class="n">text_y</span><span class="p">,</span> <span class="n">text_y</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+        <span class="n">texts</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">x_all</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">x_all</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_all</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lines+text&quot;</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="n">texts</span><span class="p">,</span>
+        <span class="n">textposition</span><span class="o">=</span><span class="s2">&quot;top center&quot;</span><span class="p">,</span>
+        <span class="n">textfont</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+        <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;toself&quot;</span><span class="p">,</span>
+        <span class="n">fillcolor</span><span class="o">=</span><span class="s2">&quot;rgba(173, 216, 230, 0.25)&quot;</span><span class="p">,</span>
+        <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;rgba(100, 149, 237, 0.5)&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Absorption features&quot;</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">legendgroup</span><span class="o">=</span><span class="s2">&quot;abs_feats&quot;</span><span class="p">,</span> <span class="n">hoverinfo</span><span class="o">=</span><span class="s2">&quot;skip&quot;</span><span class="p">,</span>
+    <span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span></div>
+
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Salvatore Quai
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=5df4c8d1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

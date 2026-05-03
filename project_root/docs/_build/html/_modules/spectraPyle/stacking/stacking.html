@@ -1,0 +1,903 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>spectraPyle.stacking.stacking - SpectraPyle 5.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">SpectraPyle 5.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <span class="sidebar-brand-text">SpectraPyle 5.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/stacking.html">stacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/schema.html">schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/processes.html">process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/instruments.html">instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/io.html">io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/spectrum.html">spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/statistic.html">statistic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">utils</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for spectraPyle.stacking.stacking</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/bin/python3</span>
+<span class="c1"># -------------- spectraPyle --------------- #</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Salvatore Quai&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Salvatore Quai&quot;</span><span class="p">,</span> 
+<span class="s2">&quot;Lucia Pozzetti&quot;</span><span class="p">,</span> 
+<span class="s2">&quot;Michele Moresco&quot;</span><span class="p">,</span> 
+<span class="s2">&quot;Margherita Talia&quot;</span><span class="p">,</span>
+<span class="s2">&quot;Zhiying Mao&quot;</span><span class="p">,</span>
+<span class="s2">&quot;Xavier Lopez Lopez&quot;</span><span class="p">,</span> 
+<span class="s2">&quot;Elisabeta Lusso&quot;</span><span class="p">,</span> 
+<span class="s2">&quot;Sotiria Fotopoulou&quot;</span><span class="p">]</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;5.0.2&quot;</span>
+<span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Salvatore Quai&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;salvatore.quai@unibo.it&quot;</span>
+<span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Developement&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Core stacking orchestrator for SpectraPyle.</span>
+
+<span class="sd">Entry point for CLI and programmatic use. The :class:`Stacking` class loads the</span>
+<span class="sd">configuration, chunks the catalog into batches of 500 spectra, runs per-spectrum</span>
+<span class="sd">processing via :func:`~spectraPyle.process.processes.main_parallel`, applies</span>
+<span class="sd">sigma-clipping, computes stacking statistics, and writes the result as a FITS file.</span>
+
+<span class="sd">Typical usage::</span>
+
+<span class="sd">    from spectraPyle.runtime.runtime_adapter import build_config_from_yaml, flatten_schema_model</span>
+<span class="sd">    from spectraPyle.stacking.stacking import Stacking</span>
+
+<span class="sd">    config = flatten_schema_model(build_config_from_yaml(&quot;config.yaml&quot;))</span>
+<span class="sd">    Stacking(config).run()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># -------------- Packages --------------</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="c1">#warnings.filterwarnings(&#39;ignore&#39;)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">sigma_clip</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.cosmology</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlatLambdaCDM</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle</span>
+<span class="n">importlib</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">spectraPyle</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.schema.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">StackingConfig</span><span class="p">,</span> <span class="n">StackingConfigResolver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.runtime.runtime_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">flatten_schema_model</span><span class="p">,</span>
+    <span class="n">build_config_from_json</span><span class="p">,</span>
+    <span class="n">build_config_from_yaml</span><span class="p">,</span>
+    <span class="n">build_config_from_dict</span>
+    <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logging</span><span class="p">,</span> <span class="n">get_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.io.IO</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.process.processes</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">spr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.statistic.statistics</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sstat</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.plot.plot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">spl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.spectrum.normalization</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">snorm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.io.filename_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_filename</span>
+<span class="c1">#importlib.reload(sio)</span>
+<span class="c1">#importlib.reload(spr)</span>
+<span class="c1">#importlib.reload(sstat)</span>
+<span class="c1">#importlib.reload(spl)</span>
+<span class="c1">#importlib.reload(snorm)</span>
+
+<span class="c1">#from typing import Optional, List, Literal, Dict, Any, Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="c1"># -------------- Stacking -------------</span>
+<div class="viewcode-block" id="Stacking">
+<a class="viewcode-back" href="../../../api/stacking.html#spectraPyle.stacking.stacking.Stacking">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Stacking</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Orchestrates the full spectral stacking pipeline.</span>
+
+<span class="sd">    Loads a flat configuration dictionary (produced by</span>
+<span class="sd">    :func:`~spectraPyle.runtime.runtime_adapter.flatten_schema_model`), sets up</span>
+<span class="sd">    cosmology and multiprocessing, then calls :meth:`run` to execute the pipeline.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_dict : dict</span>
+<span class="sd">        Flat configuration dictionary. Keys follow the legacy flat-dict convention</span>
+<span class="sd">        (e.g. ``config[&#39;grism_io&#39;][&#39;red&#39;][&#39;spectra_dir&#39;]``).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config : dict</span>
+<span class="sd">    inst : module</span>
+<span class="sd">        Dynamically loaded instrument module (e.g. ``spectraPyle.instruments.euclid``).</span>
+<span class="sd">    cosmology : astropy.cosmology.FlatLambdaCDM</span>
+<span class="sd">    num_cpus : int or None</span>
+<span class="sd">        Number of worker processes; ``None`` when multiprocessing is disabled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config_dict</span>
+        
+        <span class="c1"># ------ Title ---------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width_print</span> <span class="o">=</span> <span class="mi">80</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_print</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;spectraPyle - Version </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width_print</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Contact: </span><span class="si">{</span><span class="n">__email__</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width_print</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status: </span><span class="si">{</span><span class="n">__status__</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width_print</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_print</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        
+        <span class="c1"># ---------- Filename ----------</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;filename_out&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;AUTO&quot;</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;filename_out&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        
+        <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Configuration: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Starting stacking: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;filename_in&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># ---------- Instrument ----------</span>
+        <span class="n">instrument_loader</span> <span class="o">=</span> <span class="n">InstrumentLoader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inst</span> <span class="o">=</span> <span class="n">instrument_loader</span><span class="o">.</span><span class="n">get_instrument_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;instrument_name&quot;</span><span class="p">])</span>
+        
+        <span class="c1"># ---------- Output directory ----------</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">])</span>
+        <span class="n">output_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
+        
+        <span class="c1"># ---------- Cosmology ----------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cosmology</span> <span class="o">=</span> <span class="n">FlatLambdaCDM</span><span class="p">(</span><span class="n">H0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;cosmo_H0&#39;</span><span class="p">],</span> <span class="n">Om0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;cosmo_Om0&#39;</span><span class="p">])</span>
+        
+        <span class="n">max_cpu_fraction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;max_cpu_fraction&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;multiprocessing&#39;</span><span class="p">]:</span>    
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_cpus</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_cpu_fraction</span><span class="o">*</span><span class="n">sio</span><span class="o">.</span><span class="n">get_effective_cpu_limit</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_cpus</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Multiprocessing: using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_cpus</span><span class="si">}</span><span class="s2"> CPUs&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># ----------- Fixed variables (To be deprecated) ------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;air_vacuum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;save_to_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            
+    <span class="c1"># ------------ RUN --------------</span>
+<div class="viewcode-block" id="Stacking.run">
+<a class="viewcode-back" href="../../../api/stacking.html#spectraPyle.stacking.stacking.Stacking.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the stacking pipeline end-to-end.</span>
+
+<span class="sd">        Pipeline steps:</span>
+
+<span class="sd">        1. Read catalog and build wavelength grid.</span>
+<span class="sd">        2. Split catalog into chunks of 500 spectra.</span>
+<span class="sd">        3. For each chunk: call :func:`~spectraPyle.process.processes.main_parallel`,</span>
+<span class="sd">           accumulate resampled spectra in an intermediate HDF5 file.</span>
+<span class="sd">        4. Load the full resampled array, apply sigma-clipping.</span>
+<span class="sd">        5. Compute stacking statistics (mean, median, geometric mean, weighted mean).</span>
+<span class="sd">        6. Write output FITS file via :func:`~spectraPyle.io.IO.write_stack`.</span>
+<span class="sd">        7. Optionally generate a Plotly plot.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">            Results are written to disk at ``config[&#39;output_dir&#39;]``.</span>
+
+<span class="sd">        Side effects</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Creates ``&lt;output_dir&gt;/&lt;filename_out&gt;_array.h5`` (intermediate, deleted after use)</span>
+<span class="sd">        and ``&lt;output_dir&gt;/&lt;filename_out&gt;.fits`` (final output).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># --- Initialize an empty dictionary that will contain the main results ---# </span>
+        <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># --- initializing variables --- #</span>
+
+        <span class="n">keys_input</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;ID_column_name&#39;</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;z_type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;observed_frame&#39;</span><span class="p">:</span>
+            <span class="n">keys_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;redshift_column_name&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;galactic_extinction&#39;</span><span class="p">]:</span>
+            <span class="n">keys_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;gal_ext_column_name&#39;</span><span class="p">])</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_print</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Galactic Extinction Correction:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;This code uses the Gordon+23 extinction curve via the &quot;</span>
+                <span class="s2">&quot;&#39;dust_extinction&#39; Python package:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;https://dust-extinction.readthedocs.io/</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;If you use this functionality, please follow the citation policy &quot;</span>
+                <span class="s2">&quot;for the G23 model, available here:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;https://dust-extinction.readthedocs.io/en/latest/dust_extinction/references.html</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_print</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;custom&#39;</span><span class="p">:</span>
+            <span class="n">keys_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;custom_column_name&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;metadata path&#39;</span><span class="p">:</span>
+            <span class="n">keys_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;metadata_path_column_name&#39;</span><span class="p">])</span>
+            <span class="n">keys_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;metadata_file_column_name&#39;</span><span class="p">])</span>
+            <span class="n">keys_input</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;metadata_indx_column_name&#39;</span><span class="p">])</span>
+
+
+        <span class="n">data_input</span> <span class="o">=</span> <span class="n">sio</span><span class="o">.</span><span class="n">read_catalog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;input_dir&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;filename_in&#39;</span><span class="p">],</span> <span class="n">extension</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;filename_in_extention&#39;</span><span class="p">],</span> <span class="n">mandatory_keys</span><span class="o">=</span><span class="n">keys_input</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;template&#39;</span><span class="p">:</span>
+            <span class="n">sio</span><span class="o">.</span><span class="n">z_sort</span><span class="p">(</span><span class="n">z_column_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;redshift_column_name&#39;</span><span class="p">],</span> <span class="n">data_input</span><span class="o">=</span><span class="n">data_input</span><span class="p">)</span>
+
+        <span class="n">specIDs</span> <span class="o">=</span> <span class="n">data_input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;ID_column_name&#39;</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;galactic_extinction&#39;</span><span class="p">]:</span>
+            <span class="n">ebv_galactic</span> <span class="o">=</span> <span class="n">data_input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;gal_ext_column_name&#39;</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ebv_galactic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">specIDs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;custom&#39;</span><span class="p">:</span>
+            <span class="n">custom_norm_param</span> <span class="o">=</span> <span class="n">data_input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;custom_column_name&#39;</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">custom_norm_param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">specIDs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;z_type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;observed_frame&#39;</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot; redshift array &quot;&quot;&quot;</span>
+            <span class="n">redshift</span> <span class="o">=</span> <span class="n">data_input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;redshift_column_name&#39;</span><span class="p">]]</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot; defining the redshift of the stacking &quot;&quot;&quot;</span>
+            <span class="n">zMin</span><span class="p">,</span> <span class="n">zMax</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;z_stacking&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sio</span><span class="o">.</span><span class="n">z_stack</span><span class="p">(</span><span class="n">redshift</span><span class="o">=</span><span class="n">redshift</span><span class="p">,</span>
+                                                          <span class="n">z_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;z_type&#39;</span><span class="p">],</span>
+                                                          <span class="n">conservation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;conservation&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;The stacked spectrum will be generated at the observed frame&#39;</span><span class="p">)</span>
+            <span class="n">redshift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">specIDs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="c1">#redshift = &#39;none&#39;</span>
+            <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;z_stacking&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;observed_frame&#39;</span>
+            <span class="n">zMin</span> <span class="o">=</span> <span class="n">zMax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; defining the minimum and maximum wavelength of the stacked spectrum &quot;&quot;&quot;</span>
+        
+        <span class="n">wavelMin</span><span class="p">,</span> <span class="n">wavelMax</span><span class="p">,</span> <span class="n">grismList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inst</span><span class="o">.</span><span class="n">prepare_stacking</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">z_stacking</span><span class="o">=</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;z_stacking&#39;</span><span class="p">],</span> <span class="n">zMin</span><span class="o">=</span><span class="n">zMin</span><span class="p">,</span> <span class="n">zMax</span><span class="o">=</span><span class="n">zMax</span><span class="p">,</span> <span class="n">lambda_edges</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;lambda_edges_rest&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;pixel_resampling_type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+            <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;wavelength_stacking&#39;</span><span class="p">],</span> <span class="n">wavelength_stacking_bins</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;pixelResampling&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sio</span><span class="o">.</span><span class="n">build_wavelength_grid</span><span class="p">(</span>
+                <span class="n">wavelMin</span><span class="p">,</span>
+                <span class="n">wavelMax</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+                <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;z_stacking&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;pixel_resampling_type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">,</span> <span class="s1">&#39;lambda_shifted&#39;</span><span class="p">]:</span>
+                <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Δλ[AA] (constant) = </span><span class="si">{:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;pixelResampling&#39;</span><span class="p">]))</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;pixel_resampling_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;log_lambda&#39;</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Δlog λ (constant) = </span><span class="si">{:.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;pixelResampling&#39;</span><span class="p">]))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">inst</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;spectraPyle.supported_instruments.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;instrument_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;spectra_mode&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;metadata path&#39;</span><span class="p">:</span>
+                <span class="n">metadata_name</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">data_input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;metadata_path_column_name&#39;</span><span class="p">]]</span>
+                    <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+                    <span class="o">+</span> <span class="n">data_input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;metadata_file_column_name&#39;</span><span class="p">]]</span>
+                <span class="p">)</span>
+
+                <span class="n">hdu_indx</span> <span class="o">=</span> <span class="n">data_input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;metadata_indx_column_name&#39;</span><span class="p">]]</span>
+                <span class="k">if</span> <span class="n">metadata_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">hdu_indx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;metadata_name and hdu_indx must be provided in metadata mode&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;wavelength_stacking&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">readSpec_metadata</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">specIDs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">metadata_name</span><span class="p">,</span> <span class="n">hdu_indx</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">first_grism</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;grisms&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;wavelength_stacking&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">readSpec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">specIDs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">first_grism</span><span class="p">)</span>
+
+
+            <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;pixelResampling&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;original&#39;</span>
+            <span class="n">wavelength_stacking_bins</span> <span class="o">=</span> <span class="s1">&#39;original&#39;</span>
+
+
+        <span class="c1">#################################################################################################################</span>
+        <span class="n">data_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                        <span class="s1">&#39;initialPixelCount&#39;</span><span class="p">:</span> <span class="p">[],</span> 
+                        <span class="s1">&#39;badPixelCount&#39;</span><span class="p">:</span> <span class="p">[],</span> 
+                        <span class="s1">&#39;sigmaClippedCount&#39;</span><span class="p">:</span> <span class="p">[],</span> 
+                        <span class="s1">&#39;goodPixelCount&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s1">&#39;voidPixelCount&#39;</span><span class="p">:</span> <span class="p">[]</span>
+                        <span class="p">})</span>
+    <span class="c1">#################################################################################################################</span>
+
+        <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">500</span>  <span class="c1"># Process in chunks of N spectra</span>
+        <span class="c1">#num_chunks = max(1, round(len(specIDs) / chunk_size))  # Ensure at least 1 chunk</span>
+        <span class="n">num_chunks</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">specIDs</span><span class="p">)</span> <span class="o">/</span> <span class="n">chunk_size</span><span class="p">)))</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_print</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">specIDs</span><span class="p">)</span><span class="si">}</span><span class="s2"> spectra, split in </span><span class="si">{</span><span class="n">num_chunks</span><span class="si">}</span><span class="s2"> chunks.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_print</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Detect type of first non-null element</span>
+        <span class="n">first_id</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">specIDs</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first_id</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)):</span>
+            <span class="c1"># Pure numeric IDs -&gt; store as integer</span>
+            <span class="n">dtype_id</span> <span class="o">=</span> <span class="s2">&quot;i8&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Mixed or string IDs → use UTF-8 string dtype</span>
+            <span class="n">dtype_id</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">string_dtype</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                
+        <span class="c1">#hdf5_filename = self.config[&#39;output_dir&#39;] + self.config[&quot;filename_out&quot;] + &#39;_array&#39;</span>
+        <span class="c1">#with h5py.File(hdf5_filename+&#39;.h5&#39;, &quot;w&quot;) as f:</span>
+        
+        <span class="n">hdf5_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;filename_out&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_array.h5&quot;</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            
+            <span class="c1"># Create compressed HDF5 datasets with chunking</span>
+            <span class="k">if</span> <span class="s2">&quot;stackArr&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">stackArr_dset</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;stackArr&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;wavelength_stacking&#39;</span><span class="p">]),</span> <span class="mi">0</span><span class="p">),</span> 
+                                            <span class="n">maxshape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;wavelength_stacking&#39;</span><span class="p">]),</span> <span class="kc">None</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+                                            <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;wavelength_stacking&#39;</span><span class="p">]),</span><span class="n">chunk_size</span><span class="p">),</span> 
+                                            <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span> 
+                <span class="n">stackArrErr_dset</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;stackArrErr&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;wavelength_stacking&#39;</span><span class="p">]),</span> <span class="mi">0</span><span class="p">),</span> 
+                                               <span class="n">maxshape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;wavelength_stacking&#39;</span><span class="p">]),</span> <span class="kc">None</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+                                               <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;wavelength_stacking&#39;</span><span class="p">]),</span> <span class="n">chunk_size</span><span class="p">),</span> 
+                                               <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span> 
+
+                <span class="n">spectraIDlist_dset</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;object_id&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span>  
+                                <span class="n">maxshape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype_id</span><span class="p">,</span>  
+                                <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">,),</span>  
+                                <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="n">stackArr_dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;stackArr&quot;</span><span class="p">]</span>
+                <span class="n">stackArrErr_dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;stackArrErr&quot;</span><span class="p">]</span>
+                <span class="n">spectraIDlist_dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;object_id&quot;</span><span class="p">]</span>
+
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_chunks</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing chunk </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_chunks</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+
+                <span class="n">start_idx</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">chunk_size</span>
+                <span class="n">end_idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">specIDs</span><span class="p">))</span>
+
+                <span class="c1"># Read chunk</span>
+                <span class="n">chunk_specIDs</span> <span class="o">=</span> <span class="n">specIDs</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span>
+                <span class="n">chunk_redshift</span> <span class="o">=</span> <span class="n">redshift</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span>                
+                <span class="n">chunk_ebv_galactic</span> <span class="o">=</span> <span class="n">ebv_galactic</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span>
+                <span class="n">chunk_custom_norm_param</span> <span class="o">=</span> <span class="n">custom_norm_param</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span>
+                <span class="n">chunk_data_input</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data_input</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+                <span class="c1"># ----- processing the spectra ------ #</span>
+                <span class="n">chunk_stackArr</span><span class="p">,</span> <span class="n">chunk_stackArrErr</span><span class="p">,</span> <span class="n">norm_factor</span><span class="p">,</span> <span class="n">spectra_not_found</span><span class="p">,</span> <span class="n">chunk_spectraIDlist</span> <span class="o">=</span> <span class="n">spr</span><span class="o">.</span><span class="n">main_parallel</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="p">,</span> <span class="n">chunk_specIDs</span><span class="p">,</span> <span class="n">chunk_redshift</span><span class="p">,</span> <span class="n">chunk_ebv_galactic</span><span class="p">,</span> 
+                        <span class="n">chunk_custom_norm_param</span><span class="p">,</span>
+                        <span class="n">wavelength_stacking_bins</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;pixelResampling&#39;</span><span class="p">],</span> 
+                        <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;z_stacking&#39;</span><span class="p">],</span> <span class="n">grismList</span><span class="p">,</span> <span class="n">chunk_data_input</span>  
+                    <span class="p">)</span>
+
+                <span class="c1"># Compute counts</span>
+                <span class="n">initialPixelCount</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">chunk_stackArr</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">badPixelCount</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">chunk_stackArr</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">voidPixelCount</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">chunk_stackArr</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1">## number of spectra with flux=np.inf in a given pixel </span>
+
+                <span class="c1"># Convert inf → NaN for sigma clipping</span>
+                <span class="n">chunk_stackArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">chunk_stackArr</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">chunk_stackArr</span><span class="p">)</span>
+                <span class="n">chunk_stackArrErr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">chunk_stackArrErr</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">chunk_stackArrErr</span><span class="p">)</span>
+
+                <span class="c1"># Get current number of spectra (num_spectra) before resizing</span>
+                <span class="n">current_spectra_count</span> <span class="o">=</span> <span class="n">stackArr_dset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># How many spectra are already stored</span>
+
+                <span class="c1"># Compute new total size</span>
+                <span class="n">new_size</span> <span class="o">=</span> <span class="n">current_spectra_count</span> <span class="o">+</span> <span class="n">chunk_stackArr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="c1"># Resize datasets to accommodate new chunk</span>
+                <span class="n">stackArr_dset</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">stackArr_dset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">new_size</span><span class="p">))</span>  <span class="c1"># Resize along num_spectra</span>
+                <span class="n">stackArrErr_dset</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">stackArrErr_dset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">new_size</span><span class="p">))</span>  <span class="c1"># Resize along num_spectra</span>
+
+                <span class="n">spectraIDlist_dset</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">new_size</span><span class="p">,))</span>  <span class="c1"># Resize along num_spectra</span>
+
+                <span class="c1"># Correctly insert new chunk at the end of the dataset</span>
+                <span class="n">stackArr_dset</span><span class="p">[:,</span> <span class="n">current_spectra_count</span><span class="p">:</span><span class="n">new_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">chunk_stackArr</span>
+                <span class="n">stackArrErr_dset</span><span class="p">[:,</span> <span class="n">current_spectra_count</span><span class="p">:</span><span class="n">new_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">chunk_stackArrErr</span>
+
+                <span class="n">chunk_spectraIDlist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">chunk_spectraIDlist</span><span class="p">)</span>
+                <span class="n">spectraIDlist_dset</span><span class="p">[</span><span class="n">current_spectra_count</span><span class="p">:</span><span class="n">new_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">chunk_spectraIDlist</span>
+
+                <span class="c1"># Store in dictionary</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;initialPixelCount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initialPixelCount</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;badPixelCount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">badPixelCount</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;voidPixelCount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">voidPixelCount</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;initialPixelCount&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">initialPixelCount</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;badPixelCount&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">badPixelCount</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;voidPixelCount&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">voidPixelCount</span>
+
+
+            <span class="n">stackArr</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;stackArr&quot;</span><span class="p">][:]</span>
+            <span class="n">stackArrErr</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;stackArrErr&quot;</span><span class="p">][:]</span>
+
+
+            <span class="c1"># Sigma Clipping</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sigma_clipping_conditions&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">stackArr</span> <span class="o">=</span> <span class="n">sigma_clip</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> 
+                                      <span class="n">sigma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;sigma_clipping_conditions&#39;</span><span class="p">],</span>
+                                      <span class="n">maxiters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                      <span class="n">cenfunc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+            <span class="n">stackArrErr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">stackArr</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">stackArrErr</span><span class="p">)</span>
+
+            <span class="c1"># Compute some other counts</span>
+            <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;sigmaClippedCount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">stackArr</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;badPixelCount&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;voidPixelCount&#39;</span><span class="p">]</span>
+
+            <span class="c1">#initialPixelCount - badPixelCount</span>
+            <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;goodPixelCount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;initialPixelCount&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;badPixelCount&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;sigmaClippedCount&#39;</span><span class="p">]</span>
+
+
+            <span class="c1"># ------ francis+1991 like normalization ------- </span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;template&#39;</span><span class="p">:</span>
+                <span class="n">stackArr</span><span class="p">,</span> <span class="n">stackArrErr</span> <span class="o">=</span> <span class="n">snorm</span><span class="o">.</span><span class="n">francis1991_normalize</span><span class="p">(</span>
+                <span class="n">stackArr</span><span class="p">,</span>
+                <span class="n">stackArrErr</span><span class="p">,</span>
+                <span class="n">norm_stat</span><span class="o">=</span><span class="s2">&quot;median&quot;</span>
+                <span class="c1">#norm_stat=&quot;mean&quot;</span>
+                <span class="p">)</span>
+
+                <span class="c1"># write new datasets (do NOT overwrite originals)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;stackArr_norm&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;stackArrErr_norm&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">stackArrErr</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">)</span>
+            <span class="c1"># -----------------------------------------------</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing complete. The array containing the processed spectra has been stored in the HDF5 file </span><span class="si">{</span><span class="n">hdf5_path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="c1">#################################################################################################################</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; statistics: &quot;&quot;&quot;</span>
+        <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackSPmean&#39;</span><span class="p">],</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackDISPmean&#39;</span><span class="p">],</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackSPmed&#39;</span><span class="p">],</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackDISPmed&#39;</span><span class="p">],</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackSPgeomMean&#39;</span><span class="p">],</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackDISPgeomMean&#39;</span><span class="p">],</span> \
+            <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackSPmeanWeighted&#39;</span><span class="p">],</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackDISPmeanWeighted&#39;</span><span class="p">],</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackERmeanWeighted&#39;</span><span class="p">],</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackPERC16th&#39;</span><span class="p">],</span> \
+            <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackPERC84th&#39;</span><span class="p">],</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackPERC98th&#39;</span><span class="p">],</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackPERC99th&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sstat</span><span class="o">.</span><span class="n">stack_statistics</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">stackArrErr</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackSPgeomMean&#39;</span><span class="p">])):</span>
+            <span class="n">warning_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> WARNING: the Geometric mean stacked spectrum contains NaN values EXCLUSIVELY! </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;This may be due to one or more input spectra containing zero or negative fluxes in each pixel of the stacked spectrum. </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;The geometric mean is defined only for positive values. Please review your input data. </span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackSPgeomMean&#39;</span><span class="p">])):</span>
+            <span class="n">warning_message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Warning: The geometric mean stacked spectrum may be unreliable. </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;It contains NaN or negative values, possibly due to zero or negative fluxes in one or more input spectra. </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;The geometric mean is defined only for positive values. Please be careful when using the geometric mean stacked spectrum. </span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
+
+
+        <span class="c1">#################################################################################################################</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; bootstrap with replacement (for statistical uncertainties estimation): &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;bootstrapping_R&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackERmean&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackERmed&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackERgeomMean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sstat</span><span class="o">.</span><span class="n">bootstrStack</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">stackArr</span><span class="p">,</span><span class="n">R</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;bootstrapping_R&#39;</span><span class="p">],</span><span class="n">n_processes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_cpus</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackERmean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackDISPmean&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;goodPixelCount&#39;</span><span class="p">])</span>
+            <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackERmed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackDISPmed&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;goodPixelCount&#39;</span><span class="p">])</span>
+            <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackERgeomMean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;stackDISPgeomMean&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;goodPixelCount&#39;</span><span class="p">])</span>
+
+<span class="w">            </span><span class="sd">&quot;&quot;&quot; note: about the error spectrum of the weighted average spectrum see ./stackingEuclid/utils/statistics.py &quot;&quot;&quot;</span>
+
+
+        <span class="c1">#################################################################################################################</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; saving to file: &quot;&quot;&quot;</span>
+        <span class="n">output_filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;save_to_file&#39;</span><span class="p">]:</span>
+            <span class="n">output_filename</span> <span class="o">=</span> <span class="n">sio</span><span class="o">.</span><span class="n">save_to_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">)</span>
+
+
+        <span class="c1">#################################################################################################################</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Closing the program: &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_print</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1">#print (&#39;spectra_not_found: &#39;, spectra_not_found)</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;N. of spectra not found (or corrupted): &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectra_not_found</span><span class="p">[</span><span class="n">spectra_not_found</span> <span class="o">!=</span> <span class="s1">&#39;nan&#39;</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectra_not_found</span><span class="p">[</span><span class="n">spectra_not_found</span> <span class="o">!=</span> <span class="s1">&#39;nan&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;IDs of spectra not found (or corrupted):&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sp_n_f</span> <span class="ow">in</span> <span class="n">spectra_not_found</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">sp_n_f</span> <span class="o">!=</span> <span class="s1">&#39;nan&#39;</span><span class="p">:</span>
+                    <span class="nb">print</span> <span class="p">(</span><span class="n">sp_n_f</span><span class="p">)</span>
+
+        <span class="nb">print</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;filename_in&#39;</span><span class="p">],</span> <span class="s1">&#39; stacking completed.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">width_print</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">output_filename</span></div>
+</div>
+
+
+<div class="viewcode-block" id="InstrumentLoader">
+<a class="viewcode-back" href="../../../api/stacking.html#spectraPyle.stacking.stacking.InstrumentLoader">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InstrumentLoader</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dynamic loader for per-instrument driver modules.</span>
+
+<span class="sd">    Loads instrument-specific modules (euclid, desi) based on configuration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modules_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    
+<div class="viewcode-block" id="InstrumentLoader.get_instrument_module">
+<a class="viewcode-back" href="../../../api/stacking.html#spectraPyle.stacking.stacking.InstrumentLoader.get_instrument_module">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instrument_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instrument_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load and return the instrument driver module.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        instrument_name : str</span>
+<span class="sd">            Instrument name (&#39;euclid&#39; or &#39;desi&#39;).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        module</span>
+<span class="sd">            Dynamically imported module containing readSpec, readSpec_metadata, prepare_stacking.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ImportError</span>
+<span class="sd">            If the instrument module cannot be imported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">module_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;spectraPyle.instruments.</span><span class="si">{</span><span class="n">instrument_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        
+        <span class="k">if</span> <span class="n">module_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules_cache</span><span class="p">:</span>
+            <span class="c1"># First time: import</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_modules_cache</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span>
+            <span class="k">return</span> <span class="n">module</span>
+        
+        <span class="c1"># Already imported: reload if needed</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules_cache</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
+        <span class="n">importlib</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modules_cache</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span>  <span class="c1"># Update cache</span>
+        <span class="k">return</span> <span class="n">module</span></div>
+</div>
+
+
+        
+<div class="viewcode-block" id="load_config_file">
+<a class="viewcode-back" href="../../../api/stacking.html#spectraPyle.stacking.stacking.load_config_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_config_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;.yml&quot;</span><span class="p">]:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.json&quot;</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported config format&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">raw</span>     </div>
+
+        
+
+
+<div class="viewcode-block" id="validate_config">
+<a class="viewcode-back" href="../../../api/stacking.html#spectraPyle.stacking.stacking.validate_config">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_config</span><span class="p">(</span><span class="n">raw_dict</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">StackingConfig</span><span class="p">(</span><span class="o">**</span><span class="n">raw_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="run_stacking">
+<a class="viewcode-back" href="../../../api/stacking.html#spectraPyle.stacking.stacking.run_stacking">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_stacking</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="n">Stacking</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">output_filename</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">output_filename</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../api/stacking.html#spectraPyle.stacking.stacking.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CLI and programmatic entry point.</span>
+
+<span class="sd">    Accepts a path to a YAML/JSON config file or a pre-built config dict,</span>
+<span class="sd">    validates it through the full pipeline, and runs :class:`Stacking`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config : str, Path, or dict</span>
+<span class="sd">        Path to a YAML/JSON config file, or a pre-validated flat config dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Reading and validating config from file&quot;</span><span class="p">)</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="n">load_config_file</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">validate_config</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Reading and validating config from dictionary&quot;</span><span class="p">)</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">validate_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">config</span>   
+        
+    <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;✅ Configuration file read!&quot;</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Using: </span><span class="si">{</span><span class="n">cfg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">flatten_schema_model</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span> <span class="c1"># to be deprecated. </span>
+
+    <span class="k">return</span> <span class="n">run_stacking</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Salvatore Quai
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=5df4c8d1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>
