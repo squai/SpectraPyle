@@ -1,4 +1,11 @@
-###################################################
+"""
+Stacking statistics: mean, median, geometric mean, weighted mean, and bootstrap.
+
+:func:`stack_statistics` computes all four stacking estimators and their
+dispersions/errors from the sigma-clipped resampled array.
+:func:`bootstrStack` estimates uncertainties via bootstrap resampling.
+"""
+
 import numpy as np
 from multiprocessing import Pool
 from functools import partial
@@ -8,8 +15,6 @@ from tqdm import tqdm
 from spectraPyle.utils.log import get_logger
 
 logger = get_logger(__name__)
-
-###################################################
 def stack_statistics(stackArr, stackArrErr):
     """
     Compute a suite of stacking statistics for spectra.
@@ -138,22 +143,21 @@ def geomMean(arr, axis=1):
 '''
 
 def geomMean(arr, axis=1):
-    """
-    Robust geometric mean and log-space scatter.
+    """Compute robust geometric mean and log-space scatter.
 
     Parameters
     ----------
     arr : ndarray
-        Input array (can contain NaN, zero, negative values)
-    axis : int
-        Axis along which to compute
+        Input array (can contain NaN, zero, and negative values).
+    axis : int, optional
+        Axis along which to compute (default: 1).
 
     Returns
     -------
     gm : ndarray
-        Geometric mean
+        Geometric mean.
     sigma_ln : ndarray
-        Log-space RMS scatter
+        Log-space RMS scatter (intrinsic dispersion).
     """
 
     arr = np.asarray(arr)
@@ -180,24 +184,23 @@ def geomMean(arr, axis=1):
     
     
 def weighted_average(stackArr, stackArrErr):
-    """
-    Weighted mean, intrinsic dispersion, and 1-sigma uncertainty.
+    """Compute weighted mean, dispersion, and 1-sigma uncertainty.
 
     Parameters
     ----------
-    stackArr : ndarray
-        Shape (N_pixels, N_spectra)
-    stackArrErr : ndarray
-        Same shape, error spectra
+    stackArr : ndarray (N_pixels, N_spectra)
+        Spectra array.
+    stackArrErr : ndarray (N_pixels, N_spectra)
+        Error spectra array (weights = 1/err^2).
 
     Returns
     -------
     mean_w : ndarray
-        Weighted mean spectrum
+        Weighted mean spectrum.
     disp_w : ndarray
-        Intrinsic weighted dispersion
+        Intrinsic weighted dispersion.
     err_mean_w : ndarray
-        1-sigma uncertainty on the weighted mean
+        1-sigma uncertainty on the weighted mean.
     """
 
     arr = np.asarray(stackArr)
@@ -277,20 +280,28 @@ def bootstrStack(arr, R=250, repl=True, weight=None, n_processes=None):
 # =========================================================
 
 def bootstrap_iteration(idx_sample, arr):
-    """
-    Perform a single bootstrap resampling.
+    """Perform a single bootstrap resampling iteration.
 
     Parameters
     ----------
     idx_sample : ndarray
-        Indices of selected spectra (size M)
+        Indices of selected spectra (size M).
     arr : ndarray (Npix, Nspec)
-        Input spectra array
+        Input spectra array.
 
     Returns
     -------
-    tuple of arrays
-        (sum, mean, median, geometric mean)
+    tuple
+        Four arrays: (sum_arr, mean_arr, med_arr, geom_arr)
+
+        - sum_arr : ndarray
+            Sum of resampled spectra
+        - mean_arr : ndarray
+            Mean of resampled spectra
+        - med_arr : ndarray
+            Median of resampled spectra
+        - geom_arr : ndarray
+            Geometric mean of resampled spectra
     """
 
     arr_sample = arr[:, idx_sample]
@@ -315,28 +326,40 @@ def bootstrStack(
     n_processes=None,
     random_state=None,
 ):
-    """
-    Bootstrap resampling of stacked spectra.
+    """Bootstrap resampling of stacked spectra.
 
     Parameters
     ----------
     arr : ndarray (Npix, Nspec)
-        Input spectra array
-    R : int
-        Number of bootstrap realizations
-    replace : bool
-        Sampling with replacement
-    weights : array-like or None
-        Sampling probabilities
-    n_processes : int or None
-        Number of processes (None = serial)
-    random_state : int or None
-        Seed for reproducibility
+        Input spectra array.
+    R : int, optional
+        Number of bootstrap realizations (default: 250).
+    replace : bool, optional
+        Sampling with replacement (default: True).
+    weights : ndarray or None, optional
+        Sampling probabilities for each spectrum.
+    n_processes : int or None, optional
+        Number of processes for parallelization (None = serial).
+    random_state : int or None, optional
+        Seed for reproducibility.
 
     Returns
     -------
-    dict
-        Bootstrap statistics
+    tuple
+        Six arrays: (mean_spec, mean_err, med_spec, med_err, geom_spec, geom_err)
+
+        - mean_spec : ndarray
+            Mean spectrum from bootstrap samples
+        - mean_err : ndarray
+            Uncertainty on mean spectrum
+        - med_spec : ndarray
+            Median spectrum from bootstrap samples
+        - med_err : ndarray
+            Uncertainty on median spectrum
+        - geom_spec : ndarray
+            Geometric mean spectrum from bootstrap samples
+        - geom_err : ndarray
+            Uncertainty on geometric mean spectrum
     """
 
     print(f"Running bootstrap (R={R})")
