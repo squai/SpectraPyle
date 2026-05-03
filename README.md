@@ -38,7 +38,7 @@ python stacking.py --config config.yaml --instrument.grisms '["red","blue"]'
 ### Run via Voilà GUI (config builder)
 
 ```bash
-python project_root/notebooks/run_spectraPyle.py
+python project_root/notebooks/run_gui.py
 ```
 
 Opens a browser tab with an interactive config builder. No CLI output is expected.
