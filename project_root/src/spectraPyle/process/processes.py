@@ -1,3 +1,10 @@
+"""
+Multiprocessing driver for per-spectrum processing.
+
+:func:`main_parallel` splits spectrum IDs across CPUs and runs the
+read → redshift-shift → resample → normalize pipeline for each spectrum.
+"""
+
 import os
 import os.path
 import numpy as np
@@ -20,7 +27,13 @@ logger = get_logger(__name__)
 
 
 def _worker_logging_init(queue):
-    """Configure logging in worker process via QueueHandler."""
+    """Configure logging in worker process via QueueHandler.
+
+    Parameters
+    ----------
+    queue : multiprocessing.Queue
+        Queue to send log records to the main process.
+    """
     root = logging.getLogger("spectraPyle")
     root.setLevel(logging.DEBUG)
     root.handlers.clear()
