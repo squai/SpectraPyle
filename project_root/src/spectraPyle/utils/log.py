@@ -1,3 +1,11 @@
+"""
+Unified logging configuration for CLI and Voilà GUI.
+
+:func:`setup_logging` initialises the ``spectraPyle`` logger hierarchy.
+:func:`get_logger` returns a named child logger. In Voilà, log output
+is redirected to avoid polluting widget output cells.
+"""
+
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -30,6 +38,18 @@ class WidgetHandler(logging.Handler):
 
 
 def get_logger(name: str) -> logging.Logger:
+    """Get a named logger under the ``spectraPyle`` hierarchy.
+
+    Parameters
+    ----------
+    name : str
+        Logger name, typically ``__name__`` of the calling module.
+
+    Returns
+    -------
+    logging.Logger
+        A logger instance configured by :func:`setup_logging`.
+    """
     return logging.getLogger(name)
 
 
@@ -38,6 +58,18 @@ def setup_logging(
     log_file: Path | None = None,
     gui_output=None,
 ) -> None:
+    """Initialize the ``spectraPyle`` logger with optional file and Voilà handlers.
+
+    Parameters
+    ----------
+    level : str, optional
+        Logging level name (e.g., 'DEBUG', 'INFO', 'WARNING'). Default 'INFO'.
+    log_file : Path or None, optional
+        If provided, write logs to this file at DEBUG level. Default None.
+    gui_output : ipywidgets.Output or None, optional
+        If provided, redirect logs to this widget for Voilà GUI display. Default None
+        (logs to stdout via StreamHandler).
+    """
     root = logging.getLogger("spectraPyle")
     root.setLevel(logging.DEBUG)
     root.handlers.clear()

@@ -1,3 +1,11 @@
+"""
+Interactive Plotly visualization of the stacked spectrum.
+
+:func:`plotting` reads the output FITS file and generates a two-panel
+Plotly figure (pixel counts panel + spectrum panel) with all stacking
+estimators overlaid.
+"""
+
 import os
 import spectraPyle
 import matplotlib as mpl
@@ -13,6 +21,26 @@ from spectraPyle.utils.log import get_logger
 logger = get_logger(__name__)
 
 def plotting(output_filename, width=950, height=550):
+    """Generate an interactive Plotly figure from a stacked FITS file.
+
+    Produces a two-panel figure: the top panel shows pixel counts
+    (good, bad, sigma-clipped), the bottom panel overlays all stacking
+    estimators (mean, median, geometric mean, weighted mean).
+
+    Parameters
+    ----------
+    output_filename : str or Path
+        Path to the stacked FITS file produced by :class:`~spectraPyle.stacking.stacking.Stacking`.
+    width : int, optional
+        Figure width in pixels. Default 950.
+    height : int, optional
+        Figure height in pixels. Default 550.
+
+    Returns
+    -------
+    plotly.graph_objects.Figure
+        A Plotly figure with two rows: pixel counts and spectrum flux.
+    """
 
     print(f"Plotting {output_filename} stack results")
     
@@ -215,14 +243,18 @@ def plotting(output_filename, width=950, height=550):
 
     
 def read_fits_and_select_columns(fits_filename):
-    """
-    Read the FITS file and prompt the user to select the spectra columns they want.
+    """Extract data columns from stacked FITS output.
 
-    Args:
-        fits_filename (str): Path to the FITS file.
+    Parameters
+    ----------
+    fits_filename : str or Path
+        Path to the FITS file containing stacking results.
 
-    Returns:
-        selected_columns (dict): Dictionary containing the selected columns (wavelength and others).
+    Returns
+    -------
+    tuple
+        (counts_columns, wavelength_column, flux_columns, error_columns,
+        dispersion_columns, percentile_columns) — all as dicts keyed by column name.
     """
        
     # Open the FITS file
@@ -263,12 +295,43 @@ def read_fits_and_select_columns(fits_filename):
     return  counts_columns, wavelength_column, flux_columns, error_columns, dispersion_columns, percentile_columns
 
 def get_header(name_stack):
+    """Extract metadata from FITS header.
+
+    Parameters
+    ----------
+    name_stack : str or Path
+        Path to the FITS file.
+
+    Returns
+    -------
+    tuple
+        (redshift, units, fscale) — values from FITS header keywords.
+    """
     from astropy.io import fits
     with fits.open(name_stack) as hdu:
         header = hdu[0].header
     return header['REDSHIFT'], header['UNITS'], header['FSCALE']
 
 def add_line_markers(fig, line_table_path, spectral_axis_midpoints, flux, redshift, row=2, col=1):
+    """Add emission line markers to the figure.
+
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure
+        The figure to add traces to.
+    line_table_path : str or Path
+        Path to CSV table of emission lines.
+    spectral_axis_midpoints : ndarray
+        Wavelength array (nanometers).
+    flux : ndarray
+        Flux array for text offset calculation.
+    redshift : float
+        Redshift to apply to line rest wavelengths.
+    row : int, optional
+        Figure row for the trace. Default 2.
+    col : int, optional
+        Figure column for the trace. Default 1.
+    """
     z_term = (1 + redshift)
     df_lines = pd.read_csv(line_table_path)
 
@@ -317,6 +380,25 @@ def add_line_markers(fig, line_table_path, spectral_axis_midpoints, flux, redshi
 
 
 def add_absorption_features(fig, absorption_table_path, spectral_axis_midpoints, flux, redshift, row=2, col=1):
+    """Add absorption feature markers to the figure.
+
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure
+        The figure to add traces to.
+    absorption_table_path : str or Path
+        Path to CSV table of absorption features.
+    spectral_axis_midpoints : ndarray
+        Wavelength array (nanometers).
+    flux : ndarray
+        Flux array for text offset calculation.
+    redshift : float
+        Redshift to apply to feature rest wavelengths.
+    row : int, optional
+        Figure row for the trace. Default 2.
+    col : int, optional
+        Figure column for the trace. Default 1.
+    """
     z_term = (1 + redshift)
     df_absorp = pd.read_csv(absorption_table_path)
 
