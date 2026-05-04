@@ -125,6 +125,7 @@ Configs are YAML or JSON, loaded via `main(config)` in `stacking.py`. Use `make_
 Key config blocks: `instrument`, `io` (with `grism_io`), `cosmology`, `redshift`, `norm`, `resampling`, `catalog_columns`, `bootstrap`, `sigmaclip`, `parallel`, `plot`.
 
 ## Development Patterns
+- **Update documentation** Always ask for updating documentation after adding/modifying/removing features or manipulating any part of the code. Use the lowest number of tokens for this task
 - **Memory Management**: When modifying `stacking.py` or `processes.py`, do NOT read the entire file if only one method needs changes. Use `grep` or partial reading.
 - **Workflow**: 1. Plan change -> 2. Review `schema.py` impact -> 3. Implement -> 4. Manual check via `stacking.py --config`.
 - **Avoid Loops**: Do not attempt to run `pytest` as it is currently a placeholder. Verify logic via dry-runs or by inspecting Pydantic models.
