@@ -49,13 +49,13 @@ def normSpecInterv(specid, lbd, flux, error, lambdamin_norm, lambdamax_norm, nor
     """
 
     vecnorm = flux[(lbd >= lambdamin_norm) & (lbd <= lambdamax_norm)]
-    
+
     if (lambdamin_norm < np.nanmin(lbd)) or (lambdamax_norm > np.nanmax(lbd)):
         print (f"WARNING normalization interval [{lambdamin_norm}, {lambdamax_norm}] [$\AA$] partially outside the wavelength range of the spectrum [{np.round(lbd[0],2)},{np.round(lbd[-1],2)}] [$\AA$].")
 
     if len(vecnorm) == 0:
         raise ValueError(fr"Normalization failure for {str(specid)}: normalization interval [{lambdamin_norm}, {lambdamax_norm}] [$\AA$] outside the wavelength range of the spectrum [{np.round(lbd[0],2)},{np.round(lbd[-1],2)}] [$\AA$].")
-    
+
     if np.all(np.isnan(vecnorm)):
         raise ValueError(fr"Normalization failure for {str(specid)}: no valid flux values in the normalization interval [ {lambdamin_norm}, {lambdamax_norm}] [$\AA$].")
     if norm_stat == 'median':
@@ -68,7 +68,7 @@ def normSpecInterv(specid, lbd, flux, error, lambdamin_norm, lambdamax_norm, nor
         norm = np.nanmin(vecnorm)
     else:
         raise ValueError(f"Normalization failure: statistics '{norm_stat}' to be applied to the normalization interval not understood or implemented yet.")
-        
+
     if (not np.isfinite(norm)) or (norm <= 0):
         raise ValueError(
             fr"Normalization failure: invalid normalization value ({norm}) "
@@ -108,7 +108,7 @@ def normSpecMed(lbd, flux, error):
         raise ValueError(
             fr"Normalization failure: invalid normalization value ({norm}) "
             )
-    
+
     fluxNorm = flux / norm
     errorNorm = error / norm
     return fluxNorm, errorNorm, norm
@@ -138,25 +138,56 @@ def normSpecIntegrMean(lbd, flux, error):
     diff = np.full_like(lbd, 0, dtype=float)
     diff[:-1] = np.diff(lbd)
     diff[-1] = diff[-2]
-    norm = np.nansum(flux*diff) / (lbd[-1]-lbd[0]) ## option n.1 
+    norm = np.nansum(flux*diff) / (lbd[-1]-lbd[0]) ## option n.1
     #norm = np.nansum(flux) / len(lbd) ## option n.2 equivalent to option n1
 
     if (not np.isfinite(norm)) or (norm <= 0):
         raise ValueError(
             fr"Normalization failure: invalid normalization value ({norm}) "
             )
-        
+
     fluxNorm = flux / norm
     errorNorm = error / norm
     return fluxNorm, errorNorm, norm
-    
-def normSpecCustom (lbd, flux, error, norm):
-    ## it requires a custom normalization parameter to be provided in the catalogue datafile
+
+def normSpecCustom(lbd, flux, error, norm):
+    """Normalize a spectrum by a caller-supplied scalar value.
+
+    The normalization scalar ``norm`` is typically read from a catalog column
+    (e.g. a photometric flux in a reference band). Use
+    ``spectra_normalization: "custom"`` in the configuration and set
+    ``catalog_columns.custom_normalization.custom_column_name`` to the column name.
+
+    Parameters
+    ----------
+    lbd : array-like
+        Wavelength array (Å). Accepted for API consistency but not used.
+    flux : ndarray
+        Flux array.
+    error : ndarray
+        Error (1-sigma) array.
+    norm : float
+        Normalization scalar. Must be finite and > 0.
+
+    Returns
+    -------
+    fluxNorm : ndarray
+        Normalized flux array.
+    errorNorm : ndarray
+        Normalized error array.
+    norm : float
+        The normalization value applied.
+
+    Raises
+    ------
+    ValueError
+        If ``norm`` is not finite or is ≤ 0.
+    """
     if (not np.isfinite(norm)) or (norm <= 0):
         raise ValueError(
             fr"Normalization failure: invalid normalization value ({norm}) "
             )
-        
+
     fluxNorm = flux / norm
     errorNorm = error / norm
     return fluxNorm, errorNorm, norm
@@ -257,7 +288,7 @@ def francis1991_normalize(
     # --------------------------------------------------
     # Robust alpha estimator
     # --------------------------------------------------
-    
+
     def sig_clip_alpha(vals):
         for _ in range(max_iter_clip):
             mu = np.nanmedian(vals)
@@ -272,11 +303,11 @@ def francis1991_normalize(
                 break
 
             vals = vals[good]
-            
+
             if vals.size < min_overlap:
                 return np.nan
         return vals
-    
+
     def robust_alpha(ref_vals, cur_vals):
 
         mask = (
@@ -303,7 +334,7 @@ def francis1991_normalize(
 
         ## no sigma clipping
         return stat_func(ref_vals[mask]) / stat_func(cur_vals[mask])
-    
+
     # --------------------------------------------------
     # Incremental normalization
     # --------------------------------------------------
@@ -349,4 +380,3 @@ def francis1991_normalize(
         ref_count[new_only] = 1
 
     return norm_flux, norm_err
-

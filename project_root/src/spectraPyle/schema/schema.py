@@ -271,12 +271,41 @@ class ResamplingConfig(BaseModel):
 # =========================================================
 
 class MetadataColumnsConfig(BaseModel):
+    """Catalog column names for metadata path access mode.
+
+    When ``spectra_mode = "metadata path"``, per-spectrum file paths and indices
+    are read from catalog columns.
+
+    Parameters
+    ----------
+    metadata_path_column_name : str
+        Column name containing spectrum file paths (e.g., ``"path"``).
+    metadata_file_column_name : str
+        Column name containing spectrum filenames within those paths
+        (e.g., ``"filename"``).
+    metadata_indx_column_name : str
+        Column name containing spectrum index or HDU number within the file
+        (e.g., ``"index"``).
+    """
     metadata_path_column_name: str
     metadata_file_column_name: str
     metadata_indx_column_name: str
 
 
 class GalacticExtinctionConfig(BaseModel):
+    """Galactic extinction correction configuration.
+
+    When enabled, spectrum flux is corrected for Galactic dust extinction
+    using the Gordon+23 reddening law via ``dust_extinction``.
+
+    Parameters
+    ----------
+    galactic_extinction : bool
+        Enable Galactic extinction correction (default: False).
+    gal_ext_column_name : str, optional
+        Catalog column containing E(B-V) values (required if
+        ``galactic_extinction = True``).
+    """
     galactic_extinction: bool = False
     gal_ext_column_name: Optional[str] = None
 
@@ -290,10 +319,42 @@ class GalacticExtinctionConfig(BaseModel):
 
 
 class CustomNormalizationColumnsConfig(BaseModel):
+    """Catalog column name for custom normalization mode.
+
+    When ``spectra_normalization = "custom"``, the normalization scalar for
+    each spectrum is read from a catalog column.
+
+    Parameters
+    ----------
+    custom_column_name : str, optional
+        Catalog column containing per-spectrum normalization values
+        (e.g., a photometric flux). Required if custom normalization is used.
+    """
     custom_column_name: Optional[str] = None
 
 
 class CatalogColumnsConfig(BaseModel):
+    """Catalog column name configuration.
+
+    Maps logical column roles to actual catalog column names. The catalog is
+    loaded via ``io.filename_in`` and must contain at least the ID column.
+
+    Parameters
+    ----------
+    ID_column_name : str
+        Column name containing unique spectrum identifiers.
+    redshift_column_name : str, optional
+        Column name containing redshift values (required unless
+        ``redshift.z_type = "observed_frame"``).
+    metadata : MetadataColumnsConfig, optional
+        Column names for metadata path mode (required if
+        ``spectra_mode = "metadata path"``).
+    galactic_extinction_parameters : GalacticExtinctionConfig
+        Galactic extinction column and enable flag.
+    custom_normalization : CustomNormalizationColumnsConfig, optional
+        Custom normalization column (required if
+        ``spectra_normalization = "custom"``).
+    """
     ID_column_name: str
     redshift_column_name: Optional[str] = None
     metadata: Optional[MetadataColumnsConfig] = None

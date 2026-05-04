@@ -1,35 +1,28 @@
 #!/bin/python3
+"""Orchestrate the full spectral stacking pipeline.
+
+Reads a catalog, processes spectra in parallel chunks of 500
+(shift → resample → normalize), applies sigma-clipping, computes
+stacking statistics (median / mean / weighted mean / geometric mean),
+and writes the result as a two-HDU FITS file.
+
+Entry point: :func:`main`.
+"""
+
 # -------------- spectraPyle --------------- #
 __author__ = "Salvatore Quai"
-__credits__ = ["Salvatore Quai", 
-"Lucia Pozzetti", 
-"Michele Moresco", 
+__credits__ = ["Salvatore Quai",
+"Lucia Pozzetti",
+"Michele Moresco",
 "Margherita Talia",
 "Zhiying Mao",
-"Xavier Lopez Lopez", 
-"Elisabeta Lusso", 
+"Xavier Lopez Lopez",
+"Elisabeta Lusso",
 "Sotiria Fotopoulou"]
 __version__ = "5.0.2"
 __maintainer__ = "Salvatore Quai"
 __email__ = "salvatore.quai@unibo.it"
 __status__ = "Developement"
-
-"""
-Core stacking orchestrator for SpectraPyle.
-
-Entry point for CLI and programmatic use. The :class:`Stacking` class loads the
-configuration, chunks the catalog into batches of 500 spectra, runs per-spectrum
-processing via :func:`~spectraPyle.process.processes.main_parallel`, applies
-sigma-clipping, computes stacking statistics, and writes the result as a FITS file.
-
-Typical usage::
-
-    from spectraPyle.runtime.runtime_adapter import build_config_from_yaml, flatten_schema_model
-    from spectraPyle.stacking.stacking import Stacking
-
-    config = flatten_schema_model(build_config_from_yaml("config.yaml"))
-    Stacking(config).run()
-"""
 
 # -------------- Packages --------------
 import os
