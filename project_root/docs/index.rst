@@ -12,6 +12,15 @@ and combines them using median, mean, weighted mean, or geometric mean statistic
    :caption: User Guide
 
    quickstart
+   gui-tour
+   citation
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Concepts
+
+   normalization
+   resampling
 
 .. toctree::
    :maxdepth: 2
