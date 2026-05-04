@@ -58,6 +58,9 @@ def stack_statistics(stackArr, stackArrErr):
         97.73th percentile (~2 sigma for a Gaussian).
     stackPERC99th : ndarray
         99.73th percentile (~3 sigma for a Gaussian).
+    geomMeanPixelCount : ndarray
+        Number of pixels with positive finite flux that entered the
+        geometric mean computation, per wavelength bin.
     """
 
     # ---------- Arithmetic statistics ----------
@@ -70,7 +73,7 @@ def stack_statistics(stackArr, stackArrErr):
     stackDISPmed = 1.4826 * MAD  # Gaussian-equivalent sigma
 
     # ---------- Geometric mean ----------
-    stackSPgeomMean, stackDISPgeomMean = geomMean(stackArr)
+    stackSPgeomMean, stackDISPgeomMean, geomMeanPixelCount = geomMean(stackArr)
 
     # ---------- Weighted mean ----------
     (stackSPmeanWeighted,
@@ -97,6 +100,7 @@ def stack_statistics(stackArr, stackArrErr):
         stackPERC84th,
         stackPERC98th,
         stackPERC99th,
+        geomMeanPixelCount,
     )
 
 '''
@@ -158,6 +162,9 @@ def geomMean(arr, axis=1):
         Geometric mean.
     sigma_ln : ndarray
         Log-space RMS scatter (intrinsic dispersion).
+    pixel_count : ndarray
+        Number of pixels with positive finite flux that entered the
+        geometric mean computation, per wavelength bin.
     """
 
     arr = np.asarray(arr)
@@ -180,7 +187,9 @@ def geomMean(arr, axis=1):
     # Back to linear space
     gm = np.exp(mean_log)
 
-    return gm, sigma_ln
+    pixel_count = np.sum(valid, axis=axis)
+
+    return gm, sigma_ln, pixel_count
     
     
 def weighted_average(stackArr, stackArrErr):
@@ -309,7 +318,7 @@ def bootstrap_iteration(idx_sample, arr):
     sum_arr = np.nansum(arr_sample, axis=1)
     mean_arr = np.nanmean(arr_sample, axis=1)
     med_arr = np.nanmedian(arr_sample, axis=1)
-    geom_arr, _ = geomMean(arr_sample)
+    geom_arr, _, _ = geomMean(arr_sample)
 
     return sum_arr, mean_arr, med_arr, geom_arr
 

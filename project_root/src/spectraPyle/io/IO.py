@@ -427,6 +427,8 @@ def save_to_file(config, data_dict):
         fits.Column(name='goodPixelCount', format='K', array=data_dict['goodPixelCount']),
         fits.Column(name='badPixelCount', format='K', array=data_dict['badPixelCount']),
         fits.Column(name='sigmaClippedCount', format='K', array=data_dict['sigmaClippedCount']),
+        fits.Column(name='geomMeanPixelCount', format='K', array=data_dict['geomMeanPixelCount']),
+        fits.Column(name='templateNormMaskedCount', format='K', array=data_dict['templateNormMaskedCount']),
     ])
 
     stacking_results_hdu = fits.BinTableHDU.from_columns(cols, name="STACKING_RESULTS")

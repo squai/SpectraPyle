@@ -92,7 +92,19 @@ def plotting(output_filename, width=950, height=550):
             legendgroup=key,  # Individual toggle groups
             showlegend=True,
         ), row=1, col=1)
-    
+
+    # Geometric mean pixel count: auto-toggles with the geometric mean spectrum trace
+    fig.add_trace(go.Scatter(
+        x=spectral_axis_midpoints,
+        y=counts_columns['Geom. mean pixels'],
+        mode='lines',
+        name='Geom. mean pixels',
+        visible='legendonly',
+        line=dict(color='orange', shape='hv'),
+        legendgroup='specGeometricMean',
+        showlegend=False,
+    ), row=1, col=1)
+
     # show the stacked spectra:
     display_order = [
         "specMean",
@@ -271,6 +283,7 @@ def read_fits_and_select_columns(fits_filename):
         counts_columns['Used spectra'] = stacking_results_hdu.data['goodPixelCount']
         counts_columns['Bad pixels'] = stacking_results_hdu.data['badPixelCount']
         counts_columns['Sigma clipped'] = stacking_results_hdu.data['sigmaClippedCount']
+        counts_columns['Geom. mean pixels'] = stacking_results_hdu.data['geomMeanPixelCount']
         
         # Mandatory wavelength column
         wavelength_column = {'wavelength': stacking_results_hdu.data['wavelength']}
