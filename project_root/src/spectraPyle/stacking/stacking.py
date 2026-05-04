@@ -408,7 +408,7 @@ class Stacking:
                                       maxiters=None, axis=1,
                                       cenfunc=np.nanmean, copy=False).filled(np.nan)
 
-            stackArrErr = np.where(stackArr == np.nan, np.nan, stackArrErr)
+            stackArrErr = np.where(np.isnan(stackArr), np.nan, stackArrErr)
 
             # Compute some other counts
             data_dict['sigmaClippedCount'] = np.sum(np.isnan(stackArr), axis=1) - data_dict['badPixelCount'] - data_dict['voidPixelCount']
@@ -416,15 +416,20 @@ class Stacking:
             #initialPixelCount - badPixelCount
             data_dict['goodPixelCount'] = data_dict['initialPixelCount'] - data_dict['badPixelCount'] - data_dict['sigmaClippedCount']
 
+            data_dict['templateNormMaskedCount'] = np.zeros_like(data_dict['goodPixelCount'])
 
-            # ------ francis+1991 like normalization ------- 
+            # ------ francis+1991 like normalization -------
             if self.config['spectra_normalization'] == 'template':
+                pre_nan = np.sum(np.isnan(stackArr), axis=1)
                 stackArr, stackArrErr = snorm.francis1991_normalize(
                 stackArr,
                 stackArrErr,
                 norm_stat="median"
                 #norm_stat="mean"
                 )
+                templateNormMaskedCount = np.sum(np.isnan(stackArr), axis=1) - pre_nan
+                data_dict['templateNormMaskedCount'] = templateNormMaskedCount
+                data_dict['goodPixelCount'] -= templateNormMaskedCount
 
                 # write new datasets (do NOT overwrite originals)
                 f.create_dataset("stackArr_norm", data=stackArr, compression="gzip")
@@ -437,7 +442,8 @@ class Stacking:
         """ statistics: """
         data_dict['stackSPmean'], data_dict['stackDISPmean'], data_dict['stackSPmed'], data_dict['stackDISPmed'], data_dict['stackSPgeomMean'], data_dict['stackDISPgeomMean'], \
             data_dict['stackSPmeanWeighted'], data_dict['stackDISPmeanWeighted'], data_dict['stackERmeanWeighted'], data_dict['stackPERC16th'], \
-            data_dict['stackPERC84th'], data_dict['stackPERC98th'], data_dict['stackPERC99th'] = sstat.stack_statistics(stackArr, stackArrErr)
+            data_dict['stackPERC84th'], data_dict['stackPERC98th'], data_dict['stackPERC99th'], \
+            data_dict['geomMeanPixelCount'] = sstat.stack_statistics(stackArr, stackArrErr)
 
 
         if np.all(np.isnan(data_dict['stackSPgeomMean'])):

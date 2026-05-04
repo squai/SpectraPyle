@@ -92,7 +92,19 @@ def plotting(output_filename, width=950, height=550):
             legendgroup=key,  # Individual toggle groups
             showlegend=True,
         ), row=1, col=1)
-    
+
+    # Geometric mean pixel count: auto-toggles with the geometric mean spectrum trace
+    fig.add_trace(go.Scatter(
+        x=spectral_axis_midpoints,
+        y=counts_columns['Geom. mean pixels'],
+        mode='lines',
+        name='Geom. mean pixels',
+        visible='legendonly',
+        line=dict(color='orange', shape='hv'),
+        legendgroup='specGeometricMean',
+        showlegend=False,
+    ), row=1, col=1)
+
     # show the stacked spectra:
     display_order = [
         "specMean",
@@ -271,6 +283,7 @@ def read_fits_and_select_columns(fits_filename):
         counts_columns['Used spectra'] = stacking_results_hdu.data['goodPixelCount']
         counts_columns['Bad pixels'] = stacking_results_hdu.data['badPixelCount']
         counts_columns['Sigma clipped'] = stacking_results_hdu.data['sigmaClippedCount']
+        counts_columns['Geom. mean pixels'] = stacking_results_hdu.data['geomMeanPixelCount']
         
         # Mandatory wavelength column
         wavelength_column = {'wavelength': stacking_results_hdu.data['wavelength']}
@@ -280,8 +293,15 @@ def read_fits_and_select_columns(fits_filename):
         dispersion_columns = {}
         percentile_columns = {}
         
-        # Filter out columns that contain "Error" or "Dispersion"
-        filtered_columns = [col for col in column_names[5:-4] if "Error" not in col and "Dispersion" not in col]
+        # Flux columns: start with 'spec', excluding percentiles and Error/Dispersion variants
+        _percentile_cols = {'spec16th', 'spec84th', 'spec98th', 'spec99th'}
+        filtered_columns = [
+            col for col in column_names
+            if col.startswith('spec')
+            and col not in _percentile_cols
+            and 'Error' not in col
+            and 'Dispersion' not in col
+        ]
         for column in filtered_columns:
             flux_columns[column] = stacking_results_hdu.data[column]
             error_columns[column + 'Error'] = stacking_results_hdu.data[column + 'Error']
