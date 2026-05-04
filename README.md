@@ -23,6 +23,14 @@ scientific analysis.
 pip install -e ".[all]"
 ```
 
+### Run via Voilà GUI (config builder)
+
+```bash
+python project_root/notebooks/run_gui.py
+```
+
+Opens a browser tab with an interactive config builder. No CLI output is expected.
+
 ### Run via CLI
 
 ```bash
@@ -34,14 +42,6 @@ Override individual config keys at runtime:
 ```bash
 python stacking.py --config config.yaml --instrument.grisms '["red","blue"]'
 ```
-
-### Run via Voilà GUI (config builder)
-
-```bash
-python project_root/notebooks/run_gui.py
-```
-
-Opens a browser tab with an interactive config builder. No CLI output is expected.
 
 ### Minimal YAML config example
 
@@ -254,6 +254,41 @@ cd project_root/docs
 make html
 # Output: project_root/docs/_build/html/index.html
 ```
+
+---
+
+## Citing SpectraPyle
+
+If you use SpectraPyle in your research, please cite:
+
+> Euclid Collaboration, Quai S., Pozzetti L., et al. 2026, *Astronomy & Astrophysics*, 707, A232.
+> DOI: [10.1051/0004-6361/202557329](https://doi.org/10.1051/0004-6361/202557329)
+
+**BibTeX:**
+
+```bibtex
+@ARTICLE{Quai2026,
+  author = {{Euclid Collaboration: Quai}, S. and {Pozzetti}, L. and {Talia}, M. and others},
+  title = "{Euclid preparation. LXXXII. Predicting star-forming galaxy scaling relations with the spectral stacking code SpectraPyle}",
+  journal = {\aap},
+  year = 2026,
+  month = mar,
+  volume = {707},
+  pages = {A232},
+  doi = {10.1051/0004-6361/202557329},
+  archivePrefix = {arXiv},
+  eprint = {2509.16120},
+  primaryClass = {astro-ph.GA}
+}
+```
+
+Publications using SpectraPyle **must** also include the following acknowledgment:
+
+> ELSA: Euclid Legacy Science Advanced analysis tools (Grant Agreement no. 101135203) is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or Innovate UK. Neither the European Union nor the granting authority can be held responsible for them. UK participation is funded through the UK Horizon guarantee scheme under Innovate UK grant 10093177.
+
+If you use SpectraPyle with **Euclid** data, you must also follow the [Euclid Consortium publication policy](https://www.euclid-ec.org/) and include the standard Euclid acknowledgment text.
+
+For the full APA reference and detailed acknowledgment requirements, see [Citation & Acknowledgments](project_root/docs/citation.rst) in the documentation.
 
 ---
 
