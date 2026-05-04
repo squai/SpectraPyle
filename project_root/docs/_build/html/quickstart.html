@@ -253,20 +253,39 @@
 </section>
 <section id="running-via-cli">
 <h2>Running via CLI<a class="headerlink" href="#running-via-cli" title="Link to this heading">¶</a></h2>
+<p><strong>Option 1: Using the CLI helper script (recommended)</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>project_root/notebooks/run_cli.py<span class="w"> </span>--config<span class="w"> </span>path/to/config.yaml<span class="w"> </span><span class="o">[</span>--log-level<span class="w"> </span>INFO<span class="o">]</span>
+</pre></div>
+</div>
+<p>Features: automatic logging setup with timestamp, supports YAML/JSON, log levels: DEBUG/INFO/WARNING</p>
+<p><strong>Option 2: Direct CLI invocation</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>project_root/src/spectraPyle/stacking/stacking.py<span class="w"> </span>--config<span class="w"> </span>path/to/config.yaml
 </pre></div>
 </div>
 <p>Override individual keys at runtime:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>stacking.py<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--instrument.grisms<span class="w"> </span><span class="s1">&#39;[&quot;red&quot;,&quot;blue&quot;]&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>project_root/src/spectraPyle/stacking/stacking.py<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--instrument.grisms<span class="w"> </span><span class="s1">&#39;[&quot;red&quot;,&quot;blue&quot;]&#39;</span>
 </pre></div>
 </div>
 </section>
 <section id="running-via-voila-gui">
 <h2>Running via Voilà GUI<a class="headerlink" href="#running-via-voila-gui" title="Link to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>project_root/notebooks/run_spectraPyle.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>project_root/notebooks/run_gui.py
 </pre></div>
 </div>
 <p>Opens a browser tab with an interactive config builder.</p>
+</section>
+<section id="post-stacking-analysis">
+<h2>Post-stacking Analysis<a class="headerlink" href="#post-stacking-analysis" title="Link to this heading">¶</a></h2>
+<p><strong>Plot Helper</strong> — Visualize the stacked spectrum:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter<span class="w"> </span>notebook<span class="w"> </span>project_root/notebooks/plot_helper.ipynb
+</pre></div>
+</div>
+<p>Interactive notebook showing all estimators (mean, median, geometric mean, weighted mean) and pixel count information.</p>
+<p><strong>Spectral Line Manager</strong> — Configure spectral lines in plots:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter<span class="w"> </span>notebook<span class="w"> </span>project_root/notebooks/line_manager.ipynb
+</pre></div>
+</div>
+<p>Enable/disable emission lines and absorption features via checkboxes. Saved settings are picked up by the next <code class="docutils literal notranslate"><span class="pre">plotting()</span></code> call.</p>
 </section>
 <section id="configuration-pipeline">
 <h2>Configuration Pipeline<a class="headerlink" href="#configuration-pipeline" title="Link to this heading">¶</a></h2>
@@ -346,6 +365,7 @@ Stacking(flat_dict).run()     stacking/stacking.py
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#running-via-cli">Running via CLI</a></li>
 <li><a class="reference internal" href="#running-via-voila-gui">Running via Voilà GUI</a></li>
+<li><a class="reference internal" href="#post-stacking-analysis">Post-stacking Analysis</a></li>
 <li><a class="reference internal" href="#configuration-pipeline">Configuration Pipeline</a></li>
 </ul>
 </li>
