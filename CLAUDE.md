@@ -14,16 +14,16 @@ cd project_root
 pip install -e ".[all]"
 ```
 
+Launch the Voilà GUI (config builder):
+```bash
+python project_root/notebooks/run_gui.py
+```
+
 Run from CLI:
 ```bash
 python project_root/src/spectraPyle/stacking/stacking.py --config path/to/config.yaml
 # or with per-key overrides:
 python stacking.py --config config.yaml --instrument.grisms '["red","blue"]'
-```
-
-Launch the Voilà GUI (config builder):
-```bash
-python project_root/notebooks/run_gui.py
 ```
 
 Lint / format:
@@ -34,9 +34,9 @@ black project_root/src/
 
 ## Verification & Testing
 - **Sanity Check (CLI)**:
-  `python project_root/src/spectraPyle/stacking/stacking.py --config path/to/default.yaml`
+  `python project_root/src/spectraPyle/stacking/stacking.py --config project_root/configs/YAML/default.yaml`
 - **Configuration Test**:
-  `python -c "from project_root.src.spectraPyle.runtime.runtime_adapter import load_config; load_config('path/to/default.yaml')"`
+  `python -c "from project_root.src.spectraPyle.runtime.runtime_adapter import load_config; load_config('project_root/configs/YAML/default.yaml')"`
   
 ## Notebook Maintenance
 - **Clean Notebook**: Before working on or pushing `notebooks/run_gui.py` (or related .ipynb), clear all outputs to save context/token space:
@@ -58,7 +58,7 @@ raw flat dict
   → Stacking(flat_dict).run()    stacking/stacking.py
 ```
 
-`flatten_schema_model()` exists only for backward compatibility with the `Stacking` runtime; downstream code still uses flat keys like `config['grism_io'][grism]['spectra_dir']`.
+`flatten_schema_model()` downstream code still uses flat keys like `config['grism_io'][grism]['spectra_dir']`. Need to be deprecated
 
 `flatten_schema_model()` is technical debt. Do not refactor it unless explicitly asked. Always use it when passing data to Stacking().
 
@@ -120,7 +120,7 @@ FITS file with two HDUs:
 
 ## Configuration
 
-Configs are YAML or JSON, loaded via `main(config)` in `stacking.py`. Use `make_config.ipynb` / Voilà GUI to build configs interactively. The schema is fully documented in `schema/schema.py`.
+Configs are YAML or JSON, loaded via `main(config)` in `stacking.py`. Use `make_config.ipynb` / Voilà GUI to build configs interactively. The schema is fully documented in `schema/schema.py`. To load existing configurations, only .gui configurations accepted (can be exported from the export tab of the gui). 
 
 Key config blocks: `instrument`, `io` (with `grism_io`), `cosmology`, `redshift`, `norm`, `resampling`, `catalog_columns`, `bootstrap`, `sigmaclip`, `parallel`, `plot`.
 
