@@ -22,6 +22,7 @@ __pycache__/
 dist/
 build/
 project_root/future/
+.superpowers/
 *.fits
 !project_root/tests/**/*.fits
 project_root/tests/**/output*/

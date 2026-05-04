@@ -25,20 +25,6 @@ pip install -e ".[all]"
 
 ### Run via CLI
 
-**Option 1: Using the CLI helper script (recommended)**
-
-```bash
-python project_root/notebooks/run_cli.py --config path/to/config.yaml [--log-level INFO]
-```
-
-Features:
-- Automatic logging setup with timestamp in `output_dir`
-- Supports both YAML and JSON configs
-- Log levels: DEBUG, INFO, WARNING
-- Integrated argument validation
-
-**Option 2: Direct CLI invocation**
-
 ```bash
 python project_root/src/spectraPyle/stacking/stacking.py --config path/to/config.yaml
 ```
@@ -46,7 +32,7 @@ python project_root/src/spectraPyle/stacking/stacking.py --config path/to/config
 Override individual config keys at runtime:
 
 ```bash
-python project_root/src/spectraPyle/stacking/stacking.py --config config.yaml --instrument.grisms '["red","blue"]'
+python stacking.py --config config.yaml --instrument.grisms '["red","blue"]'
 ```
 
 ### Run via Voilà GUI (config builder)
@@ -60,9 +46,11 @@ Opens a browser tab with an interactive config builder. No CLI output is expecte
 ### Minimal YAML config example
 
 ```yaml
-instrument:
-  instrument_name: euclid
-  grisms: ["red"]
+instrument_name: euclid
+  survey_name: wide
+  grisms:
+  - red
+  data_release: Q1
 
 io:
   input_dir: /path/to/catalog
@@ -77,17 +65,16 @@ redshift:
   z_type: rest_frame
 
 norm:
-  norm_type: median
-  norm_range: [13000, 16000]
+  norm_type: interval
+  norm_range: [5100, 5500]
 
 resampling:
-  pixel_resampling_type: linear
-  pixel_size: 10.0
+  pixel_resampling_type: lambda
+  pixel_size_type: instrumental
+  nyquist_sampling: 5.0
 
 sigmaclip:
-  sigma_clipping: true
-  sigma_lower: 3.0
-  sigma_upper: 3.0
+  sigma_clipping_conditions: 3.0
 ```
 
 ---
@@ -267,28 +254,6 @@ cd project_root/docs
 make html
 # Output: project_root/docs/_build/html/index.html
 ```
-
----
-
-## Post-stacking Analysis
-
-After running the stacking pipeline, use the Jupyter notebooks for visualization and spectral line management:
-
-### Plot Helper
-
-```bash
-jupyter notebook project_root/notebooks/plot_helper.ipynb
-```
-
-Interactive notebook to visualize the stacked spectrum with all estimators (mean, median, geometric mean, weighted mean) and pixel count information.
-
-### Spectral Line Manager
-
-```bash
-jupyter notebook project_root/notebooks/line_manager.ipynb
-```
-
-Configure which emission lines and absorption features appear in plots. Enable/disable entries via checkboxes, then save — the next `plotting()` call picks them up automatically.
 
 ---
 

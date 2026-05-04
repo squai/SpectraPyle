@@ -46,9 +46,11 @@ Opens a browser tab with an interactive config builder. No CLI output is expecte
 ### Minimal YAML config example
 
 ```yaml
-instrument:
-  instrument_name: euclid
-  grisms: ["red"]
+instrument_name: euclid
+  survey_name: wide
+  grisms:
+  - red
+  data_release: Q1
 
 io:
   input_dir: /path/to/catalog
@@ -63,17 +65,16 @@ redshift:
   z_type: rest_frame
 
 norm:
-  norm_type: median
-  norm_range: [13000, 16000]
+  norm_type: interval
+  norm_range: [5100, 5500]
 
 resampling:
-  pixel_resampling_type: linear
-  pixel_size: 10.0
+  pixel_resampling_type: lambda
+  pixel_size_type: instrumental
+  nyquist_sampling: 5.0
 
 sigmaclip:
-  sigma_clipping: true
-  sigma_lower: 3.0
-  sigma_upper: 3.0
+  sigma_clipping_conditions: 3.0
 ```
 
 ---
