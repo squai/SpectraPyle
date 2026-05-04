@@ -331,7 +331,7 @@
 <li><p><strong>Catalogue Browser</strong>: Select a FITS, NPZ, or CSV file containing your object catalogue. The pipeline will read columns for object IDs, redshifts, and optional metadata from this file.</p></li>
 <li><p><strong>Spectra Format Selector</strong>: Choose how individual spectra are organized:</p>
 <ol class="arabic simple">
-<li><p><strong>Individual FITS</strong> — One FITS file per object, resolved by object ID (e.g., <code class="docutils literal notranslate"><span class="pre">&lt;object_id&gt;.fits</span></code>,``&lt;object_id&gt;_RGS.fits``)</p></li>
+<li><p><strong>Individual FITS</strong> — One FITS file per object, resolved by object ID (e.g., <code class="docutils literal notranslate"><span class="pre">&lt;object_id&gt;.fits</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;object_id&gt;_RGS.fits</span></code>)</p></li>
 <li><p><strong>Combined FITS</strong> — All spectra in a single FITS file, indexed by HDU or row number</p></li>
 <li><p><strong>Metadata Path</strong> — Path/filename/index sourced from catalogue columns (most flexible)</p></li>
 </ol>
@@ -356,7 +356,7 @@
 <li><p><strong>ID Column</strong>: The name of the catalogue column containing unique object identifiers (e.g., <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">gal_id</span></code>, <code class="docutils literal notranslate"><span class="pre">object_id</span></code>). This is used to locate individual spectrum files.</p></li>
 <li><p><strong>Redshift Column</strong>: The name of the catalogue column containing object redshifts (e.g., <code class="docutils literal notranslate"><span class="pre">z</span></code>, <code class="docutils literal notranslate"><span class="pre">redshift</span></code>, <code class="docutils literal notranslate"><span class="pre">z_spec</span></code>). All spectra are shifted to the common redshift of the stacked spectrum using these values.</p></li>
 <li><p><strong>Metadata Columns</strong> (optional): If you want to include other data (e.g., magnitude, stellar mass, star-formation rate) in the catalogue for custom weighting, list the column names here. These are written to the output HDU for reference.</p></li>
-<li><p><strong>Galactic Extinction Correction</strong>: Toggle to apply Galactic dust extinction correction (via <a class="reference external" href="https://dust-extinction.readthedocs.io/">dust_extinction</a>). The name of the catalogue column containing the Galactic E(B-V) values for each object (e.g.,``ebv_gal``). By default, it applies the model G23 (Gordon, 2024).</p></li>
+<li><p><strong>Galactic Extinction Correction</strong>: Toggle to apply Galactic dust extinction correction (via <a class="reference external" href="https://dust-extinction.readthedocs.io/">dust_extinction</a>). The name of the catalogue column containing the Galactic E(B-V) values for each object (e.g., <code class="docutils literal notranslate"><span class="pre">ebv_gal</span></code>). By default, it applies the model G23 (Gordon, 2024).</p></li>
 <li><p><strong>Custom Normalization Column</strong> (optional): If you have pre-computed normalization factors in your catalogue (e.g., continuum flux), specify the column name here to use it in the normalization mode (see <a class="reference internal" href="normalization.html"><span class="doc">Normalization Methods</span></a>).</p></li>
 </ul>
 <p>—</p>
