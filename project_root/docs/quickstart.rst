@@ -8,6 +8,15 @@ Installation
 
    pip install -e ".[all]"
 
+Running via Voilà GUI
+---------------------
+
+.. code-block:: bash
+
+   python project_root/notebooks/run_gui.py
+
+Opens a browser tab with an interactive config builder.
+
 Running via CLI
 ---------------
 
@@ -30,15 +39,6 @@ Override individual keys at runtime:
 .. code-block:: bash
 
    python project_root/src/spectraPyle/stacking/stacking.py --config config.yaml --instrument.grisms '["red","blue"]'
-
-Running via Voilà GUI
----------------------
-
-.. code-block:: bash
-
-   python project_root/notebooks/run_gui.py
-
-Opens a browser tab with an interactive config builder.
 
 Post-stacking Analysis
 ----------------------
