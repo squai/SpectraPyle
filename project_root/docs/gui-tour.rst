@@ -97,7 +97,7 @@ Key controls in this tab:
 
 - **Spectra Format Selector**: Choose how individual spectra are organized:
 
-  1. **Individual FITS** — One FITS file per object, resolved by object ID (e.g., ``<object_id>.fits``,``<object_id>_RGS.fits``)
+  1. **Individual FITS** — One FITS file per object, resolved by object ID (e.g., ``<object_id>.fits``, ``<object_id>_RGS.fits``)
   2. **Combined FITS** — All spectra in a single FITS file, indexed by HDU or row number
   3. **Metadata Path** — Path/filename/index sourced from catalogue columns (most flexible)
 
@@ -127,7 +127,7 @@ Key controls in this tab:
 
 - **Metadata Columns** (optional): If you want to include other data (e.g., magnitude, stellar mass, star-formation rate) in the catalogue for custom weighting, list the column names here. These are written to the output HDU for reference.
 
-- **Galactic Extinction Correction**: Toggle to apply Galactic dust extinction correction (via `dust_extinction <https://dust-extinction.readthedocs.io/>`_). The name of the catalogue column containing the Galactic E(B-V) values for each object (e.g.,``ebv_gal``). By default, it applies the model G23 (Gordon, 2024). 
+- **Galactic Extinction Correction**: Toggle to apply Galactic dust extinction correction (via `dust_extinction <https://dust-extinction.readthedocs.io/>`_). The name of the catalogue column containing the Galactic E(B-V) values for each object (e.g., ``ebv_gal``). By default, it applies the model G23 (Gordon, 2024). 
 
 - **Custom Normalization Column** (optional): If you have pre-computed normalization factors in your catalogue (e.g., continuum flux), specify the column name here to use it in the normalization mode (see :doc:`normalization`).
 

@@ -52,9 +52,9 @@ No Normalization
 
 **Config value:** ``"no_normalization"``
 
-**Use case:** When spectra are already normalized externally, or when physical information must be preserved (e.g., measuring emission line fluxes) or when applying Francis et al. (1991) method (spectra are normilesef following a dedicated algorithm).
+**Use case:** When spectra are already normalized externally, or when physical information must be preserved (e.g., measuring emission line fluxes) or when applying Francis et al. (1991) method (spectra are normalized following a dedicated algorithm).
 
-This is a pure identity operation. Each spectrum stays unchanged. The ``conservation`` field must specify whether the user wants to **conserve the flux** (e.g.,cheaper, but optimal for conserving emission line ratios) or to **conserve luminosity** (e.g., to preserve the instrinsic luminosity of the spectral features, for instance to estimates intrinsic properties from emission lines, as star formation rates from the Halpha line)  
+This is a pure identity operation. Each spectrum stays unchanged. The ``conservation`` field must specify whether the user wants to **conserve the flux** (e.g., simpler but optimal for conserving emission line ratios) or to **conserve luminosity** (e.g., to preserve the intrinsic luminosity of the spectral features, for instance to estimate intrinsic properties from emission lines, such as star formation rates from the Hα line)  
 
 .. code-block:: yaml
 
