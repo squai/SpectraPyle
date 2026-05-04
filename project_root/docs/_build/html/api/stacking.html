@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="schema" href="schema.html"><link rel="prev" title="Quick Start" href="../quickstart.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="schema" href="schema.html"><link rel="prev" title="Resampling Modes" href="../resampling.html">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>stacking - SpectraPyle 5.0.2 documentation</title>
@@ -193,6 +193,13 @@
   <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation &amp; Acknowledgments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../normalization.html">Normalization Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resampling.html">Resampling Modes</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul class="current">
@@ -245,6 +252,12 @@
         <article role="main" id="furo-main-content">
           <section id="module-spectraPyle.stacking.stacking">
 <span id="stacking"></span><h1>stacking<a class="headerlink" href="#module-spectraPyle.stacking.stacking" title="Link to this heading">¶</a></h1>
+<p>Orchestrate the full spectral stacking pipeline.</p>
+<p>Reads a catalog, processes spectra in parallel chunks of 500
+(shift → resample → normalize), applies sigma-clipping, computes
+stacking statistics (median / mean / weighted mean / geometric mean),
+and writes the result as a two-HDU FITS file.</p>
+<p>Entry point: <a class="reference internal" href="#spectraPyle.stacking.stacking.main" title="spectraPyle.stacking.stacking.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">main()</span></code></a>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="spectraPyle.stacking.stacking.InstrumentLoader">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">spectraPyle.stacking.stacking.</span></span><span class="sig-name descname"><span class="pre">InstrumentLoader</span></span><a class="reference internal" href="../_modules/spectraPyle/stacking/stacking.html#InstrumentLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.stacking.stacking.InstrumentLoader" title="Link to this definition">¶</a></dt>
@@ -404,14 +417,14 @@ validates it through the full pipeline, and runs <a class="reference internal" h
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../quickstart.html">
+          <a class="prev-page" href="../resampling.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Quick Start</div>
+                <div class="title">Resampling Modes</div>
                 
               </div>
             </a>

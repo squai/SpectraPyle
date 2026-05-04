@@ -52,9 +52,9 @@ No Normalization
 
 **Config value:** ``"no_normalization"``
 
-**Use case:** When spectra are already normalized externally or when using the template-based Francis et al. (1991) method with pre-normalized spectra.
+**Use case:** When spectra are already normalized externally, or when physical information must be preserved (e.g., measuring emission line fluxes) or when applying Francis et al. (1991) method (spectra are normilesef following a dedicated algorithm).
 
-This is a pure identity operation. Each spectrum is divided by 1 (i.e., unchanged). The ``conservation`` field must specify whether the flux represents a **conserved flux** (``"flux"``) or a **flux equivalent in the luminosity domain** (``"luminosity"``). This distinction is used only for bookkeeping; the actual flux values are not modified.
+This is a pure identity operation. Each spectrum stays unchanged. The ``conservation`` field must specify whether the user wants to **conserve the flux** (e.g.,cheaper, but optimal for conserving emission line ratios) or to **conserve luminosity** (e.g., to preserve the instrinsic luminosity of the spectral features, for instance to estimates intrinsic properties from emission lines, as star formation rates from the Halpha line)  
 
 .. code-block:: yaml
 
@@ -103,13 +103,13 @@ Interval Normalization
 
    f_{\mathrm{norm}} = \frac{f}{S}
 
-where :math:`S` is one of four statistics computed over a rest-frame wavelength range :math:`[\lambda_{\mathrm{min}}, \lambda_{\mathrm{max}}]`:
+where :math:`S` is one of four statistics computed on the flux over a rest-frame wavelength range :math:`[\lambda_{\mathrm{min}}, \lambda_{\mathrm{max}}]`:
 
 .. math::
 
    S \in \{\mathrm{median}, \mathrm{mean}, \mathrm{maximum}, \mathrm{minimum}\}
 
-**Use case:** Normalizing over a specific rest-frame wavelength interval where the continuum is expected to be well-defined and free of strong emission or absorption features. Common in UV stacking (e.g., normalizing at 1500 Å) or in Lyman-alpha studies.
+**Use case:** Normalizing over a specific rest-frame wavelength interval where the continuum is expected to be well-defined and free of strong emission or absorption features. 
 
 **YAML Example:**
 
@@ -209,7 +209,7 @@ The Francis et al. (1991) method normalizes a set of spectra iteratively against
 
 4. **Output** — normalized flux and error for all spectra.
 
-**Use case:** Multi-epoch or multi-instrument samples where different spectra have different wavelength coverage or sensitivity. The iterative approach ensures that all spectra are mutually consistent while preserving the relative flux levels within overlapping regions. Also used when you need relative flux conservation across a heterogeneous sample.
+**Use case:** Producing spectral templates of homogeneous sources. The iterative approach ensures that all spectra are mutually consistent while preserving the relative flux levels within overlapping regions. Also used when you need relative flux conservation across a heterogeneous sample.
 
 **YAML Example:**
 

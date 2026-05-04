@@ -23,7 +23,7 @@ python stacking.py --config config.yaml --instrument.grisms '["red","blue"]'
 
 Launch the Voilà GUI (config builder):
 ```bash
-python project_root/notebooks/run_spectraPyle.py
+python project_root/notebooks/run_gui.py
 ```
 
 Lint / format:
@@ -39,7 +39,7 @@ black project_root/src/
   `python -c "from project_root.src.spectraPyle.runtime.runtime_adapter import load_config; load_config('path/to/default.yaml')"`
   
 ## Notebook Maintenance
-- **Clean Notebook**: Before working on or pushing `notebooks/run_spectraPyle.py` (or related .ipynb), clear all outputs to save context/token space:
+- **Clean Notebook**: Before working on or pushing `notebooks/run_gui.py` (or related .ipynb), clear all outputs to save context/token space:
   `jupyter nbconvert --clear-output --inplace notebooks/make_config.ipynb`
 - **Restart Insight**: Since the Voilà GUI depends on the notebook state, always remind the user to restart the Jupyter kernel after making changes to `runtime_adapter.py` or `schema.py`.
 
@@ -112,8 +112,8 @@ FITS file with two HDUs:
 - `HDU[1]` table: `wavelength`, `specMean/Median/GeometricMean/WeightedMean` + `Dispersion`/`Error` variants, `initialPixelCount`, `goodPixelCount`, `badPixelCount`, `sigmaClippedCount`
 
 ## GUI & Notebooks
-- **Entry Point**: `notebooks/run_spectraPyle.py` is the main launcher for the Voilà GUI.
-- **How to Run**: Use `python notebooks/run_spectraPyle.py`. This starts a local web server (Voilà).
+- **Entry Point**: `notebooks/run_gui.py` is the main launcher for the Voilà GUI.
+- **How to Run**: Use `python notebooks/run_gui.py`. This starts a local web server (Voilà).
 - **Behavior**: It is a wrapper around `notebooks/make_config.ipynb`. Do not expect CLI output; it opens a browser tab.
 - **Workflow**: If you modify `schema.py` or `runtime_adapter.py`, the Voilà server/kernel must be manually restarted to reflect changes in the GUI widgets.
 

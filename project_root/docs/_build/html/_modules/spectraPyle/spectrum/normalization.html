@@ -192,6 +192,13 @@
   <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citation.html">Citation &amp; Acknowledgments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../normalization.html">Normalization Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resampling.html">Resampling Modes</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -290,13 +297,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">vecnorm</span> <span class="o">=</span> <span class="n">flux</span><span class="p">[(</span><span class="n">lbd</span> <span class="o">&gt;=</span> <span class="n">lambdamin_norm</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lbd</span> <span class="o">&lt;=</span> <span class="n">lambdamax_norm</span><span class="p">)]</span>
-    
+
     <span class="k">if</span> <span class="p">(</span><span class="n">lambdamin_norm</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">lbd</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">lambdamax_norm</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">lbd</span><span class="p">)):</span>
         <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING normalization interval [</span><span class="si">{</span><span class="n">lambdamin_norm</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">lambdamax_norm</span><span class="si">}</span><span class="s2">] [$\AA$] partially outside the wavelength range of the spectrum [</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lbd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lbd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">] [$\AA$].&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vecnorm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;Normalization failure for </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span><span class="si">}</span><span class="s2">: normalization interval [</span><span class="si">{</span><span class="n">lambdamin_norm</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">lambdamax_norm</span><span class="si">}</span><span class="s2">] [$\AA$] outside the wavelength range of the spectrum [</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lbd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lbd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">] [$\AA$].&quot;</span><span class="p">)</span>
-    
+
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vecnorm</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;Normalization failure for </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span><span class="si">}</span><span class="s2">: no valid flux values in the normalization interval [ </span><span class="si">{</span><span class="n">lambdamin_norm</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">lambdamax_norm</span><span class="si">}</span><span class="s2">] [$\AA$].&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">norm_stat</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
@@ -309,7 +316,7 @@
         <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">vecnorm</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Normalization failure: statistics &#39;</span><span class="si">{</span><span class="n">norm_stat</span><span class="si">}</span><span class="s2">&#39; to be applied to the normalization interval not understood or implemented yet.&quot;</span><span class="p">)</span>
-        
+
     <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">norm</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">norm</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">fr</span><span class="s2">&quot;Normalization failure: invalid normalization value (</span><span class="si">{</span><span class="n">norm</span><span class="si">}</span><span class="s2">) &quot;</span>
@@ -352,7 +359,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">fr</span><span class="s2">&quot;Normalization failure: invalid normalization value (</span><span class="si">{</span><span class="n">norm</span><span class="si">}</span><span class="s2">) &quot;</span>
             <span class="p">)</span>
-    
+
     <span class="n">fluxNorm</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">/</span> <span class="n">norm</span>
     <span class="n">errorNorm</span> <span class="o">=</span> <span class="n">error</span> <span class="o">/</span> <span class="n">norm</span>
     <span class="k">return</span> <span class="n">fluxNorm</span><span class="p">,</span> <span class="n">errorNorm</span><span class="p">,</span> <span class="n">norm</span></div>
@@ -385,28 +392,59 @@
     <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">lbd</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">diff</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">lbd</span><span class="p">)</span>
     <span class="n">diff</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">diff</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">flux</span><span class="o">*</span><span class="n">diff</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">lbd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">lbd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">## option n.1 </span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">flux</span><span class="o">*</span><span class="n">diff</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">lbd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">lbd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">## option n.1</span>
     <span class="c1">#norm = np.nansum(flux) / len(lbd) ## option n.2 equivalent to option n1</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">norm</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">norm</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">fr</span><span class="s2">&quot;Normalization failure: invalid normalization value (</span><span class="si">{</span><span class="n">norm</span><span class="si">}</span><span class="s2">) &quot;</span>
             <span class="p">)</span>
-        
+
     <span class="n">fluxNorm</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">/</span> <span class="n">norm</span>
     <span class="n">errorNorm</span> <span class="o">=</span> <span class="n">error</span> <span class="o">/</span> <span class="n">norm</span>
     <span class="k">return</span> <span class="n">fluxNorm</span><span class="p">,</span> <span class="n">errorNorm</span><span class="p">,</span> <span class="n">norm</span></div>
 
-    
+
 <div class="viewcode-block" id="normSpecCustom">
 <a class="viewcode-back" href="../../../api/spectrum.html#spectraPyle.spectrum.normalization.normSpecCustom">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">normSpecCustom</span> <span class="p">(</span><span class="n">lbd</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">norm</span><span class="p">):</span>
-    <span class="c1">## it requires a custom normalization parameter to be provided in the catalogue datafile</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">normSpecCustom</span><span class="p">(</span><span class="n">lbd</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">norm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize a spectrum by a caller-supplied scalar value.</span>
+
+<span class="sd">    The normalization scalar ``norm`` is typically read from a catalog column</span>
+<span class="sd">    (e.g. a photometric flux in a reference band). Use</span>
+<span class="sd">    ``spectra_normalization: &quot;custom&quot;`` in the configuration and set</span>
+<span class="sd">    ``catalog_columns.custom_normalization.custom_column_name`` to the column name.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lbd : array-like</span>
+<span class="sd">        Wavelength array (Å). Accepted for API consistency but not used.</span>
+<span class="sd">    flux : ndarray</span>
+<span class="sd">        Flux array.</span>
+<span class="sd">    error : ndarray</span>
+<span class="sd">        Error (1-sigma) array.</span>
+<span class="sd">    norm : float</span>
+<span class="sd">        Normalization scalar. Must be finite and &gt; 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fluxNorm : ndarray</span>
+<span class="sd">        Normalized flux array.</span>
+<span class="sd">    errorNorm : ndarray</span>
+<span class="sd">        Normalized error array.</span>
+<span class="sd">    norm : float</span>
+<span class="sd">        The normalization value applied.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``norm`` is not finite or is ≤ 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">norm</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">norm</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">fr</span><span class="s2">&quot;Normalization failure: invalid normalization value (</span><span class="si">{</span><span class="n">norm</span><span class="si">}</span><span class="s2">) &quot;</span>
             <span class="p">)</span>
-        
+
     <span class="n">fluxNorm</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">/</span> <span class="n">norm</span>
     <span class="n">errorNorm</span> <span class="o">=</span> <span class="n">error</span> <span class="o">/</span> <span class="n">norm</span>
     <span class="k">return</span> <span class="n">fluxNorm</span><span class="p">,</span> <span class="n">errorNorm</span><span class="p">,</span> <span class="n">norm</span></div>
@@ -510,7 +548,7 @@
     <span class="c1"># --------------------------------------------------</span>
     <span class="c1"># Robust alpha estimator</span>
     <span class="c1"># --------------------------------------------------</span>
-    
+
     <span class="k">def</span><span class="w"> </span><span class="nf">sig_clip_alpha</span><span class="p">(</span><span class="n">vals</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter_clip</span><span class="p">):</span>
             <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
@@ -525,11 +563,11 @@
                 <span class="k">break</span>
 
             <span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="n">good</span><span class="p">]</span>
-            
+
             <span class="k">if</span> <span class="n">vals</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">min_overlap</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
         <span class="k">return</span> <span class="n">vals</span>
-    
+
     <span class="k">def</span><span class="w"> </span><span class="nf">robust_alpha</span><span class="p">(</span><span class="n">ref_vals</span><span class="p">,</span> <span class="n">cur_vals</span><span class="p">):</span>
 
         <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span>
@@ -556,7 +594,7 @@
 
         <span class="c1">## no sigma clipping</span>
         <span class="k">return</span> <span class="n">stat_func</span><span class="p">(</span><span class="n">ref_vals</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="o">/</span> <span class="n">stat_func</span><span class="p">(</span><span class="n">cur_vals</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
-    
+
     <span class="c1"># --------------------------------------------------</span>
     <span class="c1"># Incremental normalization</span>
     <span class="c1"># --------------------------------------------------</span>
@@ -602,7 +640,6 @@
         <span class="n">ref_count</span><span class="p">[</span><span class="n">new_only</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">return</span> <span class="n">norm_flux</span><span class="p">,</span> <span class="n">norm_err</span></div>
-
 
 </pre></div>
         </article>

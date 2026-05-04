@@ -68,9 +68,9 @@ When ``pixel_size_type: "manual"``, the user directly specifies the wavelength s
    resampling:
      pixel_resampling_type: "lambda"
      pixel_size_type: "manual"
-     pixel_resampling: 0.5
+     pixel_resampling: 4
 
-This creates a grid with 0.5 Å steps, suitable for low-resolution or moderate-resolution spectra where oversampling is not needed.
+This creates a grid with 4 Å steps, suitable for low-resolution or moderate-resolution spectra where oversampling is not needed.
 
 Instrumental (Nyquist-Sampled) Pixel Size
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,11 +87,11 @@ where
 - **λ_ref** is a reference wavelength (typically the midpoint of the stacking window)
 - **n_nyq** is the number of pixels per resolution element (default: 5)
 
-For example, with Euclid NISP red grism (R ≈ 380) at λ = 1000 Å and n_nyq = 5:
+For example, with Euclid NISP red grism (R ≈ 600) at λ = 16000 Å and n_nyq = 5:
 
 .. math::
 
-   \Delta\lambda = \frac{1000}{380 \times 5} \approx 0.53 \text{ Å}
+   \Delta\lambda = \frac{16000}{600 \times 5} \approx 5.33 \text{ Å}
 
 **YAML Example:**
 
@@ -154,11 +154,11 @@ When ``pixel_size_type: "instrumental"``, the step is computed from resolving po
 
 where **R** and **n_nyq** are as defined for linear grids.
 
-For Euclid NISP red (R ≈ 380) with n_nyq = 5:
+For Euclid NISP red (R ≈ 600) with n_nyq = 5:
 
 .. math::
 
-   \Delta\log_{10}\lambda = \frac{1}{380 \times 5 \times \ln(10)} \approx 0.000108
+   \Delta\log_{10}\lambda = \frac{1}{600 \times 5 \times \ln(10)} \approx 0.000144
 
 **YAML Example:**
 

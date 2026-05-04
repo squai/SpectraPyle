@@ -193,6 +193,13 @@
   <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation &amp; Acknowledgments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../normalization.html">Normalization Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resampling.html">Resampling Modes</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul class="current">
@@ -339,7 +346,33 @@ including median-flux normalization over a wavelength range, and the
 <dl class="py function">
 <dt class="sig sig-object py" id="spectraPyle.spectrum.normalization.normSpecCustom">
 <span class="sig-prename descclassname"><span class="pre">spectraPyle.spectrum.normalization.</span></span><span class="sig-name descname"><span class="pre">normSpecCustom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lbd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/spectrum/normalization.html#normSpecCustom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.spectrum.normalization.normSpecCustom" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Normalize a spectrum by a caller-supplied scalar value.</p>
+<p>The normalization scalar <code class="docutils literal notranslate"><span class="pre">norm</span></code> is typically read from a catalog column
+(e.g. a photometric flux in a reference band). Use
+<code class="docutils literal notranslate"><span class="pre">spectra_normalization:</span> <span class="pre">&quot;custom&quot;</span></code> in the configuration and set
+<code class="docutils literal notranslate"><span class="pre">catalog_columns.custom_normalization.custom_column_name</span></code> to the column name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lbd</strong> (<em>array-like</em>) – Wavelength array (Å). Accepted for API consistency but not used.</p></li>
+<li><p><strong>flux</strong> (<em>ndarray</em>) – Flux array.</p></li>
+<li><p><strong>error</strong> (<em>ndarray</em>) – Error (1-sigma) array.</p></li>
+<li><p><strong>norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Normalization scalar. Must be finite and &gt; 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fluxNorm</strong> (<em>ndarray</em>) – Normalized flux array.</p></li>
+<li><p><strong>errorNorm</strong> (<em>ndarray</em>) – Normalized error array.</p></li>
+<li><p><strong>norm</strong> (<em>float</em>) – The normalization value applied.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">norm</span></code> is not finite or is ≤ 0.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="spectraPyle.spectrum.normalization.normSpecIntegrMean">

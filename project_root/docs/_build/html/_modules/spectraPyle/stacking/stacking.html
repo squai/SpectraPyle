@@ -192,6 +192,13 @@
   <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citation.html">Citation &amp; Acknowledgments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../normalization.html">Normalization Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resampling.html">Resampling Modes</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -238,37 +245,30 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for spectraPyle.stacking.stacking</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/bin/python3</span>
+<span class="sd">&quot;&quot;&quot;Orchestrate the full spectral stacking pipeline.</span>
+
+<span class="sd">Reads a catalog, processes spectra in parallel chunks of 500</span>
+<span class="sd">(shift → resample → normalize), applies sigma-clipping, computes</span>
+<span class="sd">stacking statistics (median / mean / weighted mean / geometric mean),</span>
+<span class="sd">and writes the result as a two-HDU FITS file.</span>
+
+<span class="sd">Entry point: :func:`main`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="c1"># -------------- spectraPyle --------------- #</span>
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Salvatore Quai&quot;</span>
-<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Salvatore Quai&quot;</span><span class="p">,</span> 
-<span class="s2">&quot;Lucia Pozzetti&quot;</span><span class="p">,</span> 
-<span class="s2">&quot;Michele Moresco&quot;</span><span class="p">,</span> 
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Salvatore Quai&quot;</span><span class="p">,</span>
+<span class="s2">&quot;Lucia Pozzetti&quot;</span><span class="p">,</span>
+<span class="s2">&quot;Michele Moresco&quot;</span><span class="p">,</span>
 <span class="s2">&quot;Margherita Talia&quot;</span><span class="p">,</span>
 <span class="s2">&quot;Zhiying Mao&quot;</span><span class="p">,</span>
-<span class="s2">&quot;Xavier Lopez Lopez&quot;</span><span class="p">,</span> 
-<span class="s2">&quot;Elisabeta Lusso&quot;</span><span class="p">,</span> 
+<span class="s2">&quot;Xavier Lopez Lopez&quot;</span><span class="p">,</span>
+<span class="s2">&quot;Elisabeta Lusso&quot;</span><span class="p">,</span>
 <span class="s2">&quot;Sotiria Fotopoulou&quot;</span><span class="p">]</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;5.0.2&quot;</span>
 <span class="n">__maintainer__</span> <span class="o">=</span> <span class="s2">&quot;Salvatore Quai&quot;</span>
 <span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;salvatore.quai@unibo.it&quot;</span>
 <span class="n">__status__</span> <span class="o">=</span> <span class="s2">&quot;Developement&quot;</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Core stacking orchestrator for SpectraPyle.</span>
-
-<span class="sd">Entry point for CLI and programmatic use. The :class:`Stacking` class loads the</span>
-<span class="sd">configuration, chunks the catalog into batches of 500 spectra, runs per-spectrum</span>
-<span class="sd">processing via :func:`~spectraPyle.process.processes.main_parallel`, applies</span>
-<span class="sd">sigma-clipping, computes stacking statistics, and writes the result as a FITS file.</span>
-
-<span class="sd">Typical usage::</span>
-
-<span class="sd">    from spectraPyle.runtime.runtime_adapter import build_config_from_yaml, flatten_schema_model</span>
-<span class="sd">    from spectraPyle.stacking.stacking import Stacking</span>
-
-<span class="sd">    config = flatten_schema_model(build_config_from_yaml(&quot;config.yaml&quot;))</span>
-<span class="sd">    Stacking(config).run()</span>
-<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1"># -------------- Packages --------------</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>

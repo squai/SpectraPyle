@@ -193,6 +193,13 @@
   <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation &amp; Acknowledgments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../normalization.html">Normalization Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resampling.html">Resampling Modes</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul class="current">
@@ -285,14 +292,20 @@
 <dt class="sig sig-object py" id="spectraPyle.schema.schema.CatalogColumnsConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">spectraPyle.schema.schema.</span></span><span class="sig-name descname"><span class="pre">CatalogColumnsConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/schema/schema.html#CatalogColumnsConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.schema.schema.CatalogColumnsConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Catalog column name configuration.</p>
+<p>Maps logical column roles to actual catalog column names. The catalog is
+loaded via <code class="docutils literal notranslate"><span class="pre">io.filename_in</span></code> and must contain at least the ID column.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ID_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>)</p></li>
-<li><p><strong>redshift_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>metadata</strong> (<a class="reference internal" href="#spectraPyle.schema.schema.MetadataColumnsConfig" title="spectraPyle.schema.schema.MetadataColumnsConfig"><em>MetadataColumnsConfig</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>galactic_extinction_parameters</strong> (<a class="reference internal" href="#spectraPyle.schema.schema.GalacticExtinctionConfig" title="spectraPyle.schema.schema.GalacticExtinctionConfig"><em>GalacticExtinctionConfig</em></a>)</p></li>
-<li><p><strong>custom_normalization</strong> (<a class="reference internal" href="#spectraPyle.schema.schema.CustomNormalizationColumnsConfig" title="spectraPyle.schema.schema.CustomNormalizationColumnsConfig"><em>CustomNormalizationColumnsConfig</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>ID_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Column name containing unique spectrum identifiers.</p></li>
+<li><p><strong>redshift_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Column name containing redshift values (required unless
+<code class="docutils literal notranslate"><span class="pre">redshift.z_type</span> <span class="pre">=</span> <span class="pre">&quot;observed_frame&quot;</span></code>).</p></li>
+<li><p><strong>metadata</strong> (<a class="reference internal" href="#spectraPyle.schema.schema.MetadataColumnsConfig" title="spectraPyle.schema.schema.MetadataColumnsConfig"><em>MetadataColumnsConfig</em></a><em>, </em><em>optional</em>) – Column names for metadata path mode (required if
+<code class="docutils literal notranslate"><span class="pre">spectra_mode</span> <span class="pre">=</span> <span class="pre">&quot;metadata</span> <span class="pre">path&quot;</span></code>).</p></li>
+<li><p><strong>galactic_extinction_parameters</strong> (<a class="reference internal" href="#spectraPyle.schema.schema.GalacticExtinctionConfig" title="spectraPyle.schema.schema.GalacticExtinctionConfig"><em>GalacticExtinctionConfig</em></a>) – Galactic extinction column and enable flag.</p></li>
+<li><p><strong>custom_normalization</strong> (<a class="reference internal" href="#spectraPyle.schema.schema.CustomNormalizationColumnsConfig" title="spectraPyle.schema.schema.CustomNormalizationColumnsConfig"><em>CustomNormalizationColumnsConfig</em></a><em>, </em><em>optional</em>) – Custom normalization column (required if
+<code class="docutils literal notranslate"><span class="pre">spectra_normalization</span> <span class="pre">=</span> <span class="pre">&quot;custom&quot;</span></code>).</p></li>
 </ul>
 </dd>
 </dl>
@@ -364,9 +377,13 @@
 <dt class="sig sig-object py" id="spectraPyle.schema.schema.CustomNormalizationColumnsConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">spectraPyle.schema.schema.</span></span><span class="sig-name descname"><span class="pre">CustomNormalizationColumnsConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/schema/schema.html#CustomNormalizationColumnsConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.schema.schema.CustomNormalizationColumnsConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Catalog column name for custom normalization mode.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">spectra_normalization</span> <span class="pre">=</span> <span class="pre">&quot;custom&quot;</span></code>, the normalization scalar for
+each spectrum is read from a catalog column.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>custom_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>)</p>
+<dd class="field-odd"><p><strong>custom_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Catalog column containing per-spectrum normalization values
+(e.g., a photometric flux). Required if custom normalization is used.</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -386,11 +403,15 @@
 <dt class="sig sig-object py" id="spectraPyle.schema.schema.GalacticExtinctionConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">spectraPyle.schema.schema.</span></span><span class="sig-name descname"><span class="pre">GalacticExtinctionConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/schema/schema.html#GalacticExtinctionConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.schema.schema.GalacticExtinctionConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Galactic extinction correction configuration.</p>
+<p>When enabled, spectrum flux is corrected for Galactic dust extinction
+using the Gordon+23 reddening law via <code class="docutils literal notranslate"><span class="pre">dust_extinction</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>galactic_extinction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>)</p></li>
-<li><p><strong>gal_ext_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>galactic_extinction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Enable Galactic extinction correction (default: False).</p></li>
+<li><p><strong>gal_ext_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Catalog column containing E(B-V) values (required if
+<code class="docutils literal notranslate"><span class="pre">galactic_extinction</span> <span class="pre">=</span> <span class="pre">True</span></code>).</p></li>
 </ul>
 </dd>
 </dl>
@@ -616,12 +637,17 @@
 <dt class="sig sig-object py" id="spectraPyle.schema.schema.MetadataColumnsConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">spectraPyle.schema.schema.</span></span><span class="sig-name descname"><span class="pre">MetadataColumnsConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/schema/schema.html#MetadataColumnsConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.schema.schema.MetadataColumnsConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Catalog column names for metadata path access mode.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">spectra_mode</span> <span class="pre">=</span> <span class="pre">&quot;metadata</span> <span class="pre">path&quot;</span></code>, per-spectrum file paths and indices
+are read from catalog columns.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metadata_path_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>)</p></li>
-<li><p><strong>metadata_file_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>)</p></li>
-<li><p><strong>metadata_indx_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>)</p></li>
+<li><p><strong>metadata_path_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Column name containing spectrum file paths (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;path&quot;</span></code>).</p></li>
+<li><p><strong>metadata_file_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Column name containing spectrum filenames within those paths
+(e.g., <code class="docutils literal notranslate"><span class="pre">&quot;filename&quot;</span></code>).</p></li>
+<li><p><strong>metadata_indx_column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Column name containing spectrum index or HDU number within the file
+(e.g., <code class="docutils literal notranslate"><span class="pre">&quot;index&quot;</span></code>).</p></li>
 </ul>
 </dd>
 </dl>

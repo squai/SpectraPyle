@@ -1,0 +1,158 @@
+Running Sphinx v9.0.4
+loading translations [en]... done
+making output directory... done
+loading intersphinx inventory 'python' from https://docs.python.org/3/objects.inv ...
+loading intersphinx inventory 'numpy' from https://numpy.org/doc/stable/objects.inv ...
+loading intersphinx inventory 'astropy' from https://docs.astropy.org/en/stable/objects.inv ...
+building [mo]: targets for 0 po files that are out of date
+writing output... 
+building [html]: targets for 17 source files that are out of date
+updating environment: [new config] 17 added, 0 changed, 0 removed
+reading sources... [  6%] .ipynb_checkpoints/index-checkpoint
+reading sources... [ 12%] .ipynb_checkpoints/quickstart-checkpoint
+reading sources... [ 18%] api/instruments
+reading sources... [ 24%] api/io
+reading sources... [ 29%] api/plot
+/Users/salvatorequai/miniconda3/envs/astro_env/lib/python3.11/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+:86: (ERROR/3) Unexpected indentation.
+reading sources... [ 35%] api/processes
+reading sources... [ 41%] api/schema
+/Users/salvatorequai/miniconda3/envs/astro_env/lib/python3.11/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+:15: (ERROR/3) Unexpected indentation.
+:16: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:18: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:29: (ERROR/3) Unexpected indentation.
+:30: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:33: (ERROR/3) Unexpected indentation.
+:34: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:36: (ERROR/3) Unexpected indentation.
+:37: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:41: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:43: (ERROR/3) Unexpected indentation.
+:44: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:56: (ERROR/3) Unexpected indentation.
+:57: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:59: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+/Users/salvatorequai/miniconda3/envs/astro_env/lib/python3.11/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+:6: (WARNING/2) Inline literal start-string without end-string.
+:6: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
+:14: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:22: (ERROR/3) Unexpected indentation.
+:24: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:36: (ERROR/3) Unexpected indentation.
+:37: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:38: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:38: (WARNING/2) Inline literal start-string without end-string.
+:38: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
+:45: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:49: (ERROR/3) Unexpected indentation.
+:45: (WARNING/2) Inline emphasis start-string without end-string.
+/Users/salvatorequai/miniconda3/envs/astro_env/lib/python3.11/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+:6: (WARNING/2) Inline literal start-string without end-string.
+:6: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
+:18: (ERROR/3) Unexpected indentation.
+:20: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:32: (ERROR/3) Unexpected indentation.
+:33: (WARNING/2) Block quote ends without a blank line; unexpected unindent.
+:34: (WARNING/2) Definition list ends without a blank line; unexpected unindent.
+:34: (WARNING/2) Inline literal start-string without end-string.
+:34: (WARNING/2) Inline interpreted text or phrase reference start-string without end-string.
+/Users/salvatorequai/miniconda3/envs/astro_env/lib/python3.11/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 47%] api/spectrum
+reading sources... [ 53%] api/stacking
+/Users/salvatorequai/miniconda3/envs/astro_env/lib/python3.11/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 59%] api/statistic
+reading sources... [ 65%] api/utils
+/Users/salvatorequai/miniconda3/envs/astro_env/lib/python3.11/site-packages/sphinx_autodoc_typehints/_parser.py:30: RemovedInSphinx10Warning: 'sphinx_autodoc_typehints._parser._RstSnippetParser.set_application' is deprecated. Check CHANGES for Sphinx API modifications.
+  parser.set_application(settings.env.app)
+reading sources... [ 71%] citation
+reading sources... [ 76%] gui-tour
+reading sources... [ 82%] index
+reading sources... [ 88%] normalization
+reading sources... [ 94%] quickstart
+reading sources... [100%] resampling
+
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/.ipynb_checkpoints/index-checkpoint.rst:10: WARNING: toctree contains reference to nonexisting document '.ipynb_checkpoints/quickstart' [toc.not_readable]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/.ipynb_checkpoints/index-checkpoint.rst:16: WARNING: toctree contains reference to nonexisting document '.ipynb_checkpoints/api/stacking' [toc.not_readable]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/.ipynb_checkpoints/index-checkpoint.rst:16: WARNING: toctree contains reference to nonexisting document '.ipynb_checkpoints/api/schema' [toc.not_readable]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/.ipynb_checkpoints/index-checkpoint.rst:16: WARNING: toctree contains reference to nonexisting document '.ipynb_checkpoints/api/processes' [toc.not_readable]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/.ipynb_checkpoints/index-checkpoint.rst:16: WARNING: toctree contains reference to nonexisting document '.ipynb_checkpoints/api/instruments' [toc.not_readable]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/.ipynb_checkpoints/index-checkpoint.rst:16: WARNING: toctree contains reference to nonexisting document '.ipynb_checkpoints/api/io' [toc.not_readable]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/.ipynb_checkpoints/index-checkpoint.rst:16: WARNING: toctree contains reference to nonexisting document '.ipynb_checkpoints/api/spectrum' [toc.not_readable]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/.ipynb_checkpoints/index-checkpoint.rst:16: WARNING: toctree contains reference to nonexisting document '.ipynb_checkpoints/api/statistic' [toc.not_readable]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/.ipynb_checkpoints/index-checkpoint.rst:16: WARNING: toctree contains reference to nonexisting document '.ipynb_checkpoints/api/utils' [toc.not_readable]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/src/spectraPyle/process/processes.py:docstring of spectraPyle.process.processes.process_spectrum_parallel:5: ERROR: Unexpected indentation. [docutils]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/src/spectraPyle/process/processes.py:docstring of spectraPyle.process.processes.process_spectrum_parallel:6: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
+WARNING: Cannot resolve forward reference in type annotations of "spectraPyle.schema.schema.Field": name 'JsonValue' is not defined [sphinx_autodoc_typehints.forward_reference]
+WARNING: Failed guarded type import with TypeError("type 'classmethod' is not subscriptable") [sphinx_autodoc_typehints.guarded_import]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/src/spectraPyle/schema/schema.py:docstring of spectraPyle.schema.schema:11: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... /Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/.ipynb_checkpoints/index-checkpoint.rst: WARNING: document isn't included in any toctree [toc.not_included]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/.ipynb_checkpoints/quickstart-checkpoint.rst: WARNING: document isn't included in any toctree [toc.not_included]
+done
+preparing documents... done
+copying assets... 
+copying static files... 
+Writing evaluated template result to /Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/_build/html/_static/basic.css
+Writing evaluated template result to /Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/_build/html/_static/language_data.js
+Writing evaluated template result to /Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/_build/html/_static/documentation_options.js
+copying static files: done
+copying extra files... 
+copying extra files: done
+copying assets: done
+writing output... [  6%] .ipynb_checkpoints/index-checkpoint
+writing output... [ 12%] .ipynb_checkpoints/quickstart-checkpoint
+writing output... [ 18%] api/instruments
+writing output... [ 24%] api/io
+writing output... [ 29%] api/plot
+writing output... [ 35%] api/processes
+writing output... [ 41%] api/schema
+writing output... [ 47%] api/spectrum
+writing output... [ 53%] api/stacking
+writing output... [ 59%] api/statistic
+writing output... [ 65%] api/utils
+writing output... [ 71%] citation
+writing output... [ 76%] gui-tour
+writing output... [ 82%] index
+writing output... [ 88%] normalization
+writing output... [ 94%] quickstart
+writing output... [100%] resampling
+
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/gui-tour.rst:7: WARNING: undefined label: 'config-schema' [ref.ref]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/gui-tour.rst:216: WARNING: undefined label: 'config-schema' [ref.ref]
+/Users/salvatorequai/Documents/coding/PYTHON/SpectraPyle_project/SpectraPyle/project_root/docs/gui-tour.rst:219: WARNING: unknown document: 'stacking' [ref.doc]
+generating indices... genindex py-modindex done
+highlighting module code... [  7%] spectraPyle.instruments.desi
+highlighting module code... [ 14%] spectraPyle.instruments.euclid
+highlighting module code... [ 21%] spectraPyle.io.IO
+highlighting module code... [ 29%] spectraPyle.io.filename_builder
+highlighting module code... [ 36%] spectraPyle.physics.extinction
+highlighting module code... [ 43%] spectraPyle.plot.plot
+highlighting module code... [ 50%] spectraPyle.process.processes
+highlighting module code... [ 57%] spectraPyle.schema.schema
+highlighting module code... [ 64%] spectraPyle.spectrum.normalization
+highlighting module code... [ 71%] spectraPyle.spectrum.resampling
+highlighting module code... [ 79%] spectraPyle.spectrum.spectra
+highlighting module code... [ 86%] spectraPyle.stacking.stacking
+highlighting module code... [ 93%] spectraPyle.statistic.statistics
+highlighting module code... [100%] spectraPyle.utils.log
+
+writing additional pages... search done
+copying images... [ 20%] _static/screenshots/gui_launch.png
+copying images... [ 40%] _static/screenshots/gui_instrument.png
+copying images... [ 60%] _static/screenshots/gui_io.png
+copying images... [ 80%] _static/screenshots/gui_catalogue.png
+copying images... [100%] _static/screenshots/gui_stack_params.png
+
+dumping search index in English (code: en)... done
+dumping object inventory... done
+build succeeded, 19 warnings.
+
+The HTML pages are in _build/html.

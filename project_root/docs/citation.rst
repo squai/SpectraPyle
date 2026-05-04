@@ -17,18 +17,23 @@ Primary reference:
 
 .. code-block:: bibtex
 
-   @misc{euclidcollaboration2025spectraPyle,
-         title={Euclid preparation. Predicting star-forming galaxy scaling
-                relations with the spectral stacking code SpectraPyle},
-         author={Euclid Collaboration and S. Quai and L. Pozzetti and M. Talia
-                 and C. Mancini and P. Cassata and others},
-         year={2025},
-         eprint={2509.16120},
-         archivePrefix={arXiv},
-         primaryClass={astro-ph.GA},
-         doi={10.1051/0004-6361/202557329},
-         url={https://arxiv.org/abs/2509.16120}
-   }
+       @ARTICLE{Quai2026,
+       author = {{Euclid Collaboration: Quai}, S. and {Pozzetti}, L. and {Talia}, M. and others},
+       title = "{Euclid preparation. LXXXII. Predicting star-forming galaxy scaling relations with the spectral stacking code SpectraPyle}",
+       journal = {\aap},
+       keywords = {methods: data analysis, techniques: spectroscopic, surveys, galaxies: evolution, galaxies: general, galaxies: star formation, Astrophysics of Galaxies},
+       year = 2026,
+       month = mar,
+       volume = {707},
+       eid = {A232},
+       pages = {A232},
+       doi = {10.1051/0004-6361/202557329},
+       archivePrefix = {arXiv},
+       eprint = {2509.16120},
+       primaryClass = {astro-ph.GA},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2026A&A...707A.232E},
+       adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+       }
 
 **APA:**
 
@@ -44,11 +49,8 @@ Publications that use SpectraPyle **must** include the following acknowledgment:
 
 .. note::
 
-   Copy the ELSA Horizon Europe acknowledgment text verbatim from the
-   Acknowledgments section of `arXiv:2509.16120
-   <https://arxiv.org/abs/2509.16120>`_ and paste it here, replacing this
-   note block.
-
+	ELSA: Euclid Legacy Science Advanced analysis tools" (Grant Agreement no. 101135203) is funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or Innovate UK. Neither the European Union nor the granting authority can be held responsible for them. UK participation is funded through the UK Horizon guarantee scheme under Innovate UK grant 10093177.
+	
 Instrument-specific acknowledgments
 ------------------------------------
 

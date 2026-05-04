@@ -192,6 +192,13 @@
   <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citation.html">Citation &amp; Acknowledgments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../normalization.html">Normalization Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../resampling.html">Resampling Modes</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -548,6 +555,22 @@
 <div class="viewcode-block" id="MetadataColumnsConfig">
 <a class="viewcode-back" href="../../../api/schema.html#spectraPyle.schema.schema.MetadataColumnsConfig">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MetadataColumnsConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Catalog column names for metadata path access mode.</span>
+
+<span class="sd">    When ``spectra_mode = &quot;metadata path&quot;``, per-spectrum file paths and indices</span>
+<span class="sd">    are read from catalog columns.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metadata_path_column_name : str</span>
+<span class="sd">        Column name containing spectrum file paths (e.g., ``&quot;path&quot;``).</span>
+<span class="sd">    metadata_file_column_name : str</span>
+<span class="sd">        Column name containing spectrum filenames within those paths</span>
+<span class="sd">        (e.g., ``&quot;filename&quot;``).</span>
+<span class="sd">    metadata_indx_column_name : str</span>
+<span class="sd">        Column name containing spectrum index or HDU number within the file</span>
+<span class="sd">        (e.g., ``&quot;index&quot;``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">metadata_path_column_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">metadata_file_column_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">metadata_indx_column_name</span><span class="p">:</span> <span class="nb">str</span></div>
@@ -557,6 +580,19 @@
 <div class="viewcode-block" id="GalacticExtinctionConfig">
 <a class="viewcode-back" href="../../../api/schema.html#spectraPyle.schema.schema.GalacticExtinctionConfig">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GalacticExtinctionConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Galactic extinction correction configuration.</span>
+
+<span class="sd">    When enabled, spectrum flux is corrected for Galactic dust extinction</span>
+<span class="sd">    using the Gordon+23 reddening law via ``dust_extinction``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    galactic_extinction : bool</span>
+<span class="sd">        Enable Galactic extinction correction (default: False).</span>
+<span class="sd">    gal_ext_column_name : str, optional</span>
+<span class="sd">        Catalog column containing E(B-V) values (required if</span>
+<span class="sd">        ``galactic_extinction = True``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">galactic_extinction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">gal_ext_column_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -576,6 +612,17 @@
 <div class="viewcode-block" id="CustomNormalizationColumnsConfig">
 <a class="viewcode-back" href="../../../api/schema.html#spectraPyle.schema.schema.CustomNormalizationColumnsConfig">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CustomNormalizationColumnsConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Catalog column name for custom normalization mode.</span>
+
+<span class="sd">    When ``spectra_normalization = &quot;custom&quot;``, the normalization scalar for</span>
+<span class="sd">    each spectrum is read from a catalog column.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    custom_column_name : str, optional</span>
+<span class="sd">        Catalog column containing per-spectrum normalization values</span>
+<span class="sd">        (e.g., a photometric flux). Required if custom normalization is used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">custom_column_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -583,6 +630,27 @@
 <div class="viewcode-block" id="CatalogColumnsConfig">
 <a class="viewcode-back" href="../../../api/schema.html#spectraPyle.schema.schema.CatalogColumnsConfig">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CatalogColumnsConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Catalog column name configuration.</span>
+
+<span class="sd">    Maps logical column roles to actual catalog column names. The catalog is</span>
+<span class="sd">    loaded via ``io.filename_in`` and must contain at least the ID column.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ID_column_name : str</span>
+<span class="sd">        Column name containing unique spectrum identifiers.</span>
+<span class="sd">    redshift_column_name : str, optional</span>
+<span class="sd">        Column name containing redshift values (required unless</span>
+<span class="sd">        ``redshift.z_type = &quot;observed_frame&quot;``).</span>
+<span class="sd">    metadata : MetadataColumnsConfig, optional</span>
+<span class="sd">        Column names for metadata path mode (required if</span>
+<span class="sd">        ``spectra_mode = &quot;metadata path&quot;``).</span>
+<span class="sd">    galactic_extinction_parameters : GalacticExtinctionConfig</span>
+<span class="sd">        Galactic extinction column and enable flag.</span>
+<span class="sd">    custom_normalization : CustomNormalizationColumnsConfig, optional</span>
+<span class="sd">        Custom normalization column (required if</span>
+<span class="sd">        ``spectra_normalization = &quot;custom&quot;``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ID_column_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">redshift_column_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MetadataColumnsConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
