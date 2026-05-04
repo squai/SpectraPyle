@@ -293,8 +293,15 @@ def read_fits_and_select_columns(fits_filename):
         dispersion_columns = {}
         percentile_columns = {}
         
-        # Filter out columns that contain "Error" or "Dispersion"
-        filtered_columns = [col for col in column_names[5:-4] if "Error" not in col and "Dispersion" not in col]
+        # Flux columns: start with 'spec', excluding percentiles and Error/Dispersion variants
+        _percentile_cols = {'spec16th', 'spec84th', 'spec98th', 'spec99th'}
+        filtered_columns = [
+            col for col in column_names
+            if col.startswith('spec')
+            and col not in _percentile_cols
+            and 'Error' not in col
+            and 'Dispersion' not in col
+        ]
         for column in filtered_columns:
             flux_columns[column] = stacking_results_hdu.data[column]
             error_columns[column + 'Error'] = stacking_results_hdu.data[column + 'Error']
