@@ -155,14 +155,19 @@ with fits.open("result.fits") as hdu:
 | Column | Description |
 |---|---|
 | `wavelength` | Wavelength array (Å) |
-| `specMean` / `specMeanDispersion` / `specMeanError` | Mean stack + 1σ dispersion + 1σ uncertainty |
-| `specMedian` / `specMedianDispersion` / `specMedianError` | Median stack |
-| `specGeometricMean` / `specGeometricMeanDispersion` / `specGeometricMeanError` | Geometric mean — non-positive flux values are excluded per pixel; result is NaN if all pixels have non-positive flux |
+| `specMean` / `specMeanDispersion` / `specMeanError` | Arithmetic mean stack + 1σ dispersion + 1σ uncertainty |
+| `specMedian` / `specMedianDispersion` / `specMedianError` | Median stack (robust dispersion via MAD × 1.4826) |
+| `specGeometricMean` / `specGeometricMeanDispersion` / `specGeometricMeanError` | Geometric mean (lenient) — non-positive flux values are excluded per pixel; result is NaN if all pixels have non-positive flux |
+| `specStrictGeometricMean` / `specStrictGeometricMeanDispersion` / `specStrictGeometricMeanError` | Geometric mean (strict) — returns NaN for any pixel with ≥1 non-positive flux value; use when strict positivity is required |
+| `specMode` / `specModeDispersion` / `specModeError` | Mode (Half-Sample Mode estimator, parameter-free); dispersion via MAD × 1.4826 |
 | `specWeightedMean` / `specWeightedMeanDispersion` / `specWeightedMeanError` | Inverse-variance weighted mean |
+| `spec16th`, `spec84th`, `spec98th`, `spec99th` | 16th, 84th, 97.73rd (≈2σ), and 99.73rd (≈3σ) percentiles |
 | `initialPixelCount` | Total spectra submitted to the stack |
 | `goodPixelCount` | Good flux values used per pixel |
 | `badPixelCount` | Bad (masked) pixels per pixel |
 | `sigmaClippedCount` | Values removed by sigma-clipping per pixel |
+| `geomMeanPixelCount` | Spectra with positive flux that contributed to geometric mean per pixel |
+| `templateNormMaskedCount` | Pixels masked during template normalization |
 
 ---
 
@@ -243,10 +248,6 @@ black project_root/src/
 python project_root/src/spectraPyle/stacking/stacking.py --config path/to/default.yaml
 ```
 
-### Voilà GUI — important note
-
-After modifying `schema.py` or `runtime_adapter.py`, restart the Jupyter kernel for changes to appear in the GUI.
-
 ### Generate documentation locally
 
 ```bash
@@ -292,10 +293,47 @@ For the full APA reference and detailed acknowledgment requirements, see [Citati
 
 ---
 
+## Contributors & Development Team
+
+**Lead Developer & Maintainer:**
+- **Salvatore Quai** (University of Bologna) — salvatore.quai@unibo.it
+
+**Contributors:**
+- Lucia Pozzetti
+- Margherita Talia 
+- Zhiying Mao
+- Xavier Lopez Lopez
+- Elisabeta Lusso 
+- Sotiria Fotopoulou
+- Michele Moresco
+
+For inquiries or contributions, please contact Salvatore Quai.
+
+---
+
+## Contributing & Collaboration
+
+We welcome discussions about new features, extensions, and scientific collaborations.
+
+If you have ideas for:
+- **New stacking statistics or methods** — we'd like to hear about them
+- **Support for additional instruments or data formats** — let's discuss
+- **Performance improvements or refactoring** — contributions are valued
+- **Joint research projects using SpectraPyle** — we're open to collaboration
+
+**Please open an issue or pull request** on the [GitHub repository](https://github.com/SpectraPyle/SpectraPyle), or contact the development team:
+- **salvatore.quai@unibo.it** (lead developer)
+- **salvatore.quai@gmail.com** (general inquiries)
+
+All contributions are reviewed and credited. We follow standard open-source practices for code review and testing.
+
+---
+
 ## License
 
 MIT — see `LICENSE`.
 
 ## Contact
 
-Salvatore Quai — salvatore.quai@gmail.com
+Salvatore Quai — salvatore.quai@unibo.it, salvatore.quai@gmail.com
+
