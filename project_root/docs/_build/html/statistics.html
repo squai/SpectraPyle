@@ -1,0 +1,934 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Interactive Plotting &amp; Visualization" href="plotting.html"><link rel="prev" title="Resampling Modes" href="resampling.html">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>Stacking Statistics - SpectraPyle 5.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">SpectraPyle 5.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  <span class="sidebar-brand-text">SpectraPyle 5.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation &amp; Acknowledgments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="normalization.html">Normalization Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resampling.html">Resampling Modes</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Stacking Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">Interactive Plotting &amp; Visualization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/stacking.html">stacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/schema.html">schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/processes.html">process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/instruments.html">instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/io.html">io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/spectrum.html">spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/statistic.html">statistic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/utils.html">utils</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/statistics.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="stacking-statistics">
+<h1>Stacking Statistics<a class="headerlink" href="#stacking-statistics" title="Link to this heading">¶</a></h1>
+<p>SpectraPyle computes six different stacking estimators for each wavelength bin. Each statistic is computed from a distribution of N-spectra flux values after <a class="reference internal" href="resampling.html"><span class="doc">Resampling Modes</span></a> and sigma-clipping.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#overview" id="id1">Overview</a></p></li>
+<li><p><a class="reference internal" href="#arithmetic-mean" id="id2">Arithmetic Mean</a></p></li>
+<li><p><a class="reference internal" href="#median" id="id3">Median</a></p></li>
+<li><p><a class="reference internal" href="#geometric-mean-lenient" id="id4">Geometric Mean (Lenient)</a></p></li>
+<li><p><a class="reference internal" href="#geometric-mean-strict" id="id5">Geometric Mean (Strict)</a></p></li>
+<li><p><a class="reference internal" href="#mode-half-sample-mode" id="id6">Mode (Half-Sample Mode)</a></p></li>
+<li><p><a class="reference internal" href="#weighted-mean" id="id7">Weighted Mean</a></p></li>
+<li><p><a class="reference internal" href="#percentiles" id="id8">Percentiles</a></p></li>
+<li><p><a class="reference internal" href="#error-estimation-bootstrap-vs-analytical" id="id9">Error Estimation: Bootstrap vs. Analytical</a></p></li>
+<li><p><a class="reference internal" href="#summary-table-when-to-use-each-statistic" id="id10">Summary Table: When to Use Each Statistic</a></p></li>
+<li><p><a class="reference internal" href="#module-spectraPyle.statistic.statistics" id="id11">API Reference</a></p></li>
+</ul>
+</nav>
+<p>—</p>
+<section id="overview">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>All statistics are available in the FITS output with the naming convention:</p>
+<ul class="simple">
+<li><p><strong>Flux:</strong> <code class="docutils literal notranslate"><span class="pre">spec{Statistic}</span></code> — the stacked spectrum value per wavelength bin</p></li>
+<li><p><strong>Dispersion:</strong> <code class="docutils literal notranslate"><span class="pre">spec{Statistic}Dispersion</span></code> — intrinsic scatter around the statistic</p></li>
+<li><p><strong>Error:</strong> <code class="docutils literal notranslate"><span class="pre">spec{Statistic}Error</span></code> — 1σ uncertainty on the statistic (from bootstrap or analytical formula)</p></li>
+</ul>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Statistic</p></th>
+<th class="head"><p>FITS columns</p></th>
+<th class="head"><p>Use case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Mean</p></td>
+<td><p>specMean*</p></td>
+<td><p>Classical average; sensitive to outliers</p></td>
+</tr>
+<tr class="row-odd"><td><p>Median</p></td>
+<td><p>specMedian*</p></td>
+<td><p>Robust; insensitive to outliers</p></td>
+</tr>
+<tr class="row-even"><td><p>Geometric mean
+(lenient)</p></td>
+<td><p>specGeometricMean*</p></td>
+<td><p>Log-space average (lenient); excludes ≤0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Geometric mean
+(strict)</p></td>
+<td><p>specStrictGeometricMean*</p></td>
+<td><p>Log-space average (strict); NaN if any ≤0</p></td>
+</tr>
+<tr class="row-even"><td><p>Mode (HSM)</p></td>
+<td><p>specMode*</p></td>
+<td><p>Most common value; parameter-free</p></td>
+</tr>
+<tr class="row-odd"><td><p>Weighted mean</p></td>
+<td><p>specWeightedMean*</p></td>
+<td><p>Uses inverse-variance weights</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>—</p>
+</section>
+<section id="arithmetic-mean">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Arithmetic Mean</a><a class="headerlink" href="#arithmetic-mean" title="Link to this heading">¶</a></h2>
+<p>The classical mean: sum of all flux values divided by count.</p>
+<p><strong>Formula:</strong></p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\bar{F} = \frac{1}{N} \sum_{i=1}^{N} F_i\]</div>
+</div>
+<p><strong>Dispersion:</strong>
+Unbiased sample standard deviation:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\sigma_{\text{mean}} = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (F_i - \bar{F})^2}\]</div>
+</div>
+<p><strong>Error:</strong>
+From bootstrap resampling (percentile 16–84) or analytic formula:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\delta \bar{F} = \frac{\sigma_{\text{mean}}}{\sqrt{N_{\text{good}}}}\]</div>
+</div>
+<p><strong>Characteristics:</strong>
+- Least robust to outliers
+- Best for distributions without extreme values
+- Default choice for symmetric distributions</p>
+<p><strong>FITS columns:</strong> <code class="docutils literal notranslate"><span class="pre">specMean</span></code>, <code class="docutils literal notranslate"><span class="pre">specMeanDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">specMeanError</span></code></p>
+<p>—</p>
+</section>
+<section id="median">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Median</a><a class="headerlink" href="#median" title="Link to this heading">¶</a></h2>
+<p>The central value separating the upper and lower halves of the distribution.</p>
+<p><strong>Dispersion:</strong>
+Robust estimate via Median Absolute Deviation (MAD), scaled to Gaussian σ:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\sigma_{\text{med}} = 1.4826 \times \text{MAD} = 1.4826 \times \text{median}(|F_i - \tilde{F}|)\]</div>
+</div>
+<p><strong>Error:</strong>
+From bootstrap resampling (percentile 16–84) or analytic formula:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\delta \tilde{F} = \frac{\sigma_{\text{med}}}{\sqrt{N_{\text{good}}}}\]</div>
+</div>
+<p><strong>Characteristics:</strong>
+- Highly robust to outliers
+- Insensitive to extreme values in either tail
+- Ideal for distributions with outliers or asymmetry
+- Default visible trace in the interactive plot</p>
+<p><strong>FITS columns:</strong> <code class="docutils literal notranslate"><span class="pre">specMedian</span></code>, <code class="docutils literal notranslate"><span class="pre">specMedianDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">specMedianError</span></code></p>
+<p>—</p>
+</section>
+<section id="geometric-mean-lenient">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Geometric Mean (Lenient)</a><a class="headerlink" href="#geometric-mean-lenient" title="Link to this heading">¶</a></h2>
+<p>Log-space average, computed from <strong>positive-valued spectra only</strong>. Non-positive values are silently excluded per wavelength bin.</p>
+<p><strong>Formula:</strong></p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[G_{\text{lenient}} = \exp\left( \frac{1}{N_{\text{pos}}} \sum_{F_i &gt; 0} \ln F_i \right)\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(N_{\text{pos}}\)</span> is the count of positive values at that wavelength.</p>
+<p><strong>Dispersion:</strong>
+Standard deviation in log-space (multiplicative scatter):</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\sigma_{\ln G} = \sqrt{\frac{1}{N_{\text{pos}}} \sum_{F_i &gt; 0} (\ln F_i - \ln G)^2}\]</div>
+</div>
+<p><strong>Pixel count:</strong>
+<code class="docutils literal notranslate"><span class="pre">geomMeanPixelCount</span></code> — number of positive-finite spectra per bin.</p>
+<p><strong>Error:</strong>
+From bootstrap (percentile 16–84) or analytic formula.</p>
+<p><strong>Characteristics:</strong>
+- Suitable for ratio-based quantities (e.g., fluxes, SED ratios)
+- Gracefully handles partial contributions (missing or zero values)
+- Returns finite values even if some spectra have ≤0 flux at a pixel
+- Useful when approximate missing data is acceptable</p>
+<p><strong>When to use:</strong>
+- Stacking spectra with occasional negative flux artifacts
+- Situations where some spectra may have zero/undefined flux at some wavelengths
+- Physical quantities that are naturally multiplicative</p>
+<p><strong>FITS columns:</strong> <code class="docutils literal notranslate"><span class="pre">specGeometricMean</span></code>, <code class="docutils literal notranslate"><span class="pre">specGeometricMeanDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">specGeometricMeanError</span></code>, <code class="docutils literal notranslate"><span class="pre">geomMeanPixelCount</span></code></p>
+<p>—</p>
+</section>
+<section id="geometric-mean-strict">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Geometric Mean (Strict)</a><a class="headerlink" href="#geometric-mean-strict" title="Link to this heading">¶</a></h2>
+<p>Log-space average that enforces <strong>strict positivity</strong>. Returns NaN for any wavelength bin where <strong>at least one</strong> spectrum has flux ≤ 0.</p>
+<p><strong>Formula:</strong></p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\begin{split}G_{\text{strict}} = \begin{cases}
+\exp\left( \frac{1}{N} \sum_{i=1}^{N} \ln F_i \right) &amp; \text{if } \forall i: F_i &gt; 0 \\
+\text{NaN} &amp; \text{otherwise}
+\end{cases}\end{split}\]</div>
+</div>
+<p><strong>Dispersion:</strong>
+Identical to lenient (σ_ln) where defined; NaN elsewhere.</p>
+<p><strong>Characteristics:</strong>
+- All spectra must contribute positive flux — no partial participation
+- Binary mask per wavelength: either all-valid or NaN
+- More conservative; fails fast if data quality is heterogeneous</p>
+<p><strong>When to use:</strong>
+- Stacking with strict physical assumptions (e.g., ratio-based analyses in log-space)
+- When data quality requirements demand 100% positivity
+- Identifying wavelength regions contaminated across the sample</p>
+<p><strong>Difference from Lenient:</strong></p>
+<p>The main difference is <strong>handling of non-positive values</strong>:</p>
+<ul class="simple">
+<li><p><strong>Lenient</strong> (<code class="docutils literal notranslate"><span class="pre">specGeometricMean</span></code>): Omits non-positive values <strong>per wavelength</strong>, allowing partial participation</p></li>
+<li><p><strong>Strict</strong> (<code class="docutils literal notranslate"><span class="pre">specStrictGeometricMean</span></code>): Requires <strong>all spectra positive at that wavelength</strong> or returns NaN</p></li>
+</ul>
+<p>Example: 10 spectra, one has negative flux at pixel i:</p>
+<ul class="simple">
+<li><p>Lenient: Uses 9 positive values → finite result</p></li>
+<li><p>Strict: Returns NaN at pixel i</p></li>
+</ul>
+<p><strong>FITS columns:</strong> <code class="docutils literal notranslate"><span class="pre">specStrictGeometricMean</span></code>, <code class="docutils literal notranslate"><span class="pre">specStrictGeometricMeanDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">specStrictGeometricMeanError</span></code></p>
+<p>—</p>
+</section>
+<section id="mode-half-sample-mode">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Mode (Half-Sample Mode)</a><a class="headerlink" href="#mode-half-sample-mode" title="Link to this heading">¶</a></h2>
+<p>The most common value in the distribution, computed via the Half-Sample Mode (HSM) algorithm.</p>
+<p><strong>Algorithm:</strong>
+Recursively finds the smallest interval containing at least half the data points. The mode is the midpoint of the final interval (Bickel 2002).</p>
+<p><strong>Advantages over histogram-based mode:</strong>
+- Parameter-free: no bin-width selection needed
+- Deterministic: no binning artifacts
+- Works with continuous data without discretization
+- Robust to outliers
+- Efficient: O(N log N) per wavelength bin</p>
+<p><strong>Dispersion:</strong>
+Median Absolute Deviation (MAD) around the mode, scaled to Gaussian σ:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\sigma_{\text{mode}} = 1.4826 \times \text{MAD}_{\text{mode}} = 1.4826 \times \text{median}(|F_i - M|)\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(M\)</span> is the mode.</p>
+<p><strong>Error:</strong>
+From bootstrap (percentile 16–84) or analytic formula.</p>
+<p><strong>Characteristics:</strong>
+- Robust to outliers
+- Best for unimodal or near-unimodal distributions
+- Non-parametric (no distribution assumptions)
+- Naturally handles discrete or continuous data</p>
+<p><strong>When to use:</strong>
+- When the most probable value is scientifically relevant
+- Distributions with strong peaks
+- As a robustness check against mean and median</p>
+<p><strong>FITS columns:</strong> <code class="docutils literal notranslate"><span class="pre">specMode</span></code>, <code class="docutils literal notranslate"><span class="pre">specModeDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">specModeError</span></code></p>
+<p>—</p>
+</section>
+<section id="weighted-mean">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Weighted Mean</a><a class="headerlink" href="#weighted-mean" title="Link to this heading">¶</a></h2>
+<p>Average computed with inverse-variance weights, accounting for per-spectrum uncertainties.</p>
+<p><strong>Formula:</strong></p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\bar{F}_w = \frac{\sum_{i=1}^{N} w_i F_i}{\sum_{i=1}^{N} w_i}, \quad w_i = \frac{1}{\sigma_i^2}\]</div>
+</div>
+<p><strong>Dispersion:</strong>
+Weighted RMS scatter:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\sigma_w = \sqrt{\frac{\sum_{i=1}^{N} w_i (F_i - \bar{F}_w)^2}{\sum_{i=1}^{N} w_i}}\]</div>
+</div>
+<p><strong>Error:</strong>
+Uncertainty on the weighted mean (not bootstrap):</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\delta \bar{F}_w = \sqrt{\frac{1}{\sum_{i=1}^{N} w_i}}\]</div>
+</div>
+<p><strong>Characteristics:</strong>
+- Accounts for per-spectrum quality
+- Downweights noisy spectra
+- Optimal if uncertainties are accurate
+- No bootstrap; error from weight sum</p>
+<p><strong>When to use:</strong>
+- When spectrum uncertainties are reliable
+- Heterogeneous data quality
+- Maximum-likelihood stacking</p>
+<p><strong>FITS columns:</strong> <code class="docutils literal notranslate"><span class="pre">specWeightedMean</span></code>, <code class="docutils literal notranslate"><span class="pre">specWeightedMeanDispersion</span></code>, <code class="docutils literal notranslate"><span class="pre">specWeightedMeanError</span></code></p>
+<p>—</p>
+</section>
+<section id="percentiles">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Percentiles</a><a class="headerlink" href="#percentiles" title="Link to this heading">¶</a></h2>
+<p>Distribution quantiles at fixed levels:</p>
+<p><strong>Use:</strong>
+- Inspect distribution shape and tails
+- Identify outliers or contamination
+- Assess asymmetry
+- Science analysis (e.g., confidence intervals)</p>
+<p><strong>No uncertainties:</strong> Percentiles are deterministic from the sample.</p>
+<p>—</p>
+</section>
+<section id="error-estimation-bootstrap-vs-analytical">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Error Estimation: Bootstrap vs. Analytical</a><a class="headerlink" href="#error-estimation-bootstrap-vs-analytical" title="Link to this heading">¶</a></h2>
+<p>SpectraPyle supports two error estimation methods, controlled by config key <code class="docutils literal notranslate"><span class="pre">bootstrapping_R</span></code>:</p>
+<p><strong>Bootstrap (``bootstrapping_R &gt; 0``):</strong></p>
+<p>Performs <span class="math notranslate nohighlight">\(R\)</span> resampling iterations with replacement. For each iteration, recomputes the statistic. Final error is the 16–84th percentile range divided by 2 (equivalent to ±1σ for normal distributions).</p>
+<ul class="simple">
+<li><p><strong>Pros:</strong> Non-parametric; valid for any distribution</p></li>
+<li><p><strong>Cons:</strong> Computationally expensive; requires tuning <span class="math notranslate nohighlight">\(R\)</span></p></li>
+</ul>
+<p><strong>Analytical (``bootstrapping_R = 0``):</strong></p>
+<p>Uses closed-form formulas based on data dispersion and sample size:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\delta \text{stat} = \frac{\sigma_{\text{stat}}}{\sqrt{N_{\text{good}}}}\]</div>
+</div>
+<ul class="simple">
+<li><p><strong>Pros:</strong> Fast; well-understood for normal distributions</p></li>
+<li><p><strong>Cons:</strong> Assumes specific distribution shape; may underestimate errors for non-normal data</p></li>
+</ul>
+<p><strong>Recommendation:</strong> Use bootstrap for heterogeneous or non-normal data; analytical for large samples with reliable dispersions.</p>
+<p>—</p>
+</section>
+<section id="summary-table-when-to-use-each-statistic">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Summary Table: When to Use Each Statistic</a><a class="headerlink" href="#summary-table-when-to-use-each-statistic" title="Link to this heading">¶</a></h2>
+<p>—</p>
+</section>
+<section id="module-spectraPyle.statistic.statistics">
+<span id="api-reference"></span><h2><a class="toc-backref" href="#id11" role="doc-backlink">API Reference</a><a class="headerlink" href="#module-spectraPyle.statistic.statistics" title="Link to this heading">¶</a></h2>
+<p>Stacking statistics: mean, median, geometric mean (lenient &amp; strict), mode, weighted mean, and bootstrap.</p>
+<p><a class="reference internal" href="#spectraPyle.statistic.statistics.stack_statistics" title="spectraPyle.statistic.statistics.stack_statistics"><code class="xref py py-func docutils literal notranslate"><span class="pre">stack_statistics()</span></code></a> computes six stacking estimators and their dispersions/errors from the
+sigma-clipped resampled array:</p>
+<ul class="simple">
+<li><p><strong>Arithmetic mean</strong> — classical average, sensitive to outliers</p></li>
+<li><p><strong>Median</strong> — robust estimator, dispersion via MAD × 1.4826</p></li>
+<li><p><strong>Geometric mean (lenient)</strong> — silently excludes non-positive flux; uses positive values per pixel</p></li>
+<li><p><strong>Geometric mean (strict)</strong> — requires all positive; returns NaN if any value ≤ 0 per pixel</p></li>
+<li><p><strong>Mode (HSM)</strong> — Half-Sample Mode estimator (Bickel 2002), parameter-free, robust</p></li>
+<li><p><strong>Weighted mean</strong> — inverse-variance weights; accounts for per-spectrum uncertainties</p></li>
+<li><p><strong>Percentiles</strong> — 16th, 84th (±1σ), 98th (≈2σ), 99th (≈3σ) for distribution inspection</p></li>
+</ul>
+<p><a class="reference internal" href="#spectraPyle.statistic.statistics.bootstrStack" title="spectraPyle.statistic.statistics.bootstrStack"><code class="xref py py-func docutils literal notranslate"><span class="pre">bootstrStack()</span></code></a> estimates uncertainties via bootstrap resampling (percentile 16–84).
+All statistics support bootstrap error estimation or analytical formulas.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.statistic.statistics.bootstrStack">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.statistic.statistics.</span></span><span class="sig-name descname"><span class="pre">bootstrStack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spectraPyle/statistic/statistics.html#bootstrStack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.statistic.statistics.bootstrStack" title="Link to this definition">¶</a></dt>
+<dd><p>Bootstrap resampling of stacked spectra.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>ndarray</em><em> (</em><em>Npix</em><em>, </em><em>Nspec</em><em>)</em>) – Input spectra array.</p></li>
+<li><p><strong>R</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of bootstrap realizations (default: 250).</p></li>
+<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Sampling with replacement (default: True).</p></li>
+<li><p><strong>weights</strong> (<em>ndarray</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Sampling probabilities for each spectrum.</p></li>
+<li><p><strong>n_processes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><em>None</em><em>, </em><em>optional</em>) – Number of processes for parallelization (None = serial).</p></li>
+<li><p><strong>random_state</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><em>None</em><em>, </em><em>optional</em>) – Seed for reproducibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Ten arrays: (mean_spec, mean_err, med_spec, med_err, geom_spec, geom_err,</dt><dd><p>mode_spec, mode_err, gms_spec, gms_err)</p>
+</dd>
+</dl>
+<ul class="simple">
+<li><dl class="simple">
+<dt>mean_spec<span class="classifier">ndarray</span></dt><dd><p>Mean spectrum from bootstrap samples</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mean_err<span class="classifier">ndarray</span></dt><dd><p>Uncertainty on mean spectrum</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>med_spec<span class="classifier">ndarray</span></dt><dd><p>Median spectrum from bootstrap samples</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>med_err<span class="classifier">ndarray</span></dt><dd><p>Uncertainty on median spectrum</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>geom_spec<span class="classifier">ndarray</span></dt><dd><p>Geometric mean spectrum from bootstrap samples</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>geom_err<span class="classifier">ndarray</span></dt><dd><p>Uncertainty on geometric mean spectrum</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mode_spec<span class="classifier">ndarray</span></dt><dd><p>Mode spectrum from bootstrap samples</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mode_err<span class="classifier">ndarray</span></dt><dd><p>Uncertainty on mode spectrum</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>gms_spec<span class="classifier">ndarray</span></dt><dd><p>Strict geometric mean spectrum from bootstrap samples</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>gms_err<span class="classifier">ndarray</span></dt><dd><p>Uncertainty on strict geometric mean spectrum</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.statistic.statistics.bootstrap_iteration">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.statistic.statistics.</span></span><span class="sig-name descname"><span class="pre">bootstrap_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spectraPyle/statistic/statistics.html#bootstrap_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.statistic.statistics.bootstrap_iteration" title="Link to this definition">¶</a></dt>
+<dd><p>Perform a single bootstrap resampling iteration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx_sample</strong> (<em>ndarray</em>) – Indices of selected spectra (size M).</p></li>
+<li><p><strong>arr</strong> (<em>ndarray</em><em> (</em><em>Npix</em><em>, </em><em>Nspec</em><em>)</em>) – Input spectra array.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Six arrays: (sum_arr, mean_arr, med_arr, geom_arr, mode_arr, gms_arr)</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>sum_arr<span class="classifier">ndarray</span></dt><dd><p>Sum of resampled spectra</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mean_arr<span class="classifier">ndarray</span></dt><dd><p>Mean of resampled spectra</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>med_arr<span class="classifier">ndarray</span></dt><dd><p>Median of resampled spectra</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>geom_arr<span class="classifier">ndarray</span></dt><dd><p>Geometric mean of resampled spectra</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mode_arr<span class="classifier">ndarray</span></dt><dd><p>Mode of resampled spectra (HSM)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>gms_arr<span class="classifier">ndarray</span></dt><dd><p>Strict geometric mean of resampled spectra</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.statistic.statistics.geomMean">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.statistic.statistics.</span></span><span class="sig-name descname"><span class="pre">geomMean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spectraPyle/statistic/statistics.html#geomMean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.statistic.statistics.geomMean" title="Link to this definition">¶</a></dt>
+<dd><p>Compute robust geometric mean and log-space scatter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>ndarray</em>) – Input array (can contain NaN, zero, and negative values).</p></li>
+<li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Axis along which to compute (default: 1).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>gm</strong> (<em>ndarray</em>) – Geometric mean.</p></li>
+<li><p><strong>sigma_ln</strong> (<em>ndarray</em>) – Log-space RMS scatter (intrinsic dispersion).</p></li>
+<li><p><strong>pixel_count</strong> (<em>ndarray</em>) – Number of pixels with positive finite flux that entered the
+geometric mean computation, per wavelength bin.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.statistic.statistics.geomMeanStrict">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.statistic.statistics.</span></span><span class="sig-name descname"><span class="pre">geomMeanStrict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spectraPyle/statistic/statistics.html#geomMeanStrict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.statistic.statistics.geomMeanStrict" title="Link to this definition">¶</a></dt>
+<dd><p>Strict geometric mean: returns NaN if any finite value ≤ 0.</p>
+<p>Contrast with geomMean() (lenient): that function silently drops values
+&lt;= 0 and computes the geometric mean of the remaining positive values,
+tracking how many were used via pixel_count. This function makes the
+opposite choice — if the distribution contains any non-positive flux,
+the geometric mean is undefined and NaN is returned for that bin.</p>
+<p>Science rationale: use geomMeanStrict when the physical interpretation
+requires all spectra to contribute (e.g., ratio-based analyses, log-space
+stacking with strict positivity). Use geomMean when partial participation
+is acceptable (e.g., noisy spectra with occasional negative flux artifacts).</p>
+<p>Dispersion: standard deviation of log(flux) for valid bins, i.e. σ_ln,
+same convention as geomMean(). Represents multiplicative scatter.</p>
+<p>No separate pixel count column: for valid bins all goodPixelCount spectra
+contribute; for NaN bins the count is implicitly zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>ndarray</em>) – Input array (can contain NaN, but positive values required for success).</p></li>
+<li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Axis along which to compute (default: 1).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>gm_strict</strong> (<em>ndarray</em>) – Geometric mean (NaN where any finite value ≤ 0).</p></li>
+<li><p><strong>disp_strict</strong> (<em>ndarray</em>) – σ_ln (std of log), NaN same mask as gm_strict.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.statistic.statistics.half_sample_mode">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.statistic.statistics.</span></span><span class="sig-name descname"><span class="pre">half_sample_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spectraPyle/statistic/statistics.html#half_sample_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.statistic.statistics.half_sample_mode" title="Link to this definition">¶</a></dt>
+<dd><p>Half-Sample Mode (HSM) estimator for continuous data.</p>
+<p>Operates on axis=1 (wavelength bins × spectra). For each bin, applies the
+Bickel (2002) HSM algorithm: finds the smallest interval containing at
+least half the non-NaN values, recursively, until 1-2 values remain.
+The mode is the midpoint of the final interval.</p>
+<p>No binning or bandwidth parameter required — deterministic and parameter-free.</p>
+<p>Dispersion: MAD × 1.4826 around the modal value (same convention as
+specMedianDispersion, giving a Gaussian-equivalent σ for symmetric
+unimodal distributions).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>ndarray</em>) – Input array. Can contain NaN and inf (ignored).</p></li>
+<li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Axis along which to compute (default: 1).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>mode_arr</strong> (<em>ndarray</em>) – Half-sample mode for each bin.</p></li>
+<li><p><strong>disp_arr</strong> (<em>ndarray</em>) – MAD × 1.4826 around the modal value.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.statistic.statistics.stack_statistics">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.statistic.statistics.</span></span><span class="sig-name descname"><span class="pre">stack_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stackArr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stackArrErr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spectraPyle/statistic/statistics.html#stack_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.statistic.statistics.stack_statistics" title="Link to this definition">¶</a></dt>
+<dd><p>Compute a suite of stacking statistics for spectra.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stackArr</strong> (<em>ndarray</em>) – Array of shape (N_pixels, N_spectra) containing the spectra
+to be stacked. NaNs are allowed and ignored where appropriate.</p></li>
+<li><p><strong>stackArrErr</strong> (<em>ndarray</em>) – Array of the same shape containing 1-sigma uncertainties
+associated with <cite>stackArr</cite>. Used for weighted statistics.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>stackSPmean</strong> (<em>ndarray</em>) – Arithmetic mean spectrum (NaN-ignoring).</p></li>
+<li><p><strong>stackDISPmean</strong> (<em>ndarray</em>) – RMS scatter of spectra around the arithmetic mean.</p></li>
+<li><p><strong>stackSPmed</strong> (<em>ndarray</em>) – Median spectrum.</p></li>
+<li><p><strong>stackDISPmed</strong> (<em>ndarray</em>) – Robust scatter estimate based on MAD, scaled to Gaussian sigma
+(1.4826 * MAD).</p></li>
+<li><p><strong>stackSPgeomMean</strong> (<em>ndarray</em>) – Geometric mean spectrum (computed only where all values are positive).</p></li>
+<li><p><strong>stackDISPgeomMean</strong> (<em>ndarray</em>) – Intrinsic dispersion around the geometric mean (log-space RMS).</p></li>
+<li><p><strong>stackSPmeanWeighted</strong> (<em>ndarray</em>) – Weighted mean spectrum (weights = 1 / err^2).</p></li>
+<li><p><strong>stackDISPmeanWeighted</strong> (<em>ndarray</em>) – Intrinsic weighted dispersion (scatter of spectra around the
+weighted mean).</p></li>
+<li><p><strong>stackERmeanWeighted</strong> (<em>ndarray</em>) – 1-sigma uncertainty on the weighted mean spectrum.</p></li>
+<li><p><strong>stackPERC16th</strong> (<em>ndarray</em>) – 16th percentile of the distribution at each pixel.</p></li>
+<li><p><strong>stackPERC84th</strong> (<em>ndarray</em>) – 84th percentile of the distribution at each pixel.</p></li>
+<li><p><strong>stackPERC98th</strong> (<em>ndarray</em>) – 97.73th percentile (~2 sigma for a Gaussian).</p></li>
+<li><p><strong>stackPERC99th</strong> (<em>ndarray</em>) – 99.73th percentile (~3 sigma for a Gaussian).</p></li>
+<li><p><strong>geomMeanPixelCount</strong> (<em>ndarray</em>) – Number of pixels with positive finite flux that entered the
+geometric mean computation, per wavelength bin.</p></li>
+<li><p><strong>stackSPmode</strong> (<em>ndarray</em>) – Mode spectrum (Half-Sample Mode estimator, parameter-free).</p></li>
+<li><p><strong>stackDISPmode</strong> (<em>ndarray</em>) – Dispersion around the mode (MAD × 1.4826).</p></li>
+<li><p><strong>stackSPgeomMeanStrict</strong> (<em>ndarray</em>) – Strict geometric mean (NaN if any finite value ≤ 0 per bin).</p></li>
+<li><p><strong>stackDISPgeomMeanStrict</strong> (<em>ndarray</em>) – Log-space dispersion for strict geometric mean (σ_ln).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.statistic.statistics.weighted_average">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.statistic.statistics.</span></span><span class="sig-name descname"><span class="pre">weighted_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stackArr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stackArrErr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spectraPyle/statistic/statistics.html#weighted_average"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.statistic.statistics.weighted_average" title="Link to this definition">¶</a></dt>
+<dd><p>Compute weighted mean, dispersion, and 1-sigma uncertainty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stackArr</strong> (<em>ndarray</em><em> (</em><em>N_pixels</em><em>, </em><em>N_spectra</em><em>)</em>) – Spectra array.</p></li>
+<li><p><strong>stackArrErr</strong> (<em>ndarray</em><em> (</em><em>N_pixels</em><em>, </em><em>N_spectra</em><em>)</em>) – Error spectra array (weights = 1/err^2).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>mean_w</strong> (<em>ndarray</em>) – Weighted mean spectrum.</p></li>
+<li><p><strong>disp_w</strong> (<em>ndarray</em>) – Intrinsic weighted dispersion.</p></li>
+<li><p><strong>err_mean_w</strong> (<em>ndarray</em>) – 1-sigma uncertainty on the weighted mean.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="plotting.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Interactive Plotting &amp; Visualization</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="resampling.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Resampling Modes</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Salvatore Quai
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Stacking Statistics</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#arithmetic-mean">Arithmetic Mean</a></li>
+<li><a class="reference internal" href="#median">Median</a></li>
+<li><a class="reference internal" href="#geometric-mean-lenient">Geometric Mean (Lenient)</a></li>
+<li><a class="reference internal" href="#geometric-mean-strict">Geometric Mean (Strict)</a></li>
+<li><a class="reference internal" href="#mode-half-sample-mode">Mode (Half-Sample Mode)</a></li>
+<li><a class="reference internal" href="#weighted-mean">Weighted Mean</a></li>
+<li><a class="reference internal" href="#percentiles">Percentiles</a></li>
+<li><a class="reference internal" href="#error-estimation-bootstrap-vs-analytical">Error Estimation: Bootstrap vs. Analytical</a></li>
+<li><a class="reference internal" href="#summary-table-when-to-use-each-statistic">Summary Table: When to Use Each Statistic</a></li>
+<li><a class="reference internal" href="#module-spectraPyle.statistic.statistics">API Reference</a><ul>
+<li><a class="reference internal" href="#spectraPyle.statistic.statistics.bootstrStack"><code class="docutils literal notranslate"><span class="pre">bootstrStack()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.statistic.statistics.bootstrap_iteration"><code class="docutils literal notranslate"><span class="pre">bootstrap_iteration()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.statistic.statistics.geomMean"><code class="docutils literal notranslate"><span class="pre">geomMean()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.statistic.statistics.geomMeanStrict"><code class="docutils literal notranslate"><span class="pre">geomMeanStrict()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.statistic.statistics.half_sample_mode"><code class="docutils literal notranslate"><span class="pre">half_sample_mode()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.statistic.statistics.stack_statistics"><code class="docutils literal notranslate"><span class="pre">stack_statistics()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.statistic.statistics.weighted_average"><code class="docutils literal notranslate"><span class="pre">weighted_average()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=5df4c8d1"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    </body>
+</html>

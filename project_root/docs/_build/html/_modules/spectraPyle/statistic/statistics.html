@@ -199,6 +199,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../normalization.html">Normalization Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../resampling.html">Resampling Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../statistics.html">Stacking Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">Interactive Plotting &amp; Visualization</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -245,11 +247,21 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for spectraPyle.statistic.statistics</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Stacking statistics: mean, median, geometric mean, weighted mean, and bootstrap.</span>
+<span class="sd">Stacking statistics: mean, median, geometric mean (lenient &amp; strict), mode, weighted mean, and bootstrap.</span>
 
-<span class="sd">:func:`stack_statistics` computes all four stacking estimators and their</span>
-<span class="sd">dispersions/errors from the sigma-clipped resampled array.</span>
-<span class="sd">:func:`bootstrStack` estimates uncertainties via bootstrap resampling.</span>
+<span class="sd">:func:`stack_statistics` computes six stacking estimators and their dispersions/errors from the</span>
+<span class="sd">sigma-clipped resampled array:</span>
+
+<span class="sd">- **Arithmetic mean** — classical average, sensitive to outliers</span>
+<span class="sd">- **Median** — robust estimator, dispersion via MAD × 1.4826</span>
+<span class="sd">- **Geometric mean (lenient)** — silently excludes non-positive flux; uses positive values per pixel</span>
+<span class="sd">- **Geometric mean (strict)** — requires all positive; returns NaN if any value ≤ 0 per pixel</span>
+<span class="sd">- **Mode (HSM)** — Half-Sample Mode estimator (Bickel 2002), parameter-free, robust</span>
+<span class="sd">- **Weighted mean** — inverse-variance weights; accounts for per-spectrum uncertainties</span>
+<span class="sd">- **Percentiles** — 16th, 84th (±1σ), 98th (≈2σ), 99th (≈3σ) for distribution inspection</span>
+
+<span class="sd">:func:`bootstrStack` estimates uncertainties via bootstrap resampling (percentile 16–84).</span>
+<span class="sd">All statistics support bootstrap error estimation or analytical formulas.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -262,7 +274,7 @@
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <div class="viewcode-block" id="stack_statistics">
-<a class="viewcode-back" href="../../../api/statistic.html#spectraPyle.statistic.statistics.stack_statistics">[docs]</a>
+<a class="viewcode-back" href="../../../statistics.html#spectraPyle.statistic.statistics.stack_statistics">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">stack_statistics</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">stackArrErr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute a suite of stacking statistics for spectra.</span>
@@ -306,6 +318,17 @@
 <span class="sd">        97.73th percentile (~2 sigma for a Gaussian).</span>
 <span class="sd">    stackPERC99th : ndarray</span>
 <span class="sd">        99.73th percentile (~3 sigma for a Gaussian).</span>
+<span class="sd">    geomMeanPixelCount : ndarray</span>
+<span class="sd">        Number of pixels with positive finite flux that entered the</span>
+<span class="sd">        geometric mean computation, per wavelength bin.</span>
+<span class="sd">    stackSPmode : ndarray</span>
+<span class="sd">        Mode spectrum (Half-Sample Mode estimator, parameter-free).</span>
+<span class="sd">    stackDISPmode : ndarray</span>
+<span class="sd">        Dispersion around the mode (MAD × 1.4826).</span>
+<span class="sd">    stackSPgeomMeanStrict : ndarray</span>
+<span class="sd">        Strict geometric mean (NaN if any finite value ≤ 0 per bin).</span>
+<span class="sd">    stackDISPgeomMeanStrict : ndarray</span>
+<span class="sd">        Log-space dispersion for strict geometric mean (σ_ln).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># ---------- Arithmetic statistics ----------</span>
@@ -318,7 +341,7 @@
     <span class="n">stackDISPmed</span> <span class="o">=</span> <span class="mf">1.4826</span> <span class="o">*</span> <span class="n">MAD</span>  <span class="c1"># Gaussian-equivalent sigma</span>
 
     <span class="c1"># ---------- Geometric mean ----------</span>
-    <span class="n">stackSPgeomMean</span><span class="p">,</span> <span class="n">stackDISPgeomMean</span> <span class="o">=</span> <span class="n">geomMean</span><span class="p">(</span><span class="n">stackArr</span><span class="p">)</span>
+    <span class="n">stackSPgeomMean</span><span class="p">,</span> <span class="n">stackDISPgeomMean</span><span class="p">,</span> <span class="n">geomMeanPixelCount</span> <span class="o">=</span> <span class="n">geomMean</span><span class="p">(</span><span class="n">stackArr</span><span class="p">)</span>
 
     <span class="c1"># ---------- Weighted mean ----------</span>
     <span class="p">(</span><span class="n">stackSPmeanWeighted</span><span class="p">,</span>
@@ -330,6 +353,12 @@
     <span class="n">stackPERC84th</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="mf">84.14</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">stackPERC98th</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="mf">97.73</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">stackPERC99th</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="mf">99.73</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># ---------- Mode (HSM) ----------</span>
+    <span class="n">stackSPmode</span><span class="p">,</span> <span class="n">stackDISPmode</span> <span class="o">=</span> <span class="n">half_sample_mode</span><span class="p">(</span><span class="n">stackArr</span><span class="p">)</span>
+
+    <span class="c1"># ---------- Strict geometric mean ----------</span>
+    <span class="n">stackSPgeomMeanStrict</span><span class="p">,</span> <span class="n">stackDISPgeomMeanStrict</span> <span class="o">=</span> <span class="n">geomMeanStrict</span><span class="p">(</span><span class="n">stackArr</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">stackSPmean</span><span class="p">,</span>
@@ -345,6 +374,11 @@
         <span class="n">stackPERC84th</span><span class="p">,</span>
         <span class="n">stackPERC98th</span><span class="p">,</span>
         <span class="n">stackPERC99th</span><span class="p">,</span>
+        <span class="n">geomMeanPixelCount</span><span class="p">,</span>
+        <span class="n">stackSPmode</span><span class="p">,</span>
+        <span class="n">stackDISPmode</span><span class="p">,</span>
+        <span class="n">stackSPgeomMeanStrict</span><span class="p">,</span>
+        <span class="n">stackDISPgeomMeanStrict</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -392,7 +426,7 @@
 <span class="sd">&#39;&#39;&#39;</span>
 
 <div class="viewcode-block" id="geomMean">
-<a class="viewcode-back" href="../../../api/statistic.html#spectraPyle.statistic.statistics.geomMean">[docs]</a>
+<a class="viewcode-back" href="../../../statistics.html#spectraPyle.statistic.statistics.geomMean">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">geomMean</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute robust geometric mean and log-space scatter.</span>
 
@@ -409,6 +443,9 @@
 <span class="sd">        Geometric mean.</span>
 <span class="sd">    sigma_ln : ndarray</span>
 <span class="sd">        Log-space RMS scatter (intrinsic dispersion).</span>
+<span class="sd">    pixel_count : ndarray</span>
+<span class="sd">        Number of pixels with positive finite flux that entered the</span>
+<span class="sd">        geometric mean computation, per wavelength bin.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
@@ -431,12 +468,148 @@
     <span class="c1"># Back to linear space</span>
     <span class="n">gm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">mean_log</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">gm</span><span class="p">,</span> <span class="n">sigma_ln</span></div>
+    <span class="n">pixel_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
 
-    
-    
+    <span class="k">return</span> <span class="n">gm</span><span class="p">,</span> <span class="n">sigma_ln</span><span class="p">,</span> <span class="n">pixel_count</span></div>
+
+
+
+<div class="viewcode-block" id="geomMeanStrict">
+<a class="viewcode-back" href="../../../statistics.html#spectraPyle.statistic.statistics.geomMeanStrict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">geomMeanStrict</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Strict geometric mean: returns NaN if any finite value ≤ 0.</span>
+
+<span class="sd">    Contrast with geomMean() (lenient): that function silently drops values</span>
+<span class="sd">    &lt;= 0 and computes the geometric mean of the remaining positive values,</span>
+<span class="sd">    tracking how many were used via pixel_count. This function makes the</span>
+<span class="sd">    opposite choice — if the distribution contains any non-positive flux,</span>
+<span class="sd">    the geometric mean is undefined and NaN is returned for that bin.</span>
+
+<span class="sd">    Science rationale: use geomMeanStrict when the physical interpretation</span>
+<span class="sd">    requires all spectra to contribute (e.g., ratio-based analyses, log-space</span>
+<span class="sd">    stacking with strict positivity). Use geomMean when partial participation</span>
+<span class="sd">    is acceptable (e.g., noisy spectra with occasional negative flux artifacts).</span>
+
+<span class="sd">    Dispersion: standard deviation of log(flux) for valid bins, i.e. σ_ln,</span>
+<span class="sd">    same convention as geomMean(). Represents multiplicative scatter.</span>
+
+<span class="sd">    No separate pixel count column: for valid bins all goodPixelCount spectra</span>
+<span class="sd">    contribute; for NaN bins the count is implicitly zero.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : ndarray</span>
+<span class="sd">        Input array (can contain NaN, but positive values required for success).</span>
+<span class="sd">    axis : int, optional</span>
+<span class="sd">        Axis along which to compute (default: 1).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    gm_strict : ndarray</span>
+<span class="sd">        Geometric mean (NaN where any finite value ≤ 0).</span>
+<span class="sd">    disp_strict : ndarray</span>
+<span class="sd">        σ_ln (std of log), NaN same mask as gm_strict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+    <span class="c1"># Identify finite mask</span>
+    <span class="n">finite_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+    <span class="c1"># For each bin, check if any finite value is non-positive</span>
+    <span class="n">has_nonpositive</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">arr</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">finite_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+    <span class="c1"># Compute log array, replacing invalid with NaN</span>
+    <span class="n">log_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">finite_mask</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+
+    <span class="c1"># Compute mean and std in log space</span>
+    <span class="n">mean_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">log_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    <span class="n">sigma_ln</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">log_arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+    <span class="c1"># Back to linear space</span>
+    <span class="n">gm_strict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">has_nonpositive</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">mean_log</span><span class="p">))</span>
+    <span class="n">disp_strict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">has_nonpositive</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">sigma_ln</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gm_strict</span><span class="p">,</span> <span class="n">disp_strict</span></div>
+
+
+
+<div class="viewcode-block" id="half_sample_mode">
+<a class="viewcode-back" href="../../../statistics.html#spectraPyle.statistic.statistics.half_sample_mode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">half_sample_mode</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Half-Sample Mode (HSM) estimator for continuous data.</span>
+
+<span class="sd">    Operates on axis=1 (wavelength bins × spectra). For each bin, applies the</span>
+<span class="sd">    Bickel (2002) HSM algorithm: finds the smallest interval containing at</span>
+<span class="sd">    least half the non-NaN values, recursively, until 1-2 values remain.</span>
+<span class="sd">    The mode is the midpoint of the final interval.</span>
+
+<span class="sd">    No binning or bandwidth parameter required — deterministic and parameter-free.</span>
+
+<span class="sd">    Dispersion: MAD × 1.4826 around the modal value (same convention as</span>
+<span class="sd">    specMedianDispersion, giving a Gaussian-equivalent σ for symmetric</span>
+<span class="sd">    unimodal distributions).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : ndarray</span>
+<span class="sd">        Input array. Can contain NaN and inf (ignored).</span>
+<span class="sd">    axis : int, optional</span>
+<span class="sd">        Axis along which to compute (default: 1).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mode_arr : ndarray</span>
+<span class="sd">        Half-sample mode for each bin.</span>
+<span class="sd">    disp_arr : ndarray</span>
+<span class="sd">        MAD × 1.4826 around the modal value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_hsm_1d</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute HSM for a single 1D array (after NaN removal).&quot;&quot;&quot;</span>
+        <span class="n">x_clean</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_clean</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_clean</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x_clean</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_clean</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="n">x_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x_clean</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_sorted</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">half_n</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">ranges</span> <span class="o">=</span> <span class="n">x_sorted</span><span class="p">[</span><span class="n">half_n</span><span class="p">:]</span> <span class="o">-</span> <span class="n">x_sorted</span><span class="p">[:</span><span class="o">-</span><span class="n">half_n</span><span class="p">]</span>
+            <span class="n">min_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">ranges</span><span class="p">)</span>
+            <span class="n">x_sorted</span> <span class="o">=</span> <span class="n">x_sorted</span><span class="p">[</span><span class="n">min_idx</span> <span class="p">:</span> <span class="n">min_idx</span> <span class="o">+</span> <span class="n">half_n</span><span class="p">]</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_sorted</span><span class="p">)</span>
+
+        <span class="n">mode_val</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x_sorted</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">mode_val</span><span class="p">,</span> <span class="n">x_clean</span>
+
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">mode_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">disp_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">mode_val</span><span class="p">,</span> <span class="n">x_clean</span> <span class="o">=</span> <span class="n">_hsm_1d</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="n">mode_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode_val</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">mode_val</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_clean</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">mad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x_clean</span> <span class="o">-</span> <span class="n">mode_val</span><span class="p">))</span>
+                <span class="n">disp_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.4826</span> <span class="o">*</span> <span class="n">mad</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">disp_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="k">return</span> <span class="n">mode_arr</span><span class="p">,</span> <span class="n">disp_arr</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;axis != 1 not implemented for half_sample_mode&quot;</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="weighted_average">
-<a class="viewcode-back" href="../../../api/statistic.html#spectraPyle.statistic.statistics.weighted_average">[docs]</a>
+<a class="viewcode-back" href="../../../statistics.html#spectraPyle.statistic.statistics.weighted_average">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">weighted_average</span><span class="p">(</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">stackArrErr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute weighted mean, dispersion, and 1-sigma uncertainty.</span>
 
@@ -535,7 +708,7 @@
 <span class="c1"># =========================================================</span>
 
 <div class="viewcode-block" id="bootstrap_iteration">
-<a class="viewcode-back" href="../../../api/statistic.html#spectraPyle.statistic.statistics.bootstrap_iteration">[docs]</a>
+<a class="viewcode-back" href="../../../statistics.html#spectraPyle.statistic.statistics.bootstrap_iteration">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">bootstrap_iteration</span><span class="p">(</span><span class="n">idx_sample</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform a single bootstrap resampling iteration.</span>
 
@@ -549,7 +722,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    tuple</span>
-<span class="sd">        Four arrays: (sum_arr, mean_arr, med_arr, geom_arr)</span>
+<span class="sd">        Six arrays: (sum_arr, mean_arr, med_arr, geom_arr, mode_arr, gms_arr)</span>
 
 <span class="sd">        - sum_arr : ndarray</span>
 <span class="sd">            Sum of resampled spectra</span>
@@ -559,6 +732,10 @@
 <span class="sd">            Median of resampled spectra</span>
 <span class="sd">        - geom_arr : ndarray</span>
 <span class="sd">            Geometric mean of resampled spectra</span>
+<span class="sd">        - mode_arr : ndarray</span>
+<span class="sd">            Mode of resampled spectra (HSM)</span>
+<span class="sd">        - gms_arr : ndarray</span>
+<span class="sd">            Strict geometric mean of resampled spectra</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">arr_sample</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[:,</span> <span class="n">idx_sample</span><span class="p">]</span>
@@ -566,9 +743,11 @@
     <span class="n">sum_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">arr_sample</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">mean_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">arr_sample</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">med_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">arr_sample</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">geom_arr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">geomMean</span><span class="p">(</span><span class="n">arr_sample</span><span class="p">)</span>
+    <span class="n">geom_arr</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">geomMean</span><span class="p">(</span><span class="n">arr_sample</span><span class="p">)</span>
+    <span class="n">mode_arr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">half_sample_mode</span><span class="p">(</span><span class="n">arr_sample</span><span class="p">)</span>
+    <span class="n">gms_arr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">geomMeanStrict</span><span class="p">(</span><span class="n">arr_sample</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">sum_arr</span><span class="p">,</span> <span class="n">mean_arr</span><span class="p">,</span> <span class="n">med_arr</span><span class="p">,</span> <span class="n">geom_arr</span></div>
+    <span class="k">return</span> <span class="n">sum_arr</span><span class="p">,</span> <span class="n">mean_arr</span><span class="p">,</span> <span class="n">med_arr</span><span class="p">,</span> <span class="n">geom_arr</span><span class="p">,</span> <span class="n">mode_arr</span><span class="p">,</span> <span class="n">gms_arr</span></div>
 
 
 
@@ -577,7 +756,7 @@
 <span class="c1"># =========================================================</span>
 
 <div class="viewcode-block" id="bootstrStack">
-<a class="viewcode-back" href="../../../api/statistic.html#spectraPyle.statistic.statistics.bootstrStack">[docs]</a>
+<a class="viewcode-back" href="../../../statistics.html#spectraPyle.statistic.statistics.bootstrStack">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">bootstrStack</span><span class="p">(</span>
     <span class="n">arr</span><span class="p">,</span>
     <span class="n">R</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span>
@@ -606,7 +785,8 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    tuple</span>
-<span class="sd">        Six arrays: (mean_spec, mean_err, med_spec, med_err, geom_spec, geom_err)</span>
+<span class="sd">        Ten arrays: (mean_spec, mean_err, med_spec, med_err, geom_spec, geom_err,</span>
+<span class="sd">                     mode_spec, mode_err, gms_spec, gms_err)</span>
 
 <span class="sd">        - mean_spec : ndarray</span>
 <span class="sd">            Mean spectrum from bootstrap samples</span>
@@ -620,6 +800,14 @@
 <span class="sd">            Geometric mean spectrum from bootstrap samples</span>
 <span class="sd">        - geom_err : ndarray</span>
 <span class="sd">            Uncertainty on geometric mean spectrum</span>
+<span class="sd">        - mode_spec : ndarray</span>
+<span class="sd">            Mode spectrum from bootstrap samples</span>
+<span class="sd">        - mode_err : ndarray</span>
+<span class="sd">            Uncertainty on mode spectrum</span>
+<span class="sd">        - gms_spec : ndarray</span>
+<span class="sd">            Strict geometric mean spectrum from bootstrap samples</span>
+<span class="sd">        - gms_err : ndarray</span>
+<span class="sd">            Uncertainty on strict geometric mean spectrum</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running bootstrap (R=</span><span class="si">{</span><span class="n">R</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
@@ -664,6 +852,8 @@
     <span class="n">meanArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
     <span class="n">medArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
     <span class="n">geomArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">modeArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">gmsArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
 
     <span class="c1"># -----------------------------------------------------</span>
     <span class="c1"># Final statistics</span>
@@ -691,12 +881,26 @@
     <span class="n">geom_spec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">geomArr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="c1">#geom_err_low = geom_spec - geom_p16</span>
     <span class="c1">#geom_err_high = geom_p84 - geom_spec</span>
-    
+
     <span class="n">geom_err</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">geom_p84</span> <span class="o">-</span> <span class="n">geom_p16</span><span class="p">)</span>
+
+    <span class="c1"># ---- MODE ----</span>
+    <span class="n">mode_p16</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">modeArr</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mode_p84</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">modeArr</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">mode_spec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">modeArr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mode_err</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">mode_p84</span> <span class="o">-</span> <span class="n">mode_p16</span><span class="p">)</span>
+
+    <span class="c1"># ---- STRICT GEOMETRIC MEAN ----</span>
+    <span class="n">gms_p16</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">gmsArr</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">gms_p84</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">gmsArr</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">gms_spec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">gmsArr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">gms_err</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">gms_p84</span> <span class="o">-</span> <span class="n">gms_p16</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bootstrap completed&quot;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">mean_spec</span><span class="p">,</span><span class="n">mean_err</span><span class="p">,</span><span class="n">med_spec</span><span class="p">,</span><span class="n">med_err</span><span class="p">,</span><span class="n">geom_spec</span><span class="p">,</span><span class="n">geom_err</span></div>
+    <span class="k">return</span> <span class="n">mean_spec</span><span class="p">,</span> <span class="n">mean_err</span><span class="p">,</span> <span class="n">med_spec</span><span class="p">,</span> <span class="n">med_err</span><span class="p">,</span> <span class="n">geom_spec</span><span class="p">,</span> <span class="n">geom_err</span><span class="p">,</span> <span class="n">mode_spec</span><span class="p">,</span> <span class="n">mode_err</span><span class="p">,</span> <span class="n">gms_spec</span><span class="p">,</span> <span class="n">gms_err</span></div>
 
 
 

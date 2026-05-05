@@ -200,6 +200,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../normalization.html">Normalization Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../resampling.html">Resampling Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../statistics.html">Stacking Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plotting.html">Interactive Plotting &amp; Visualization</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul class="current">
@@ -252,10 +254,20 @@
         <article role="main" id="furo-main-content">
           <section id="module-spectraPyle.statistic.statistics">
 <span id="statistic"></span><h1>statistic<a class="headerlink" href="#module-spectraPyle.statistic.statistics" title="Link to this heading">¶</a></h1>
-<p>Stacking statistics: mean, median, geometric mean, weighted mean, and bootstrap.</p>
-<p><a class="reference internal" href="#spectraPyle.statistic.statistics.stack_statistics" title="spectraPyle.statistic.statistics.stack_statistics"><code class="xref py py-func docutils literal notranslate"><span class="pre">stack_statistics()</span></code></a> computes all four stacking estimators and their
-dispersions/errors from the sigma-clipped resampled array.
-<a class="reference internal" href="#spectraPyle.statistic.statistics.bootstrStack" title="spectraPyle.statistic.statistics.bootstrStack"><code class="xref py py-func docutils literal notranslate"><span class="pre">bootstrStack()</span></code></a> estimates uncertainties via bootstrap resampling.</p>
+<p>Stacking statistics: mean, median, geometric mean (lenient &amp; strict), mode, weighted mean, and bootstrap.</p>
+<p><a class="reference internal" href="../statistics.html#spectraPyle.statistic.statistics.stack_statistics" title="spectraPyle.statistic.statistics.stack_statistics"><code class="xref py py-func docutils literal notranslate"><span class="pre">stack_statistics()</span></code></a> computes six stacking estimators and their dispersions/errors from the
+sigma-clipped resampled array:</p>
+<ul class="simple">
+<li><p><strong>Arithmetic mean</strong> — classical average, sensitive to outliers</p></li>
+<li><p><strong>Median</strong> — robust estimator, dispersion via MAD × 1.4826</p></li>
+<li><p><strong>Geometric mean (lenient)</strong> — silently excludes non-positive flux; uses positive values per pixel</p></li>
+<li><p><strong>Geometric mean (strict)</strong> — requires all positive; returns NaN if any value ≤ 0 per pixel</p></li>
+<li><p><strong>Mode (HSM)</strong> — Half-Sample Mode estimator (Bickel 2002), parameter-free, robust</p></li>
+<li><p><strong>Weighted mean</strong> — inverse-variance weights; accounts for per-spectrum uncertainties</p></li>
+<li><p><strong>Percentiles</strong> — 16th, 84th (±1σ), 98th (≈2σ), 99th (≈3σ) for distribution inspection</p></li>
+</ul>
+<p><a class="reference internal" href="../statistics.html#spectraPyle.statistic.statistics.bootstrStack" title="spectraPyle.statistic.statistics.bootstrStack"><code class="xref py py-func docutils literal notranslate"><span class="pre">bootstrStack()</span></code></a> estimates uncertainties via bootstrap resampling (percentile 16–84).
+All statistics support bootstrap error estimation or analytical formulas.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="spectraPyle.statistic.statistics.bootstrStack">
 <span class="sig-prename descclassname"><span class="pre">spectraPyle.statistic.statistics.</span></span><span class="sig-name descname"><span class="pre">bootstrStack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/statistic/statistics.html#bootstrStack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.statistic.statistics.bootstrStack" title="Link to this definition">¶</a></dt>
@@ -272,7 +284,10 @@ dispersions/errors from the sigma-clipped resampled array.
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><p>Six arrays: (mean_spec, mean_err, med_spec, med_err, geom_spec, geom_err)</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>Ten arrays: (mean_spec, mean_err, med_spec, med_err, geom_spec, geom_err,</dt><dd><p>mode_spec, mode_err, gms_spec, gms_err)</p>
+</dd>
+</dl>
 <ul class="simple">
 <li><dl class="simple">
 <dt>mean_spec<span class="classifier">ndarray</span></dt><dd><p>Mean spectrum from bootstrap samples</p>
@@ -304,6 +319,26 @@ dispersions/errors from the sigma-clipped resampled array.
 </dd>
 </dl>
 </li>
+<li><dl class="simple">
+<dt>mode_spec<span class="classifier">ndarray</span></dt><dd><p>Mode spectrum from bootstrap samples</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mode_err<span class="classifier">ndarray</span></dt><dd><p>Uncertainty on mode spectrum</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>gms_spec<span class="classifier">ndarray</span></dt><dd><p>Strict geometric mean spectrum from bootstrap samples</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>gms_err<span class="classifier">ndarray</span></dt><dd><p>Uncertainty on strict geometric mean spectrum</p>
+</dd>
+</dl>
+</li>
 </ul>
 </p>
 </dd>
@@ -325,7 +360,7 @@ dispersions/errors from the sigma-clipped resampled array.
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><p>Four arrays: (sum_arr, mean_arr, med_arr, geom_arr)</p>
+<dd class="field-even"><p><p>Six arrays: (sum_arr, mean_arr, med_arr, geom_arr, mode_arr, gms_arr)</p>
 <ul class="simple">
 <li><dl class="simple">
 <dt>sum_arr<span class="classifier">ndarray</span></dt><dd><p>Sum of resampled spectra</p>
@@ -344,6 +379,16 @@ dispersions/errors from the sigma-clipped resampled array.
 </li>
 <li><dl class="simple">
 <dt>geom_arr<span class="classifier">ndarray</span></dt><dd><p>Geometric mean of resampled spectra</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mode_arr<span class="classifier">ndarray</span></dt><dd><p>Mode of resampled spectra (HSM)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>gms_arr<span class="classifier">ndarray</span></dt><dd><p>Strict geometric mean of resampled spectra</p>
 </dd>
 </dl>
 </li>
@@ -371,6 +416,71 @@ dispersions/errors from the sigma-clipped resampled array.
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>gm</strong> (<em>ndarray</em>) – Geometric mean.</p></li>
 <li><p><strong>sigma_ln</strong> (<em>ndarray</em>) – Log-space RMS scatter (intrinsic dispersion).</p></li>
+<li><p><strong>pixel_count</strong> (<em>ndarray</em>) – Number of pixels with positive finite flux that entered the
+geometric mean computation, per wavelength bin.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.statistic.statistics.geomMeanStrict">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.statistic.statistics.</span></span><span class="sig-name descname"><span class="pre">geomMeanStrict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/statistic/statistics.html#geomMeanStrict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.statistic.statistics.geomMeanStrict" title="Link to this definition">¶</a></dt>
+<dd><p>Strict geometric mean: returns NaN if any finite value ≤ 0.</p>
+<p>Contrast with geomMean() (lenient): that function silently drops values
+&lt;= 0 and computes the geometric mean of the remaining positive values,
+tracking how many were used via pixel_count. This function makes the
+opposite choice — if the distribution contains any non-positive flux,
+the geometric mean is undefined and NaN is returned for that bin.</p>
+<p>Science rationale: use geomMeanStrict when the physical interpretation
+requires all spectra to contribute (e.g., ratio-based analyses, log-space
+stacking with strict positivity). Use geomMean when partial participation
+is acceptable (e.g., noisy spectra with occasional negative flux artifacts).</p>
+<p>Dispersion: standard deviation of log(flux) for valid bins, i.e. σ_ln,
+same convention as geomMean(). Represents multiplicative scatter.</p>
+<p>No separate pixel count column: for valid bins all goodPixelCount spectra
+contribute; for NaN bins the count is implicitly zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>ndarray</em>) – Input array (can contain NaN, but positive values required for success).</p></li>
+<li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Axis along which to compute (default: 1).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>gm_strict</strong> (<em>ndarray</em>) – Geometric mean (NaN where any finite value ≤ 0).</p></li>
+<li><p><strong>disp_strict</strong> (<em>ndarray</em>) – σ_ln (std of log), NaN same mask as gm_strict.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.statistic.statistics.half_sample_mode">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.statistic.statistics.</span></span><span class="sig-name descname"><span class="pre">half_sample_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/statistic/statistics.html#half_sample_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.statistic.statistics.half_sample_mode" title="Link to this definition">¶</a></dt>
+<dd><p>Half-Sample Mode (HSM) estimator for continuous data.</p>
+<p>Operates on axis=1 (wavelength bins × spectra). For each bin, applies the
+Bickel (2002) HSM algorithm: finds the smallest interval containing at
+least half the non-NaN values, recursively, until 1-2 values remain.
+The mode is the midpoint of the final interval.</p>
+<p>No binning or bandwidth parameter required — deterministic and parameter-free.</p>
+<p>Dispersion: MAD × 1.4826 around the modal value (same convention as
+specMedianDispersion, giving a Gaussian-equivalent σ for symmetric
+unimodal distributions).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>ndarray</em>) – Input array. Can contain NaN and inf (ignored).</p></li>
+<li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Axis along which to compute (default: 1).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>mode_arr</strong> (<em>ndarray</em>) – Half-sample mode for each bin.</p></li>
+<li><p><strong>disp_arr</strong> (<em>ndarray</em>) – MAD × 1.4826 around the modal value.</p></li>
 </ul>
 </p>
 </dd>
@@ -407,6 +517,12 @@ weighted mean).</p></li>
 <li><p><strong>stackPERC84th</strong> (<em>ndarray</em>) – 84th percentile of the distribution at each pixel.</p></li>
 <li><p><strong>stackPERC98th</strong> (<em>ndarray</em>) – 97.73th percentile (~2 sigma for a Gaussian).</p></li>
 <li><p><strong>stackPERC99th</strong> (<em>ndarray</em>) – 99.73th percentile (~3 sigma for a Gaussian).</p></li>
+<li><p><strong>geomMeanPixelCount</strong> (<em>ndarray</em>) – Number of pixels with positive finite flux that entered the
+geometric mean computation, per wavelength bin.</p></li>
+<li><p><strong>stackSPmode</strong> (<em>ndarray</em>) – Mode spectrum (Half-Sample Mode estimator, parameter-free).</p></li>
+<li><p><strong>stackDISPmode</strong> (<em>ndarray</em>) – Dispersion around the mode (MAD × 1.4826).</p></li>
+<li><p><strong>stackSPgeomMeanStrict</strong> (<em>ndarray</em>) – Strict geometric mean (NaN if any finite value ≤ 0 per bin).</p></li>
+<li><p><strong>stackDISPgeomMeanStrict</strong> (<em>ndarray</em>) – Log-space dispersion for strict geometric mean (σ_ln).</p></li>
 </ul>
 </p>
 </dd>
@@ -496,6 +612,8 @@ weighted mean).</p></li>
 <li><a class="reference internal" href="#spectraPyle.statistic.statistics.bootstrStack"><code class="docutils literal notranslate"><span class="pre">bootstrStack()</span></code></a></li>
 <li><a class="reference internal" href="#spectraPyle.statistic.statistics.bootstrap_iteration"><code class="docutils literal notranslate"><span class="pre">bootstrap_iteration()</span></code></a></li>
 <li><a class="reference internal" href="#spectraPyle.statistic.statistics.geomMean"><code class="docutils literal notranslate"><span class="pre">geomMean()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.statistic.statistics.geomMeanStrict"><code class="docutils literal notranslate"><span class="pre">geomMeanStrict()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.statistic.statistics.half_sample_mode"><code class="docutils literal notranslate"><span class="pre">half_sample_mode()</span></code></a></li>
 <li><a class="reference internal" href="#spectraPyle.statistic.statistics.stack_statistics"><code class="docutils literal notranslate"><span class="pre">stack_statistics()</span></code></a></li>
 <li><a class="reference internal" href="#spectraPyle.statistic.statistics.weighted_average"><code class="docutils literal notranslate"><span class="pre">weighted_average()</span></code></a></li>
 </ul>

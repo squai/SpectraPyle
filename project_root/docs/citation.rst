@@ -58,3 +58,22 @@ If you use SpectraPyle with **Euclid** data, you must also follow the
 `Euclid Consortium publication policy
 <https://www.euclid-ec.org/>`_ and include the standard Euclid acknowledgment
 text as specified in the consortium guidelines.
+
+Development Team
+----------------
+
+**SpectraPyle is developed and maintained by:**
+
+- **Salvatore Quai** (Lead Developer & Maintainer) — University of Bologna
+- **Lucia Pozzetti** — INAF–Astrophysics and Space Science Observatory, Bologna
+- **Michele Moresco** — University of Bologna
+- **Margherita Talia** — INAF–Astrophysics and Space Science Observatory, Bologna
+- **Zhiying Mao**
+- **Xavier Lopez Lopez**
+- **Elisabeta Lusso** — University of Bologna
+- **Sotiria Fotopoulou**
+
+**Contact:** salvatore.quai@unibo.it
+
+For bug reports, feature requests, or contributions, please visit the
+`SpectraPyle GitHub repository <https://github.com/SpectraPyle/SpectraPyle>`_.

@@ -1,9 +1,19 @@
 """
-Stacking statistics: mean, median, geometric mean, weighted mean, and bootstrap.
+Stacking statistics: mean, median, geometric mean (lenient & strict), mode, weighted mean, and bootstrap.
 
-:func:`stack_statistics` computes all four stacking estimators and their
-dispersions/errors from the sigma-clipped resampled array.
-:func:`bootstrStack` estimates uncertainties via bootstrap resampling.
+:func:`stack_statistics` computes six stacking estimators and their dispersions/errors from the
+sigma-clipped resampled array:
+
+- **Arithmetic mean** — classical average, sensitive to outliers
+- **Median** — robust estimator, dispersion via MAD × 1.4826
+- **Geometric mean (lenient)** — silently excludes non-positive flux; uses positive values per pixel
+- **Geometric mean (strict)** — requires all positive; returns NaN if any value ≤ 0 per pixel
+- **Mode (HSM)** — Half-Sample Mode estimator (Bickel 2002), parameter-free, robust
+- **Weighted mean** — inverse-variance weights; accounts for per-spectrum uncertainties
+- **Percentiles** — 16th, 84th (±1σ), 98th (≈2σ), 99th (≈3σ) for distribution inspection
+
+:func:`bootstrStack` estimates uncertainties via bootstrap resampling (percentile 16–84).
+All statistics support bootstrap error estimation or analytical formulas.
 """
 
 import numpy as np
@@ -61,6 +71,14 @@ def stack_statistics(stackArr, stackArrErr):
     geomMeanPixelCount : ndarray
         Number of pixels with positive finite flux that entered the
         geometric mean computation, per wavelength bin.
+    stackSPmode : ndarray
+        Mode spectrum (Half-Sample Mode estimator, parameter-free).
+    stackDISPmode : ndarray
+        Dispersion around the mode (MAD × 1.4826).
+    stackSPgeomMeanStrict : ndarray
+        Strict geometric mean (NaN if any finite value ≤ 0 per bin).
+    stackDISPgeomMeanStrict : ndarray
+        Log-space dispersion for strict geometric mean (σ_ln).
     """
 
     # ---------- Arithmetic statistics ----------
@@ -86,6 +104,12 @@ def stack_statistics(stackArr, stackArrErr):
     stackPERC98th = np.nanpercentile(stackArr, 97.73, axis=1)
     stackPERC99th = np.nanpercentile(stackArr, 99.73, axis=1)
 
+    # ---------- Mode (HSM) ----------
+    stackSPmode, stackDISPmode = half_sample_mode(stackArr)
+
+    # ---------- Strict geometric mean ----------
+    stackSPgeomMeanStrict, stackDISPgeomMeanStrict = geomMeanStrict(stackArr)
+
     return (
         stackSPmean,
         stackDISPmean,
@@ -101,6 +125,10 @@ def stack_statistics(stackArr, stackArrErr):
         stackPERC98th,
         stackPERC99th,
         geomMeanPixelCount,
+        stackSPmode,
+        stackDISPmode,
+        stackSPgeomMeanStrict,
+        stackDISPgeomMeanStrict,
     )
 
 '''
@@ -190,8 +218,136 @@ def geomMean(arr, axis=1):
     pixel_count = np.sum(valid, axis=axis)
 
     return gm, sigma_ln, pixel_count
-    
-    
+
+
+def geomMeanStrict(arr, axis=1):
+    """Strict geometric mean: returns NaN if any finite value ≤ 0.
+
+    Contrast with geomMean() (lenient): that function silently drops values
+    <= 0 and computes the geometric mean of the remaining positive values,
+    tracking how many were used via pixel_count. This function makes the
+    opposite choice — if the distribution contains any non-positive flux,
+    the geometric mean is undefined and NaN is returned for that bin.
+
+    Science rationale: use geomMeanStrict when the physical interpretation
+    requires all spectra to contribute (e.g., ratio-based analyses, log-space
+    stacking with strict positivity). Use geomMean when partial participation
+    is acceptable (e.g., noisy spectra with occasional negative flux artifacts).
+
+    Dispersion: standard deviation of log(flux) for valid bins, i.e. σ_ln,
+    same convention as geomMean(). Represents multiplicative scatter.
+
+    No separate pixel count column: for valid bins all goodPixelCount spectra
+    contribute; for NaN bins the count is implicitly zero.
+
+    Parameters
+    ----------
+    arr : ndarray
+        Input array (can contain NaN, but positive values required for success).
+    axis : int, optional
+        Axis along which to compute (default: 1).
+
+    Returns
+    -------
+    gm_strict : ndarray
+        Geometric mean (NaN where any finite value ≤ 0).
+    disp_strict : ndarray
+        σ_ln (std of log), NaN same mask as gm_strict.
+    """
+
+    arr = np.asarray(arr)
+
+    # Identify finite mask
+    finite_mask = np.isfinite(arr)
+
+    # For each bin, check if any finite value is non-positive
+    has_nonpositive = np.any((arr <= 0) & finite_mask, axis=axis)
+
+    # Compute log array, replacing invalid with NaN
+    log_arr = np.log(np.where(finite_mask, arr, np.nan))
+
+    # Compute mean and std in log space
+    mean_log = np.nanmean(log_arr, axis=axis)
+    sigma_ln = np.nanstd(log_arr, axis=axis)
+
+    # Back to linear space
+    gm_strict = np.where(has_nonpositive, np.nan, np.exp(mean_log))
+    disp_strict = np.where(has_nonpositive, np.nan, sigma_ln)
+
+    return gm_strict, disp_strict
+
+
+def half_sample_mode(arr, axis=1):
+    """Half-Sample Mode (HSM) estimator for continuous data.
+
+    Operates on axis=1 (wavelength bins × spectra). For each bin, applies the
+    Bickel (2002) HSM algorithm: finds the smallest interval containing at
+    least half the non-NaN values, recursively, until 1-2 values remain.
+    The mode is the midpoint of the final interval.
+
+    No binning or bandwidth parameter required — deterministic and parameter-free.
+
+    Dispersion: MAD × 1.4826 around the modal value (same convention as
+    specMedianDispersion, giving a Gaussian-equivalent σ for symmetric
+    unimodal distributions).
+
+    Parameters
+    ----------
+    arr : ndarray
+        Input array. Can contain NaN and inf (ignored).
+    axis : int, optional
+        Axis along which to compute (default: 1).
+
+    Returns
+    -------
+    mode_arr : ndarray
+        Half-sample mode for each bin.
+    disp_arr : ndarray
+        MAD × 1.4826 around the modal value.
+    """
+
+    def _hsm_1d(x):
+        """Compute HSM for a single 1D array (after NaN removal)."""
+        x_clean = x[~np.isnan(x)]
+        if len(x_clean) == 0:
+            return np.nan, np.nan
+        if len(x_clean) <= 1:
+            return x_clean[0] if len(x_clean) == 1 else np.nan, np.nan
+
+        x_sorted = np.sort(x_clean)
+        n = len(x_sorted)
+
+        while n > 2:
+            half_n = (n + 1) // 2
+            ranges = x_sorted[half_n:] - x_sorted[:-half_n]
+            min_idx = np.argmin(ranges)
+            x_sorted = x_sorted[min_idx : min_idx + half_n]
+            n = len(x_sorted)
+
+        mode_val = 0.5 * (x_sorted[0] + x_sorted[-1])
+        return mode_val, x_clean
+
+    arr = np.asarray(arr)
+
+    if axis == 1:
+        mode_arr = np.zeros(arr.shape[0])
+        disp_arr = np.zeros(arr.shape[0])
+
+        for i in range(arr.shape[0]):
+            mode_val, x_clean = _hsm_1d(arr[i, :])
+            mode_arr[i] = mode_val
+
+            if not np.isnan(mode_val) and len(x_clean) > 0:
+                mad = np.median(np.abs(x_clean - mode_val))
+                disp_arr[i] = 1.4826 * mad
+            else:
+                disp_arr[i] = np.nan
+
+        return mode_arr, disp_arr
+    else:
+        raise NotImplementedError("axis != 1 not implemented for half_sample_mode")
+
+
 def weighted_average(stackArr, stackArrErr):
     """Compute weighted mean, dispersion, and 1-sigma uncertainty.
 
@@ -301,7 +457,7 @@ def bootstrap_iteration(idx_sample, arr):
     Returns
     -------
     tuple
-        Four arrays: (sum_arr, mean_arr, med_arr, geom_arr)
+        Six arrays: (sum_arr, mean_arr, med_arr, geom_arr, mode_arr, gms_arr)
 
         - sum_arr : ndarray
             Sum of resampled spectra
@@ -311,6 +467,10 @@ def bootstrap_iteration(idx_sample, arr):
             Median of resampled spectra
         - geom_arr : ndarray
             Geometric mean of resampled spectra
+        - mode_arr : ndarray
+            Mode of resampled spectra (HSM)
+        - gms_arr : ndarray
+            Strict geometric mean of resampled spectra
     """
 
     arr_sample = arr[:, idx_sample]
@@ -319,8 +479,10 @@ def bootstrap_iteration(idx_sample, arr):
     mean_arr = np.nanmean(arr_sample, axis=1)
     med_arr = np.nanmedian(arr_sample, axis=1)
     geom_arr, _, _ = geomMean(arr_sample)
+    mode_arr, _ = half_sample_mode(arr_sample)
+    gms_arr, _ = geomMeanStrict(arr_sample)
 
-    return sum_arr, mean_arr, med_arr, geom_arr
+    return sum_arr, mean_arr, med_arr, geom_arr, mode_arr, gms_arr
 
 
 # =========================================================
@@ -355,7 +517,8 @@ def bootstrStack(
     Returns
     -------
     tuple
-        Six arrays: (mean_spec, mean_err, med_spec, med_err, geom_spec, geom_err)
+        Ten arrays: (mean_spec, mean_err, med_spec, med_err, geom_spec, geom_err,
+                     mode_spec, mode_err, gms_spec, gms_err)
 
         - mean_spec : ndarray
             Mean spectrum from bootstrap samples
@@ -369,6 +532,14 @@ def bootstrStack(
             Geometric mean spectrum from bootstrap samples
         - geom_err : ndarray
             Uncertainty on geometric mean spectrum
+        - mode_spec : ndarray
+            Mode spectrum from bootstrap samples
+        - mode_err : ndarray
+            Uncertainty on mode spectrum
+        - gms_spec : ndarray
+            Strict geometric mean spectrum from bootstrap samples
+        - gms_err : ndarray
+            Uncertainty on strict geometric mean spectrum
     """
 
     print(f"Running bootstrap (R={R})")
@@ -413,6 +584,8 @@ def bootstrStack(
     meanArr = np.array([r[1] for r in results]).T
     medArr = np.array([r[2] for r in results]).T
     geomArr = np.array([r[3] for r in results]).T
+    modeArr = np.array([r[4] for r in results]).T
+    gmsArr = np.array([r[5] for r in results]).T
 
     # -----------------------------------------------------
     # Final statistics
@@ -440,11 +613,25 @@ def bootstrStack(
     geom_spec = np.nanmedian(geomArr, axis=1)
     #geom_err_low = geom_spec - geom_p16
     #geom_err_high = geom_p84 - geom_spec
-    
+
     geom_err = 0.5 * (geom_p84 - geom_p16)
+
+    # ---- MODE ----
+    mode_p16 = np.nanpercentile(modeArr, 16, axis=1)
+    mode_p84 = np.nanpercentile(modeArr, 84, axis=1)
+
+    mode_spec = np.nanmedian(modeArr, axis=1)
+    mode_err = 0.5 * (mode_p84 - mode_p16)
+
+    # ---- STRICT GEOMETRIC MEAN ----
+    gms_p16 = np.nanpercentile(gmsArr, 16, axis=1)
+    gms_p84 = np.nanpercentile(gmsArr, 84, axis=1)
+
+    gms_spec = np.nanmedian(gmsArr, axis=1)
+    gms_err = 0.5 * (gms_p84 - gms_p16)
 
     print("Bootstrap completed")
 
-    return mean_spec,mean_err,med_spec,med_err,geom_spec,geom_err
+    return mean_spec, mean_err, med_spec, med_err, geom_spec, geom_err, mode_spec, mode_err, gms_spec, gms_err
 
 

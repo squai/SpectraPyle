@@ -155,14 +155,19 @@ with fits.open("result.fits") as hdu:
 | Column | Description |
 |---|---|
 | `wavelength` | Wavelength array (Å) |
-| `specMean` / `specMeanDispersion` / `specMeanError` | Mean stack + 1σ dispersion + 1σ uncertainty |
-| `specMedian` / `specMedianDispersion` / `specMedianError` | Median stack |
-| `specGeometricMean` / `specGeometricMeanDispersion` / `specGeometricMeanError` | Geometric mean — non-positive flux values are excluded per pixel; result is NaN if all pixels have non-positive flux |
+| `specMean` / `specMeanDispersion` / `specMeanError` | Arithmetic mean stack + 1σ dispersion + 1σ uncertainty |
+| `specMedian` / `specMedianDispersion` / `specMedianError` | Median stack (robust dispersion via MAD × 1.4826) |
+| `specGeometricMean` / `specGeometricMeanDispersion` / `specGeometricMeanError` | Geometric mean (lenient) — non-positive flux values are excluded per pixel; result is NaN if all pixels have non-positive flux |
+| `specStrictGeometricMean` / `specStrictGeometricMeanDispersion` / `specStrictGeometricMeanError` | Geometric mean (strict) — returns NaN for any pixel with ≥1 non-positive flux value; use when strict positivity is required |
+| `specMode` / `specModeDispersion` / `specModeError` | Mode (Half-Sample Mode estimator, parameter-free); dispersion via MAD × 1.4826 |
 | `specWeightedMean` / `specWeightedMeanDispersion` / `specWeightedMeanError` | Inverse-variance weighted mean |
+| `spec16th`, `spec84th`, `spec98th`, `spec99th` | 16th, 84th, 97.73rd (≈2σ), and 99.73rd (≈3σ) percentiles |
 | `initialPixelCount` | Total spectra submitted to the stack |
 | `goodPixelCount` | Good flux values used per pixel |
 | `badPixelCount` | Bad (masked) pixels per pixel |
 | `sigmaClippedCount` | Values removed by sigma-clipping per pixel |
+| `geomMeanPixelCount` | Spectra with positive flux that contributed to geometric mean per pixel |
+| `templateNormMaskedCount` | Pixels masked during template normalization |
 
 ---
 
@@ -289,6 +294,24 @@ Publications using SpectraPyle **must** also include the following acknowledgmen
 If you use SpectraPyle with **Euclid** data, you must also follow the [Euclid Consortium publication policy](https://www.euclid-ec.org/) and include the standard Euclid acknowledgment text.
 
 For the full APA reference and detailed acknowledgment requirements, see [Citation & Acknowledgments](project_root/docs/citation.rst) in the documentation.
+
+---
+
+## Contributors & Development Team
+
+**Lead Developer & Maintainer:**
+- **Salvatore Quai** (University of Bologna) — salvatore.quai@unibo.it
+
+**Contributors:**
+- Lucia Pozzetti (INAF–OAS Bologna)
+- Michele Moresco (University of Bologna)
+- Margherita Talia (INAF–OAS Bologna)
+- Zhiying Mao
+- Xavier Lopez Lopez
+- Elisabeta Lusso (University of Bologna)
+- Sotiria Fotopoulou
+
+For inquiries or contributions, please contact Salvatore Quai.
 
 ---
 

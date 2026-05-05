@@ -200,6 +200,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="normalization.html">Normalization Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="resampling.html">Resampling Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statistics.html">Stacking Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">Interactive Plotting &amp; Visualization</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -254,7 +256,8 @@
 <h1>SpectraPyle Documentation<a class="headerlink" href="#spectrapyle-documentation" title="Link to this heading">¶</a></h1>
 <p>SpectraPyle is a flexible, scalable tool for stacking galaxy spectra.
 It shifts spectra to a common rest frame, normalizes, resamples, sigma-clips,
-and combines them using median, mean, weighted mean, or geometric mean statistics.</p>
+and combines them using six stacking estimators: mean, median, geometric mean (lenient &amp; strict),
+mode (HSM), and weighted mean. Includes bootstrap uncertainty estimation and interactive plots.</p>
 <p><strong>Supported instruments:</strong> Euclid (NISP) · DESI</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
@@ -304,6 +307,35 @@ and combines them using median, mean, weighted mean, or geometric mean statistic
 <li class="toctree-l2"><a class="reference internal" href="resampling.html#logarithmic-grid">Logarithmic Grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="resampling.html#no-resampling">No Resampling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="resampling.html#algorithm-fruchter-hook-2002-drizzle">Algorithm: Fruchter &amp; Hook (2002) Drizzle</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="statistics.html">Stacking Statistics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html#arithmetic-mean">Arithmetic Mean</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html#median">Median</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html#geometric-mean-lenient">Geometric Mean (Lenient)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html#geometric-mean-strict">Geometric Mean (Strict)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html#mode-half-sample-mode">Mode (Half-Sample Mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html#weighted-mean">Weighted Mean</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html#percentiles">Percentiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html#error-estimation-bootstrap-vs-analytical">Error Estimation: Bootstrap vs. Analytical</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html#summary-table-when-to-use-each-statistic">Summary Table: When to Use Each Statistic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statistics.html#module-spectraPyle.statistic.statistics">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">Interactive Plotting &amp; Visualization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#layout-structure">Layout &amp; Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#pixel-count-traces-top-panel">Pixel Count Traces (Top Panel)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#main-spectrum-traces-bottom-panel">Main Spectrum Traces (Bottom Panel)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#percentile-bands">Percentile Bands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#astrophysical-markers">Astrophysical Markers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#legend-interactivity">Legend &amp; Interactivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#when-to-use-each-trace">When to Use Each Trace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#error-vs-dispersion-bands">Error vs. Dispersion Bands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#example-interpreting-a-stack">Example: Interpreting a Stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html#module-spectraPyle.plot.plot">API Reference</a></li>
 </ul>
 </li>
 </ul>
@@ -367,6 +399,8 @@ and combines them using median, mean, weighted mean, or geometric mean statistic
 <li class="toctree-l2"><a class="reference internal" href="api/statistic.html#spectraPyle.statistic.statistics.bootstrStack"><code class="docutils literal notranslate"><span class="pre">bootstrStack()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/statistic.html#spectraPyle.statistic.statistics.bootstrap_iteration"><code class="docutils literal notranslate"><span class="pre">bootstrap_iteration()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/statistic.html#spectraPyle.statistic.statistics.geomMean"><code class="docutils literal notranslate"><span class="pre">geomMean()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/statistic.html#spectraPyle.statistic.statistics.geomMeanStrict"><code class="docutils literal notranslate"><span class="pre">geomMeanStrict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/statistic.html#spectraPyle.statistic.statistics.half_sample_mode"><code class="docutils literal notranslate"><span class="pre">half_sample_mode()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/statistic.html#spectraPyle.statistic.statistics.stack_statistics"><code class="docutils literal notranslate"><span class="pre">stack_statistics()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/statistic.html#spectraPyle.statistic.statistics.weighted_average"><code class="docutils literal notranslate"><span class="pre">weighted_average()</span></code></a></li>
 </ul>

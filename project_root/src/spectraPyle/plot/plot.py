@@ -1,9 +1,20 @@
 """
 Interactive Plotly visualization of the stacked spectrum.
 
-:func:`plotting` reads the output FITS file and generates a two-panel
-Plotly figure (pixel counts panel + spectrum panel) with all stacking
-estimators overlaid.
+:func:`plotting` reads the output FITS file and generates a two-panel Plotly figure:
+
+**Top panel (pixel counts):** Line traces for initial, good, bad, sigma-clipped, and
+geometric-mean-specific pixel counts. Each toggleable individually.
+
+**Bottom panel (stacked spectra):** Overlays all stacking estimators:
+
+- Mean, Median, Geometric Mean (lenient), Geometric Mean (strict), Weighted Mean, Mode
+- Each trace includes ±1σ error band and ±dispersion band (toggleable separately)
+- Percentile bands: 16th–84th (±1σ envelope), 98th, 99th (independent traces)
+- Emission lines and absorption features overlaid (if not in observed frame)
+
+All traces are toggleable via legend. Percentiles use dashed (98th) and dotted (99th) styles
+to distinguish from main statistics. Colors chosen for accessibility.
 """
 
 import os
@@ -102,7 +113,7 @@ def plotting(output_filename, width=950, height=550):
         visible='legendonly',
         line=dict(color='orange', shape='hv'),
         legendgroup='specGeometricMean',
-        showlegend=False,
+        showlegend=True,
     ), row=1, col=1)
 
     # show the stacked spectra:
@@ -110,21 +121,27 @@ def plotting(output_filename, width=950, height=550):
         "specMean",
         "specMedian",
         "specWeightedMean",
-        "specGeometricMean"
+        "specGeometricMean",
+        "specStrictGeometricMean",
+        "specMode"
     ]
 
     colors = {
         "specMean": "orange",                 # RGB(255, 165, 0)
         "specMedian": "cyan",                  # RGB(0, 255, 255)
         "specWeightedMean": "purple",          # RGB(128, 0, 128)
-        "specGeometricMean": "green"           # RGB(0, 128, 0)
+        "specGeometricMean": "green",          # RGB(0, 128, 0)
+        "specStrictGeometricMean": "lime",     # RGB(0, 255, 0)
+        "specMode": "red"                      # RGB(255, 0, 0)
     }
 
     error_fillcolors = {
         "specMean": "rgba(255, 165, 0, 0.2)",      # transparent orange
         "specMedian": "rgba(0, 255, 255, 0.2)",    # transparent cyan
         "specWeightedMean": "rgba(128, 0, 128, 0.2)",  # transparent purple
-        "specGeometricMean": "rgba(0, 128, 0, 0.2)"    # transparent green
+        "specGeometricMean": "rgba(0, 128, 0, 0.2)",   # transparent green
+        "specStrictGeometricMean": "rgba(0, 255, 0, 0.2)",  # transparent lime
+        "specMode": "rgba(255, 0, 0, 0.2)"         # transparent red
     }
     
     y_min = 0.9*np.nanmin((np.nanmin(flux_columns["specMean"]), 
@@ -218,9 +235,59 @@ def plotting(output_filename, width=950, height=550):
             legendgroup=key,
             showlegend=True
         ), row=2, col=1)
-        
-    
-    
+
+    # Percentile band 16th–84th (±1σ envelope)
+    if 'spec16th' in percentile_columns and 'spec84th' in percentile_columns:
+        fig.add_trace(go.Scatter(
+            x=spectral_axis_midpoints,
+            y=percentile_columns['spec84th'],
+            mode='lines',
+            line=dict(width=0),
+            fill=None,
+            showlegend=False,
+            legendgroup='percentile_1sigma',
+            visible='legendonly',
+            hoverinfo='skip'
+        ), row=2, col=1)
+        fig.add_trace(go.Scatter(
+            x=spectral_axis_midpoints,
+            y=percentile_columns['spec16th'],
+            mode='lines',
+            line=dict(width=0),
+            fill='tonexty',
+            fillcolor='rgba(100, 100, 200, 0.15)',
+            name='±1σ envelope (16th–84th)',
+            legendgroup='percentile_1sigma',
+            showlegend=True,
+            visible='legendonly',
+            hoverinfo='skip'
+        ), row=2, col=1)
+
+    # Percentile 98th (independent toggle)
+    if 'spec98th' in percentile_columns:
+        fig.add_trace(go.Scatter(
+            x=spectral_axis_midpoints,
+            y=percentile_columns['spec98th'],
+            mode='lines',
+            line=dict(dash='dash', width=1.5, color='steelblue'),
+            name='98th percentile',
+            visible='legendonly',
+            showlegend=True
+        ), row=2, col=1)
+
+    # Percentile 99th (independent toggle)
+    if 'spec99th' in percentile_columns:
+        fig.add_trace(go.Scatter(
+            x=spectral_axis_midpoints,
+            y=percentile_columns['spec99th'],
+            mode='lines',
+            line=dict(dash='dot', width=1.5, color='darkslateblue'),
+            name='99th percentile',
+            visible='legendonly',
+            showlegend=True
+        ), row=2, col=1)
+
+
     # Layout
     fig.update_layout(
         xaxis2_title="Wavelength (nm)",
@@ -307,10 +374,11 @@ def read_fits_and_select_columns(fits_filename):
             error_columns[column + 'Error'] = stacking_results_hdu.data[column + 'Error']
             dispersion_columns[column + 'Dispersion'] = stacking_results_hdu.data[column + 'Dispersion']
             
-        
-        filtered_columns = [col for col in column_names[1:5]]
-        for column in filtered_columns:
-            percentile_columns[column] = stacking_results_hdu.data[column]
+
+        percentile_names = {'spec16th', 'spec84th', 'spec98th', 'spec99th'}
+        for column in column_names:
+            if column in percentile_names:
+                percentile_columns[column] = stacking_results_hdu.data[column]
         
     return  counts_columns, wavelength_column, flux_columns, error_columns, dispersion_columns, percentile_columns
 

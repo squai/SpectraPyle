@@ -200,6 +200,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../normalization.html">Normalization Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../resampling.html">Resampling Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../statistics.html">Stacking Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plotting.html">Interactive Plotting &amp; Visualization</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul class="current">
@@ -253,9 +255,18 @@
           <section id="module-spectraPyle.plot.plot">
 <span id="plot"></span><h1>plot<a class="headerlink" href="#module-spectraPyle.plot.plot" title="Link to this heading">¶</a></h1>
 <p>Interactive Plotly visualization of the stacked spectrum.</p>
-<p><a class="reference internal" href="#spectraPyle.plot.plot.plotting" title="spectraPyle.plot.plot.plotting"><code class="xref py py-func docutils literal notranslate"><span class="pre">plotting()</span></code></a> reads the output FITS file and generates a two-panel
-Plotly figure (pixel counts panel + spectrum panel) with all stacking
-estimators overlaid.</p>
+<p><a class="reference internal" href="../plotting.html#spectraPyle.plot.plot.plotting" title="spectraPyle.plot.plot.plotting"><code class="xref py py-func docutils literal notranslate"><span class="pre">plotting()</span></code></a> reads the output FITS file and generates a two-panel Plotly figure:</p>
+<p><strong>Top panel (pixel counts):</strong> Line traces for initial, good, bad, sigma-clipped, and
+geometric-mean-specific pixel counts. Each toggleable individually.</p>
+<p><strong>Bottom panel (stacked spectra):</strong> Overlays all stacking estimators:</p>
+<ul class="simple">
+<li><p>Mean, Median, Geometric Mean (lenient), Geometric Mean (strict), Weighted Mean, Mode</p></li>
+<li><p>Each trace includes ±1σ error band and ±dispersion band (toggleable separately)</p></li>
+<li><p>Percentile bands: 16th–84th (±1σ envelope), 98th, 99th (independent traces)</p></li>
+<li><p>Emission lines and absorption features overlaid (if not in observed frame)</p></li>
+</ul>
+<p>All traces are toggleable via legend. Percentiles use dashed (98th) and dotted (99th) styles
+to distinguish from main statistics. Colors chosen for accessibility.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="spectraPyle.plot.plot.add_absorption_features">
 <span class="sig-prename descclassname"><span class="pre">spectraPyle.plot.plot.</span></span><span class="sig-name descname"><span class="pre">add_absorption_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absorption_table_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spectral_axis_midpoints</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/plot/plot.html#add_absorption_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.plot.plot.add_absorption_features" title="Link to this definition">¶</a></dt>

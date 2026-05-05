@@ -443,7 +443,8 @@ class Stacking:
         data_dict['stackSPmean'], data_dict['stackDISPmean'], data_dict['stackSPmed'], data_dict['stackDISPmed'], data_dict['stackSPgeomMean'], data_dict['stackDISPgeomMean'], \
             data_dict['stackSPmeanWeighted'], data_dict['stackDISPmeanWeighted'], data_dict['stackERmeanWeighted'], data_dict['stackPERC16th'], \
             data_dict['stackPERC84th'], data_dict['stackPERC98th'], data_dict['stackPERC99th'], \
-            data_dict['geomMeanPixelCount'] = sstat.stack_statistics(stackArr, stackArrErr)
+            data_dict['geomMeanPixelCount'], data_dict['stackSPmode'], data_dict['stackDISPmode'], \
+            data_dict['stackSPgeomMeanStrict'], data_dict['stackDISPgeomMeanStrict'] = sstat.stack_statistics(stackArr, stackArrErr)
 
 
         if np.all(np.isnan(data_dict['stackSPgeomMean'])):
@@ -466,11 +467,13 @@ class Stacking:
         """ bootstrap with replacement (for statistical uncertainties estimation): """
 
         if self.config['bootstrapping_R'] > 0:
-            _, data_dict['stackERmean'], _, data_dict['stackERmed'], _, data_dict['stackERgeomMean'] = sstat.bootstrStack(arr=stackArr,R=self.config['bootstrapping_R'],n_processes=self.num_cpus)
+            _, data_dict['stackERmean'], _, data_dict['stackERmed'], _, data_dict['stackERgeomMean'], _, data_dict['stackERmode'], _, data_dict['stackERgeomMeanStrict'] = sstat.bootstrStack(arr=stackArr,R=self.config['bootstrapping_R'],n_processes=self.num_cpus)
         else:
             data_dict['stackERmean'] = data_dict['stackDISPmean'] / np.sqrt(data_dict['goodPixelCount'])
             data_dict['stackERmed'] = data_dict['stackDISPmed'] / np.sqrt(data_dict['goodPixelCount'])
             data_dict['stackERgeomMean'] = data_dict['stackDISPgeomMean'] / np.sqrt(data_dict['goodPixelCount'])
+            data_dict['stackERmode'] = data_dict['stackDISPmode'] / np.sqrt(data_dict['goodPixelCount'])
+            data_dict['stackERgeomMeanStrict'] = data_dict['stackDISPgeomMeanStrict'] / np.sqrt(data_dict['goodPixelCount'])
 
             """ note: about the error spectrum of the weighted average spectrum see ./stackingEuclid/utils/statistics.py """
 
