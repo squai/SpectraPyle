@@ -322,7 +322,7 @@ If you have ideas for:
 - **Joint research projects using SpectraPyle** — we're open to collaboration
 
 **Please open an issue or pull request** on the [GitHub repository](https://github.com/SpectraPyle/SpectraPyle), or contact the development team:
-- **salvatore.quai@unibo.it**, **salvatore.quai@gmail.com (lead developer)
+- **salvatore.quai@unibo.it**, **salvatore.quai@gmail.com** (lead developer)
 
 All contributions are reviewed and credited. We follow standard open-source practices for code review and testing.
 
