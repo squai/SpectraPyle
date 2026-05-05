@@ -111,9 +111,9 @@ def plotting(output_filename, width=950, height=550):
         mode='lines',
         name='Geom. mean pixels',
         visible='legendonly',
-        line=dict(color='orange', shape='hv'),
+        line=dict(color="green", shape='hv'),
         legendgroup='specGeometricMean',
-        showlegend=True,
+        showlegend=False,
     ), row=1, col=1)
 
     # show the stacked spectra:
