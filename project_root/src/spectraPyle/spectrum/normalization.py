@@ -228,6 +228,7 @@ def francis1991_normalize(
     -------
     norm_flux : ndarray
     norm_err : ndarray
+    alphas : ndarray (Nspec,) — per-spectrum normalization factors
     """
 
     print("\nStarting stacking Francis 1991-like", flush=True)
@@ -238,6 +239,7 @@ def francis1991_normalize(
 
     norm_flux = np.full_like(stackArr, np.nan)
     norm_err = np.full_like(stackArrErr, np.nan)
+    alphas = np.full(Nspec, np.nan)
 
     # --------------------------------------------------
     # Feature mask
@@ -279,6 +281,7 @@ def francis1991_normalize(
 
     norm_flux[:, anchor] = f0 / alpha0
     norm_err[:, anchor] = e0 / alpha0
+    alphas[anchor] = alpha0
 
     ref_flux = norm_flux[:, anchor].copy()
 
@@ -358,11 +361,13 @@ def francis1991_normalize(
 
         if not np.isfinite(alpha) or (alpha < 0) or (alpha > 1000):
             print (fr"Normalization failure for spectrum N.{str(i)}: invalid normalization value ({alpha}).", flush=True)
+            alphas[i] = np.nan
             continue
 
         # normalize
         norm_flux[:, i] = alpha * fi
         norm_err[:, i] = alpha * ei
+        alphas[i] = alpha
 
         # update reference (count-weighted)
         both = overlap
@@ -379,4 +384,4 @@ def francis1991_normalize(
         ref_flux[new_only] = norm_flux[new_only, i]
         ref_count[new_only] = 1
 
-    return norm_flux, norm_err
+    return norm_flux, norm_err, alphas

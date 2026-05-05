@@ -327,14 +327,25 @@ class Stacking:
                                                chunks=(len(data_dict['wavelength_stacking']), chunk_size), 
                                                compression="gzip", compression_opts=9) 
 
-                spectraIDlist_dset = f.create_dataset("object_id", shape=(0,),  
-                                maxshape=(None,), dtype=dtype_id,  
-                                chunks=(chunk_size,),  
+                spectraIDlist_dset = f.create_dataset("object_id", shape=(0,),
+                                maxshape=(None,), dtype=dtype_id,
+                                chunks=(chunk_size,),
                                 compression="gzip", compression_opts=9)
-            else: 
+
+                norm_factor_dset = f.create_dataset("norm_factor", shape=(0,),
+                                maxshape=(None,), dtype="f8",
+                                chunks=(chunk_size,),
+                                compression="gzip", compression_opts=9)
+
+                grism_label_dset = f.create_dataset("grism_label", shape=(0,),
+                                maxshape=(None,), dtype=h5py.special_dtype(vlen=str),
+                                chunks=(chunk_size,))
+            else:
                 stackArr_dset = f["stackArr"]
                 stackArrErr_dset = f["stackArrErr"]
                 spectraIDlist_dset = f["object_id"]
+                norm_factor_dset = f["norm_factor"]
+                grism_label_dset = f["grism_label"]
 
 
             for i in range(num_chunks):
@@ -351,11 +362,11 @@ class Stacking:
                 chunk_data_input = {key: val[start_idx:end_idx] for key, val in data_input.items()}
 
                 # ----- processing the spectra ------ #
-                chunk_stackArr, chunk_stackArrErr, norm_factor, spectra_not_found, chunk_spectraIDlist = spr.main_parallel(
-                        self, chunk_specIDs, chunk_redshift, chunk_ebv_galactic, 
+                chunk_stackArr, chunk_stackArrErr, norm_factor, spectra_not_found, chunk_spectraIDlist, chunk_grism_labels = spr.main_parallel(
+                        self, chunk_specIDs, chunk_redshift, chunk_ebv_galactic,
                         chunk_custom_norm_param,
-                        wavelength_stacking_bins, data_dict['pixelResampling'], 
-                        data_dict['z_stacking'], grismList, chunk_data_input  
+                        wavelength_stacking_bins, data_dict['pixelResampling'],
+                        data_dict['z_stacking'], grismList, chunk_data_input
                     )
 
                 # Compute counts
@@ -378,6 +389,8 @@ class Stacking:
                 stackArrErr_dset.resize((stackArrErr_dset.shape[0], new_size))  # Resize along num_spectra
 
                 spectraIDlist_dset.resize((new_size,))  # Resize along num_spectra
+                norm_factor_dset.resize((new_size,))
+                grism_label_dset.resize((new_size,))
 
                 # Correctly insert new chunk at the end of the dataset
                 stackArr_dset[:, current_spectra_count:new_size] = chunk_stackArr
@@ -385,6 +398,8 @@ class Stacking:
 
                 chunk_spectraIDlist = np.array(chunk_spectraIDlist)
                 spectraIDlist_dset[current_spectra_count:new_size] = chunk_spectraIDlist
+                norm_factor_dset[current_spectra_count:new_size] = norm_factor
+                grism_label_dset[current_spectra_count:new_size] = chunk_grism_labels
 
                 # Store in dictionary
                 if i == 0:
@@ -421,7 +436,7 @@ class Stacking:
             # ------ francis+1991 like normalization -------
             if self.config['spectra_normalization'] == 'template':
                 pre_nan = np.sum(np.isnan(stackArr), axis=1)
-                stackArr, stackArrErr = snorm.francis1991_normalize(
+                stackArr, stackArrErr, alphas = snorm.francis1991_normalize(
                 stackArr,
                 stackArrErr,
                 norm_stat="median"
@@ -430,6 +445,9 @@ class Stacking:
                 templateNormMaskedCount = np.sum(np.isnan(stackArr), axis=1) - pre_nan
                 data_dict['templateNormMaskedCount'] = templateNormMaskedCount
                 data_dict['goodPixelCount'] -= templateNormMaskedCount
+
+                # update norm_factor with actual alpha values from template normalization
+                f['norm_factor'][:] = alphas
 
                 # write new datasets (do NOT overwrite originals)
                 f.create_dataset("stackArr_norm", data=stackArr, compression="gzip")
@@ -602,3 +620,9 @@ def main(config):
     cfg = flatten_schema_model(cfg) # to be deprecated. 
 
     return run_stacking(cfg)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Spectral stacking pipeline")
+    parser.add_argument("--config", type=str, required=True, help="Path to config file (YAML or JSON)")
+    args = parser.parse_args()
+    main(args.config)

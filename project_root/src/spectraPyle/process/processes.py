@@ -161,18 +161,19 @@ def main_parallel(
             )
         )
     
-    # Flatten results 
+    # Flatten results
     flat_results = [item for sublist in results for item in sublist]
-    
+
     # -------- Unpack results --------
-    specid_result, specResampledArr, errResampledArr, normalization_factors, spectra_not_found = zip(*flat_results)
-    
+    specid_result, grism_labels, specResampledArr, errResampledArr, normalization_factors, spectra_not_found = zip(*flat_results)
+
     # Convert to arrays
     specid_result = np.array(specid_result)
-    
+    grism_labels = np.array(grism_labels)
+
     specResampledArr = np.array(specResampledArr).T
     errResampledArr = np.array(errResampledArr).T
-    
+
     normalization_factors = np.array(normalization_factors)
     spectra_not_found = np.array(spectra_not_found, dtype=str)
 
@@ -181,7 +182,8 @@ def main_parallel(
         errResampledArr,
         normalization_factors,
         spectra_not_found,
-        specid_result
+        specid_result,
+        grism_labels
     )
 
 def process_spectrum_parallel(args):
@@ -321,7 +323,8 @@ def process_spectrum_parallel(args):
 
         # append ONE result per grism
         results.append((
-            specid,  
+            specid,
+            grism,
             specResampled,
             errResampled,
             normalization_factor,
