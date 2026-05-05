@@ -683,8 +683,14 @@ def plot_h5_heatmap(h5_path, fits_path, template_array='norm',
                         showgrid=False, zeroline=False),
         )
 
+    # Constrain y-axis to metric range ± 50% padding to avoid extreme outliers
+    c_min, c_max = np.nanmin(curve), np.nanmax(curve)
+    pad = 0.5 * (c_max - c_min) if c_max != c_min else 0.1 * abs(c_max)
+    yaxis_range = [c_min - pad, c_max + pad]
+
     fig.update_layout(
         title=f'{h5_path.stem} — {template_array} | {mode} | {metric}',
+        yaxis=dict(range=yaxis_range),
         height=650, width=1100, hovermode='closest',
     )
     return fig
