@@ -541,3 +541,138 @@ def add_absorption_features(fig, absorption_table_path, spectral_axis_midpoints,
         legendgroup="abs_feats", hoverinfo="skip",
     ), row=row, col=col)
 
+
+
+def plot_h5_heatmap(h5_path, fits_path, template_array='norm',
+                    metric='specMedian', norm_factors=False,
+                    mode='heatmap', max_spectra=None, line_alpha=0.05):
+    """
+    2D visualization of stacked spectra from H5 file with metrics from FITS.
+
+    Parameters
+    ----------
+    h5_path : str or Path
+        Path to *_array.h5 file.
+    fits_path : str or Path
+        Path to the companion *_STACKING.fits file (metrics read from here).
+    template_array : {'norm', 'original'}
+        If 'norm' and stackArr_norm exists in H5, use it; else use stackArr.
+    metric : str
+        Column name from FITS STACKING_RESULTS table to overlay
+        (e.g. 'specMedian', 'specMean', 'specGeometricMean').
+    norm_factors : bool
+        If True, overlay norm_factors from H5 as a scatter trace.
+    mode : {'heatmap', 'lines'}
+        'heatmap' — 2D image, wavelength vs spectrum index (all spectra, fast).
+        'lines'   — individual spectra as thin overlapping traces.
+    max_spectra : int or None
+        Cap on number of spectra shown. None = all. Recommended ~300 for 'lines'.
+    line_alpha : float
+        Opacity per trace in 'lines' mode (default 0.05).
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+    """
+    import h5py
+    from pathlib import Path
+    from astropy.io import fits as astrofits
+
+    h5_path = Path(h5_path)
+    fits_path = Path(fits_path)
+
+    # --- Read H5 ---
+    with h5py.File(h5_path, 'r') as f:
+        if template_array == 'norm' and 'stackArr_norm' in f:
+            stackArr = f['stackArr_norm'][:]
+        else:
+            stackArr = f['stackArr'][:]
+        norm_factor_data = f['norm_factor'][:] if (norm_factors and 'norm_factor' in f) else None
+
+    # --- Read metric from FITS ---
+    with astrofits.open(fits_path) as hdul:
+        tbl = hdul['STACKING_RESULTS'].data
+        wavelength = tbl['wavelength']
+        if metric not in tbl.names:
+            raise ValueError(f"Metric '{metric}' not found in FITS. Available: {tbl.names}")
+        curve = tbl[metric]
+
+    # --- Optional subsample ---
+    Nspec = stackArr.shape[1]
+    if max_spectra is not None and Nspec > max_spectra:
+        idx = np.sort(np.random.choice(Nspec, max_spectra, replace=False))
+        stackArr = stackArr[:, idx]
+        if norm_factor_data is not None:
+            norm_factor_data = norm_factor_data[idx]
+
+    fig = go.Figure()
+
+    if mode == 'heatmap':
+        fig.add_trace(go.Heatmap(
+            z=stackArr,
+            x=np.arange(stackArr.shape[1]),
+            y=wavelength,
+            colorscale='RdBu_r',
+            zmid=0,
+            name='Flux',
+            hovertemplate='λ=%{y:.1f} Å  spec=%{x}  flux=%{z:.2e}<extra></extra>',
+        ))
+        fig.add_trace(go.Scatter(
+            x=curve,
+            y=wavelength,
+            mode='lines',
+            line=dict(color='black', width=1.5),
+            name=metric,
+            xaxis='x2',
+        ))
+        fig.update_layout(
+            xaxis=dict(title='Spectrum index', domain=[0, 0.82]),
+            xaxis2=dict(title=metric, overlaying='x', side='top',
+                        showgrid=False, zeroline=False),
+            yaxis_title='Wavelength (Å)',
+        )
+
+    else:  # lines mode — each spectrum normalized to its own nanmax for visual comparability
+        scale = np.nanmax(np.abs(stackArr), axis=0, keepdims=True)
+        scale[scale == 0] = 1.0
+        norm_arr = stackArr / scale
+        x_all, y_all = [], []
+        for i in range(norm_arr.shape[1]):
+            x_all.extend(norm_arr[:, i].tolist())
+            x_all.append(None)
+            y_all.extend(wavelength.tolist())
+            y_all.append(None)
+
+        fig.add_trace(go.Scatter(
+            x=x_all, y=y_all,
+            mode='lines',
+            line=dict(color=f'rgba(70,130,180,{line_alpha})', width=0.5),
+            name='Spectra',
+            hoverinfo='skip',
+        ))
+        curve_scale = np.nanmax(np.abs(curve))
+        fig.add_trace(go.Scatter(
+            x=curve / (curve_scale if curve_scale > 0 else 1.0),
+            y=wavelength,
+            mode='lines',
+            line=dict(color='black', width=2),
+            name=metric,
+        ))
+        fig.update_layout(xaxis_title='Normalized flux', yaxis_title='Wavelength (Å)')
+
+    if norm_factor_data is not None:
+        idx_scat = np.arange(0, len(norm_factor_data), max(1, len(norm_factor_data) // 200))
+        fig.add_trace(go.Scatter(
+            x=idx_scat if mode == 'heatmap' else norm_factor_data[idx_scat],
+            y=norm_factor_data[idx_scat] if mode == 'heatmap' else wavelength[:len(idx_scat)],
+            mode='markers',
+            marker=dict(size=3, color='crimson', opacity=0.4),
+            name='Norm factors',
+            xaxis='x2' if mode == 'heatmap' else 'x',
+        ))
+
+    fig.update_layout(
+        title=f'{h5_path.stem} — {template_array} | {mode} | {metric}',
+        height=650, width=1100, hovermode='closest',
+    )
+    return fig
