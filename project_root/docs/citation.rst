@@ -65,15 +65,33 @@ Development Team
 **SpectraPyle is developed and maintained by:**
 
 - **Salvatore Quai** (Lead Developer & Maintainer) — University of Bologna
-- **Lucia Pozzetti** — INAF–Astrophysics and Space Science Observatory, Bologna
-- **Michele Moresco** — University of Bologna
-- **Margherita Talia** — INAF–Astrophysics and Space Science Observatory, Bologna
+- **Lucia Pozzetti**
+- **Margherita Talia** 
 - **Zhiying Mao**
 - **Xavier Lopez Lopez**
-- **Elisabeta Lusso** — University of Bologna
+- **Elisabeta Lusso**
 - **Sotiria Fotopoulou**
+- **Michele Moresco** 
 
-**Contact:** salvatore.quai@unibo.it
+**Contact:** salvatore.quai@unibo.it, salvatore.quai@gmail.com
 
-For bug reports, feature requests, or contributions, please visit the
-`SpectraPyle GitHub repository <https://github.com/SpectraPyle/SpectraPyle>`_.
+Collaboration & Feature Discussion
+----------------------------------
+
+SpectraPyle is actively maintained and open to community input. We welcome discussions about:
+
+- **New stacking statistics and estimation methods** — bring your ideas
+- **Support for additional instruments or data formats**
+- **Scientific collaborations** — joint projects using SpectraPyle
+- **Code contributions** — bug fixes, performance improvements, refactoring
+
+**To contribute or collaborate:**
+- Open an issue or pull request on the `GitHub repository <https://github.com/SpectraPyle/SpectraPyle>`_
+- Contact the development team (contact info above)
+- All contributions are reviewed, credited, and follow standard open-source practices
+
+**We are particularly interested in:**
+- Extensions for new astronomical surveys or instruments
+- Novel stacking methods or statistical approaches
+- Performance optimizations for large datasets
+- Applications in research projects

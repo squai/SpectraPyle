@@ -255,25 +255,9 @@
           <section id="interactive-plotting-visualization">
 <h1>Interactive Plotting &amp; Visualization<a class="headerlink" href="#interactive-plotting-visualization" title="Link to this heading">¶</a></h1>
 <p>SpectraPyle generates an <strong>interactive Plotly figure</strong> showing the stacked spectrum with all six stacking estimators overlaid, pixel counts, percentile bands, and astrophysical features (emission lines, absorption features).</p>
-<nav class="contents local" id="contents">
-<ul class="simple">
-<li><p><a class="reference internal" href="#overview" id="id1">Overview</a></p></li>
-<li><p><a class="reference internal" href="#layout-structure" id="id2">Layout &amp; Structure</a></p></li>
-<li><p><a class="reference internal" href="#pixel-count-traces-top-panel" id="id3">Pixel Count Traces (Top Panel)</a></p></li>
-<li><p><a class="reference internal" href="#main-spectrum-traces-bottom-panel" id="id4">Main Spectrum Traces (Bottom Panel)</a></p></li>
-<li><p><a class="reference internal" href="#percentile-bands" id="id5">Percentile Bands</a></p></li>
-<li><p><a class="reference internal" href="#astrophysical-markers" id="id6">Astrophysical Markers</a></p></li>
-<li><p><a class="reference internal" href="#legend-interactivity" id="id7">Legend &amp; Interactivity</a></p></li>
-<li><p><a class="reference internal" href="#when-to-use-each-trace" id="id8">When to Use Each Trace</a></p></li>
-<li><p><a class="reference internal" href="#error-vs-dispersion-bands" id="id9">Error vs. Dispersion Bands</a></p></li>
-<li><p><a class="reference internal" href="#configuration" id="id10">Configuration</a></p></li>
-<li><p><a class="reference internal" href="#example-interpreting-a-stack" id="id11">Example: Interpreting a Stack</a></p></li>
-<li><p><a class="reference internal" href="#module-spectraPyle.plot.plot" id="id12">API Reference</a></p></li>
-</ul>
-</nav>
 <p>—</p>
 <section id="overview">
-<h2><a class="toc-backref" href="#id1" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
 <p>The plot is a <strong>two-panel Plotly figure</strong> that opens in a browser or Jupyter notebook:</p>
 <ol class="arabic simple">
 <li><p><strong>Top panel:</strong> Pixel counts over wavelength (good, bad, sigma-clipped, etc.)</p></li>
@@ -283,7 +267,7 @@
 <p>—</p>
 </section>
 <section id="layout-structure">
-<h2><a class="toc-backref" href="#id2" role="doc-backlink">Layout &amp; Structure</a><a class="headerlink" href="#layout-structure" title="Link to this heading">¶</a></h2>
+<h2>Layout &amp; Structure<a class="headerlink" href="#layout-structure" title="Link to this heading">¶</a></h2>
 <dl class="simple">
 <dt><strong>Top panel (row 1):</strong></dt><dd><ul class="simple">
 <li><p>15% of figure height</p></li>
@@ -303,7 +287,7 @@
 <p>—</p>
 </section>
 <section id="pixel-count-traces-top-panel">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Pixel Count Traces (Top Panel)</a><a class="headerlink" href="#pixel-count-traces-top-panel" title="Link to this heading">¶</a></h2>
+<h2>Pixel Count Traces (Top Panel)<a class="headerlink" href="#pixel-count-traces-top-panel" title="Link to this heading">¶</a></h2>
 <p>The top panel displays <strong>four mandatory counts</strong> and <strong>one optional count</strong>:</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
@@ -355,7 +339,7 @@
 <p>—</p>
 </section>
 <section id="main-spectrum-traces-bottom-panel">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">Main Spectrum Traces (Bottom Panel)</a><a class="headerlink" href="#main-spectrum-traces-bottom-panel" title="Link to this heading">¶</a></h2>
+<h2>Main Spectrum Traces (Bottom Panel)<a class="headerlink" href="#main-spectrum-traces-bottom-panel" title="Link to this heading">¶</a></h2>
 <p>Six stacking estimators are displayed with consistent visual structure:</p>
 <p>For <strong>each statistic</strong> (<span class="math notranslate nohighlight">\(S \in \{\text{Mean, Median, Geom. Mean, Strict Geom. Mean, Mode, Weighted Mean}\}\)</span>):</p>
 <ol class="arabic simple">
@@ -406,7 +390,7 @@
 <p>—</p>
 </section>
 <section id="percentile-bands">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">Percentile Bands</a><a class="headerlink" href="#percentile-bands" title="Link to this heading">¶</a></h2>
+<h2>Percentile Bands<a class="headerlink" href="#percentile-bands" title="Link to this heading">¶</a></h2>
 <p><strong>Four percentile traces</strong> are plotted as optional, hidden-by-default bands:</p>
 <dl class="simple">
 <dt><strong>16th–84th percentile band:</strong></dt><dd><ul class="simple">
@@ -428,7 +412,7 @@
 <p>—</p>
 </section>
 <section id="astrophysical-markers">
-<h2><a class="toc-backref" href="#id6" role="doc-backlink">Astrophysical Markers</a><a class="headerlink" href="#astrophysical-markers" title="Link to this heading">¶</a></h2>
+<h2>Astrophysical Markers<a class="headerlink" href="#astrophysical-markers" title="Link to this heading">¶</a></h2>
 <p>If the stacking is <strong>not in observed frame</strong> (i.e., <code class="docutils literal notranslate"><span class="pre">z_type</span> <span class="pre">!=</span> <span class="pre">'observed_frame'</span></code>):</p>
 <dl class="simple">
 <dt><strong>Emission lines</strong> (from <code class="docutils literal notranslate"><span class="pre">tables/emission_lines_vacuum_table.csv</span></code>):</dt><dd><ul class="simple">
@@ -451,7 +435,7 @@
 <p>—</p>
 </section>
 <section id="legend-interactivity">
-<h2><a class="toc-backref" href="#id7" role="doc-backlink">Legend &amp; Interactivity</a><a class="headerlink" href="#legend-interactivity" title="Link to this heading">¶</a></h2>
+<h2>Legend &amp; Interactivity<a class="headerlink" href="#legend-interactivity" title="Link to this heading">¶</a></h2>
 <p><strong>Legend location:</strong> Right of plot area (<code class="docutils literal notranslate"><span class="pre">x=1.02</span></code>)</p>
 <dl class="simple">
 <dt><strong>Legend features:</strong></dt><dd><ul class="simple">
@@ -477,11 +461,11 @@
 <p>—</p>
 </section>
 <section id="when-to-use-each-trace">
-<h2><a class="toc-backref" href="#id8" role="doc-backlink">When to Use Each Trace</a><a class="headerlink" href="#when-to-use-each-trace" title="Link to this heading">¶</a></h2>
+<h2>When to Use Each Trace<a class="headerlink" href="#when-to-use-each-trace" title="Link to this heading">¶</a></h2>
 <p>—</p>
 </section>
 <section id="error-vs-dispersion-bands">
-<h2><a class="toc-backref" href="#id9" role="doc-backlink">Error vs. Dispersion Bands</a><a class="headerlink" href="#error-vs-dispersion-bands" title="Link to this heading">¶</a></h2>
+<h2>Error vs. Dispersion Bands<a class="headerlink" href="#error-vs-dispersion-bands" title="Link to this heading">¶</a></h2>
 <p>Two types of <strong>uncertainty bands</strong> are shown for each statistic:</p>
 <dl class="simple">
 <dt><strong>Error band (`` ± 1σ Uncertainty``):</strong></dt><dd><ul class="simple">
@@ -512,7 +496,7 @@
 <p>—</p>
 </section>
 <section id="configuration">
-<h2><a class="toc-backref" href="#id10" role="doc-backlink">Configuration</a><a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h2>
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h2>
 <p>Plot appearance is controlled by the <code class="docutils literal notranslate"><span class="pre">plot</span></code> section in the config:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">plot</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">plot_results</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">  </span><span class="c1"># if false, skips plot generation</span>
@@ -527,7 +511,7 @@
 <p>—</p>
 </section>
 <section id="example-interpreting-a-stack">
-<h2><a class="toc-backref" href="#id11" role="doc-backlink">Example: Interpreting a Stack</a><a class="headerlink" href="#example-interpreting-a-stack" title="Link to this heading">¶</a></h2>
+<h2>Example: Interpreting a Stack<a class="headerlink" href="#example-interpreting-a-stack" title="Link to this heading">¶</a></h2>
 <p>A typical stacked spectrum tells you:</p>
 <ol class="arabic simple">
 <li><p><strong>Median (cyan, main focus):</strong>
@@ -553,7 +537,7 @@
 <p>—</p>
 </section>
 <section id="module-spectraPyle.plot.plot">
-<span id="api-reference"></span><h2><a class="toc-backref" href="#id12" role="doc-backlink">API Reference</a><a class="headerlink" href="#module-spectraPyle.plot.plot" title="Link to this heading">¶</a></h2>
+<span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-spectraPyle.plot.plot" title="Link to this heading">¶</a></h2>
 <p>Interactive Plotly visualization of the stacked spectrum.</p>
 <p><a class="reference internal" href="#spectraPyle.plot.plot.plotting" title="spectraPyle.plot.plot.plotting"><code class="xref py py-func docutils literal notranslate"><span class="pre">plotting()</span></code></a> reads the output FITS file and generates a two-panel Plotly figure:</p>
 <p><strong>Top panel (pixel counts):</strong> Line traces for initial, good, bad, sigma-clipped, and

@@ -3,10 +3,6 @@ Stacking Statistics
 
 SpectraPyle computes six different stacking estimators for each wavelength bin. Each statistic is computed from a distribution of N-spectra flux values after :doc:`resampling` and sigma-clipping.
 
-.. contents::
-   :local:
-   :depth: 2
-
 ---
 
 Overview

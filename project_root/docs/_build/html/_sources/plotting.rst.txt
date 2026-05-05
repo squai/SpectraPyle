@@ -3,10 +3,6 @@ Interactive Plotting & Visualization
 
 SpectraPyle generates an **interactive Plotly figure** showing the stacked spectrum with all six stacking estimators overlaid, pixel counts, percentile bands, and astrophysical features (emission lines, absorption features).
 
-.. contents::
-   :local:
-   :depth: 2
-
 ---
 
 Overview

@@ -255,24 +255,9 @@
           <section id="stacking-statistics">
 <h1>Stacking Statistics<a class="headerlink" href="#stacking-statistics" title="Link to this heading">¶</a></h1>
 <p>SpectraPyle computes six different stacking estimators for each wavelength bin. Each statistic is computed from a distribution of N-spectra flux values after <a class="reference internal" href="resampling.html"><span class="doc">Resampling Modes</span></a> and sigma-clipping.</p>
-<nav class="contents local" id="contents">
-<ul class="simple">
-<li><p><a class="reference internal" href="#overview" id="id1">Overview</a></p></li>
-<li><p><a class="reference internal" href="#arithmetic-mean" id="id2">Arithmetic Mean</a></p></li>
-<li><p><a class="reference internal" href="#median" id="id3">Median</a></p></li>
-<li><p><a class="reference internal" href="#geometric-mean-lenient" id="id4">Geometric Mean (Lenient)</a></p></li>
-<li><p><a class="reference internal" href="#geometric-mean-strict" id="id5">Geometric Mean (Strict)</a></p></li>
-<li><p><a class="reference internal" href="#mode-half-sample-mode" id="id6">Mode (Half-Sample Mode)</a></p></li>
-<li><p><a class="reference internal" href="#weighted-mean" id="id7">Weighted Mean</a></p></li>
-<li><p><a class="reference internal" href="#percentiles" id="id8">Percentiles</a></p></li>
-<li><p><a class="reference internal" href="#error-estimation-bootstrap-vs-analytical" id="id9">Error Estimation: Bootstrap vs. Analytical</a></p></li>
-<li><p><a class="reference internal" href="#summary-table-when-to-use-each-statistic" id="id10">Summary Table: When to Use Each Statistic</a></p></li>
-<li><p><a class="reference internal" href="#module-spectraPyle.statistic.statistics" id="id11">API Reference</a></p></li>
-</ul>
-</nav>
 <p>—</p>
 <section id="overview">
-<h2><a class="toc-backref" href="#id1" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
 <p>All statistics are available in the FITS output with the naming convention:</p>
 <ul class="simple">
 <li><p><strong>Flux:</strong> <code class="docutils literal notranslate"><span class="pre">spec{Statistic}</span></code> — the stacked spectrum value per wavelength bin</p></li>
@@ -320,7 +305,7 @@
 <p>—</p>
 </section>
 <section id="arithmetic-mean">
-<h2><a class="toc-backref" href="#id2" role="doc-backlink">Arithmetic Mean</a><a class="headerlink" href="#arithmetic-mean" title="Link to this heading">¶</a></h2>
+<h2>Arithmetic Mean<a class="headerlink" href="#arithmetic-mean" title="Link to this heading">¶</a></h2>
 <p>The classical mean: sum of all flux values divided by count.</p>
 <p><strong>Formula:</strong></p>
 <div class="math-wrapper docutils container">
@@ -347,7 +332,7 @@ From bootstrap resampling (percentile 16–84) or analytic formula:</p>
 <p>—</p>
 </section>
 <section id="median">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Median</a><a class="headerlink" href="#median" title="Link to this heading">¶</a></h2>
+<h2>Median<a class="headerlink" href="#median" title="Link to this heading">¶</a></h2>
 <p>The central value separating the upper and lower halves of the distribution.</p>
 <p><strong>Dispersion:</strong>
 Robust estimate via Median Absolute Deviation (MAD), scaled to Gaussian σ:</p>
@@ -370,7 +355,7 @@ From bootstrap resampling (percentile 16–84) or analytic formula:</p>
 <p>—</p>
 </section>
 <section id="geometric-mean-lenient">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">Geometric Mean (Lenient)</a><a class="headerlink" href="#geometric-mean-lenient" title="Link to this heading">¶</a></h2>
+<h2>Geometric Mean (Lenient)<a class="headerlink" href="#geometric-mean-lenient" title="Link to this heading">¶</a></h2>
 <p>Log-space average, computed from <strong>positive-valued spectra only</strong>. Non-positive values are silently excluded per wavelength bin.</p>
 <p><strong>Formula:</strong></p>
 <div class="math-wrapper docutils container">
@@ -401,7 +386,7 @@ From bootstrap (percentile 16–84) or analytic formula.</p>
 <p>—</p>
 </section>
 <section id="geometric-mean-strict">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">Geometric Mean (Strict)</a><a class="headerlink" href="#geometric-mean-strict" title="Link to this heading">¶</a></h2>
+<h2>Geometric Mean (Strict)<a class="headerlink" href="#geometric-mean-strict" title="Link to this heading">¶</a></h2>
 <p>Log-space average that enforces <strong>strict positivity</strong>. Returns NaN for any wavelength bin where <strong>at least one</strong> spectrum has flux ≤ 0.</p>
 <p><strong>Formula:</strong></p>
 <div class="math-wrapper docutils container">
@@ -436,7 +421,7 @@ Identical to lenient (σ_ln) where defined; NaN elsewhere.</p>
 <p>—</p>
 </section>
 <section id="mode-half-sample-mode">
-<h2><a class="toc-backref" href="#id6" role="doc-backlink">Mode (Half-Sample Mode)</a><a class="headerlink" href="#mode-half-sample-mode" title="Link to this heading">¶</a></h2>
+<h2>Mode (Half-Sample Mode)<a class="headerlink" href="#mode-half-sample-mode" title="Link to this heading">¶</a></h2>
 <p>The most common value in the distribution, computed via the Half-Sample Mode (HSM) algorithm.</p>
 <p><strong>Algorithm:</strong>
 Recursively finds the smallest interval containing at least half the data points. The mode is the midpoint of the final interval (Bickel 2002).</p>
@@ -468,7 +453,7 @@ From bootstrap (percentile 16–84) or analytic formula.</p>
 <p>—</p>
 </section>
 <section id="weighted-mean">
-<h2><a class="toc-backref" href="#id7" role="doc-backlink">Weighted Mean</a><a class="headerlink" href="#weighted-mean" title="Link to this heading">¶</a></h2>
+<h2>Weighted Mean<a class="headerlink" href="#weighted-mean" title="Link to this heading">¶</a></h2>
 <p>Average computed with inverse-variance weights, accounting for per-spectrum uncertainties.</p>
 <p><strong>Formula:</strong></p>
 <div class="math-wrapper docutils container">
@@ -500,7 +485,7 @@ Uncertainty on the weighted mean (not bootstrap):</p>
 <p>—</p>
 </section>
 <section id="percentiles">
-<h2><a class="toc-backref" href="#id8" role="doc-backlink">Percentiles</a><a class="headerlink" href="#percentiles" title="Link to this heading">¶</a></h2>
+<h2>Percentiles<a class="headerlink" href="#percentiles" title="Link to this heading">¶</a></h2>
 <p>Distribution quantiles at fixed levels:</p>
 <p><strong>Use:</strong>
 - Inspect distribution shape and tails
@@ -511,7 +496,7 @@ Uncertainty on the weighted mean (not bootstrap):</p>
 <p>—</p>
 </section>
 <section id="error-estimation-bootstrap-vs-analytical">
-<h2><a class="toc-backref" href="#id9" role="doc-backlink">Error Estimation: Bootstrap vs. Analytical</a><a class="headerlink" href="#error-estimation-bootstrap-vs-analytical" title="Link to this heading">¶</a></h2>
+<h2>Error Estimation: Bootstrap vs. Analytical<a class="headerlink" href="#error-estimation-bootstrap-vs-analytical" title="Link to this heading">¶</a></h2>
 <p>SpectraPyle supports two error estimation methods, controlled by config key <code class="docutils literal notranslate"><span class="pre">bootstrapping_R</span></code>:</p>
 <p><strong>Bootstrap (``bootstrapping_R &gt; 0``):</strong></p>
 <p>Performs <span class="math notranslate nohighlight">\(R\)</span> resampling iterations with replacement. For each iteration, recomputes the statistic. Final error is the 16–84th percentile range divided by 2 (equivalent to ±1σ for normal distributions).</p>
@@ -533,11 +518,11 @@ Uncertainty on the weighted mean (not bootstrap):</p>
 <p>—</p>
 </section>
 <section id="summary-table-when-to-use-each-statistic">
-<h2><a class="toc-backref" href="#id10" role="doc-backlink">Summary Table: When to Use Each Statistic</a><a class="headerlink" href="#summary-table-when-to-use-each-statistic" title="Link to this heading">¶</a></h2>
+<h2>Summary Table: When to Use Each Statistic<a class="headerlink" href="#summary-table-when-to-use-each-statistic" title="Link to this heading">¶</a></h2>
 <p>—</p>
 </section>
 <section id="module-spectraPyle.statistic.statistics">
-<span id="api-reference"></span><h2><a class="toc-backref" href="#id11" role="doc-backlink">API Reference</a><a class="headerlink" href="#module-spectraPyle.statistic.statistics" title="Link to this heading">¶</a></h2>
+<span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-spectraPyle.statistic.statistics" title="Link to this heading">¶</a></h2>
 <p>Stacking statistics: mean, median, geometric mean (lenient &amp; strict), mode, weighted mean, and bootstrap.</p>
 <p><a class="reference internal" href="#spectraPyle.statistic.statistics.stack_statistics" title="spectraPyle.statistic.statistics.stack_statistics"><code class="xref py py-func docutils literal notranslate"><span class="pre">stack_statistics()</span></code></a> computes six stacking estimators and their dispersions/errors from the
 sigma-clipped resampled array:</p>

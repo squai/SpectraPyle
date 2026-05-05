@@ -58,3 +58,40 @@ If you use SpectraPyle with **Euclid** data, you must also follow the
 `Euclid Consortium publication policy
 <https://www.euclid-ec.org/>`_ and include the standard Euclid acknowledgment
 text as specified in the consortium guidelines.
+
+Development Team
+----------------
+
+**SpectraPyle is developed and maintained by:**
+
+- **Salvatore Quai** (Lead Developer & Maintainer) — University of Bologna
+- **Lucia Pozzetti**
+- **Margherita Talia** 
+- **Zhiying Mao**
+- **Xavier Lopez Lopez**
+- **Elisabeta Lusso**
+- **Sotiria Fotopoulou**
+- **Michele Moresco** 
+
+**Contact:** salvatore.quai@unibo.it, salvatore.quai@gmail.com
+
+Collaboration & Feature Discussion
+----------------------------------
+
+SpectraPyle is actively maintained and open to community input. We welcome discussions about:
+
+- **New stacking statistics and estimation methods** — bring your ideas
+- **Support for additional instruments or data formats**
+- **Scientific collaborations** — joint projects using SpectraPyle
+- **Code contributions** — bug fixes, performance improvements, refactoring
+
+**To contribute or collaborate:**
+- Open an issue or pull request on the `GitHub repository <https://github.com/SpectraPyle/SpectraPyle>`_
+- Contact the development team (contact info above)
+- All contributions are reviewed, credited, and follow standard open-source practices
+
+**We are particularly interested in:**
+- Extensions for new astronomical surveys or instruments
+- Novel stacking methods or statistical approaches
+- Performance optimizations for large datasets
+- Applications in research projects

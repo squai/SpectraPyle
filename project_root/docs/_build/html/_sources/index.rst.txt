@@ -8,6 +8,10 @@ mode (HSM), and weighted mean. Includes bootstrap uncertainty estimation and int
 
 **Supported instruments:** Euclid (NISP) · DESI
 
+**Development team:** S. Quai, L. Pozzetti, M. Moresco, M. Talia, Z. Mao, X. Lopez Lopez, E. Lusso, S. Fotopoulou
+**Maintainer:** Salvatore Quai (salvatore.quai@unibo.it)
+**License:** MIT
+
 .. toctree::
    :maxdepth: 2
    :caption: User Guide
