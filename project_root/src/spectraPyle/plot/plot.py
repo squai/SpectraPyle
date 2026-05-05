@@ -578,11 +578,11 @@ def plot_h5_heatmap(h5_path, fits_path, template_array='norm',
     from pathlib import Path
     from astropy.io import fits as astrofits
 
-    h5_path = Path(h5_path)
-    fits_path = Path(fits_path)
+    h5_path = Path(h5_path).expanduser()
+    fits_path = Path(fits_path).expanduser()
 
     # --- Read H5 ---
-    with h5py.File(h5_path, 'r') as f:
+    with h5py.File(str(h5_path), 'r') as f:
         if template_array == 'norm' and 'stackArr_norm' in f:
             stackArr = f['stackArr_norm'][:]
         else:
@@ -590,7 +590,7 @@ def plot_h5_heatmap(h5_path, fits_path, template_array='norm',
         norm_factor_data = f['norm_factor'][:] if (norm_factors and 'norm_factor' in f) else None
 
     # --- Read metric from FITS ---
-    with astrofits.open(fits_path) as hdul:
+    with astrofits.open(str(fits_path)) as hdul:
         tbl = hdul['STACKING_RESULTS'].data
         wavelength = tbl['wavelength']
         if metric not in tbl.names:
