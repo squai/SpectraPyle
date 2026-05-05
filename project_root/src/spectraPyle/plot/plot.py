@@ -545,7 +545,8 @@ def add_absorption_features(fig, absorption_table_path, spectral_axis_midpoints,
 
 def plot_h5_heatmap(h5_path, fits_path, template_array='norm',
                     metric='specMedian', norm_factors=False,
-                    mode='heatmap', max_spectra=None, line_alpha=0.05):
+                    mode='heatmap', max_spectra=None, line_alpha=0.05,
+                    nbinsx=None, nbinsy=200):
     """
     2D visualization of stacked spectra from H5 file with metrics from FITS.
 
@@ -622,16 +623,52 @@ def plot_h5_heatmap(h5_path, fits_path, template_array='norm',
     fig = go.Figure()
 
     if mode == 'heatmap':
-        # hist2d: counts how many spectra have a given flux at each wavelength bin
-        # ybins constrained to yaxis_range so bins match the visible area
-        ybin_size = (yaxis_range[1] - yaxis_range[0]) / 200
-        fig.add_trace(go.Histogram2d(
-            x=wl_flat,
-            y=fl_flat,
+        # hist2d with deterministic bin edges (avoids Plotly's internal rounding artifacts)
+        # Zero-count bins → NaN for transparent display
+        n_pixels = len(wavelength)
+        nbinsx_val = nbinsx if nbinsx is not None else n_pixels
+        nbinsy_val = nbinsy if nbinsy is not None else 200
+
+        # x bin edges: pixel-exact when nbinsx == n_pixels (preserves original spacing,
+        # correct for both linear and log-linear grids); uniform otherwise
+        if nbinsx_val == n_pixels:
+            half = np.diff(wavelength) / 2
+            xedges = np.concatenate([
+                [wavelength[0] - half[0]],
+                wavelength[:-1] + half,
+                [wavelength[-1] + half[-1]]
+            ])
+        else:
+            print(
+                f"⚠  nbinsx={nbinsx_val} < n_pixels={n_pixels}: uniform x-bins applied. "
+                f"On non-uniform (e.g. log-linear) grids this redistributes flux across bins — "
+                f"use n_pixels for a physically unbiased map."
+            )
+            xedges = np.linspace(wavelength[0], wavelength[-1], nbinsx_val + 1)
+
+        yedges = np.linspace(yaxis_range[0], yaxis_range[1], nbinsy_val + 1)
+
+        # Pre-calculate histogram (not done by Plotly)
+        counts, xedges, yedges = np.histogram2d(
+            wl_flat, fl_flat, bins=[xedges, yedges]
+        )
+        # counts shape: (nbinsx_val, nbinsy_val)
+        # For go.Heatmap: rows = y-axis, cols = x-axis → transpose
+        counts_T = counts.T  # shape: (nbinsy_val, nbinsx_val)
+
+        # Replace zero-count cells with NaN → transparent in heatmap
+        counts_disp = np.where(counts_T > 0, counts_T.astype(float), np.nan)
+
+        # Bin centers for axis labels
+        xbin_centers = 0.5 * (xedges[:-1] + xedges[1:])
+        ybin_centers = 0.5 * (yedges[:-1] + yedges[1:])
+
+        fig.add_trace(go.Heatmap(
+            x=xbin_centers,
+            y=ybin_centers,
+            z=counts_disp,
             colorscale='hot_r',
             colorbar=dict(title='N spectra'),
-            nbinsx=len(wavelength),
-            ybins=dict(start=yaxis_range[0], end=yaxis_range[1], size=ybin_size),
             name='Density',
         ))
         fig.add_trace(go.Scatter(
