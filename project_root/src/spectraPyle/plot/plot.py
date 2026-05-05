@@ -605,42 +605,49 @@ def plot_h5_heatmap(h5_path, fits_path, template_array='norm',
         if norm_factor_data is not None:
             norm_factor_data = norm_factor_data[idx]
 
+    # --- Flatten array: tile wavelength N times, flatten flux column-by-column ---
+    # wl_flat[i*Npix:(i+1)*Npix] = wavelength  for each spectrum i
+    # fl_flat follows the same order via stackArr.T.flatten()
+    wl_flat = np.tile(wavelength, stackArr.shape[1])
+    fl_flat = stackArr.T.flatten()
+    valid   = np.isfinite(fl_flat)
+    wl_flat = wl_flat[valid]
+    fl_flat = fl_flat[valid]
+
     fig = go.Figure()
 
     if mode == 'heatmap':
-        fig.add_trace(go.Heatmap(
-            z=stackArr,
-            x=np.arange(stackArr.shape[1]),
-            y=wavelength,
-            colorscale='RdBu_r',
-            zmid=0,
-            name='Flux',
-            hovertemplate='λ=%{y:.1f} Å  spec=%{x}  flux=%{z:.2e}<extra></extra>',
+        # hist2d: counts how many spectra have a given flux at each wavelength bin
+        fig.add_trace(go.Histogram2d(
+            x=wl_flat,
+            y=fl_flat,
+            colorscale='hot_r',
+            colorbar=dict(title='N spectra'),
+            nbinsx=len(wavelength),
+            nbinsy=200,
+            name='Density',
         ))
         fig.add_trace(go.Scatter(
-            x=curve,
-            y=wavelength,
+            x=wavelength,
+            y=curve,
             mode='lines',
-            line=dict(color='black', width=1.5),
+            line=dict(color='cyan', width=1.5),
             name=metric,
-            xaxis='x2',
         ))
         fig.update_layout(
-            xaxis=dict(title='Spectrum index', domain=[0, 0.82]),
-            xaxis2=dict(title=metric, overlaying='x', side='top',
-                        showgrid=False, zeroline=False),
-            yaxis_title='Wavelength (Å)',
+            xaxis_title='Wavelength (Å)',
+            yaxis_title='Flux',
         )
 
-    else:  # lines mode — each spectrum normalized to its own nanmax for visual comparability
+    else:  # lines mode — each spectrum normalized to its own nanmax
         scale = np.nanmax(np.abs(stackArr), axis=0, keepdims=True)
         scale[scale == 0] = 1.0
         norm_arr = stackArr / scale
         x_all, y_all = [], []
         for i in range(norm_arr.shape[1]):
-            x_all.extend(norm_arr[:, i].tolist())
+            x_all.extend(wavelength.tolist())
             x_all.append(None)
-            y_all.extend(wavelength.tolist())
+            y_all.extend(norm_arr[:, i].tolist())
             y_all.append(None)
 
         fig.add_trace(go.Scatter(
@@ -652,24 +659,29 @@ def plot_h5_heatmap(h5_path, fits_path, template_array='norm',
         ))
         curve_scale = np.nanmax(np.abs(curve))
         fig.add_trace(go.Scatter(
-            x=curve / (curve_scale if curve_scale > 0 else 1.0),
-            y=wavelength,
+            x=wavelength,
+            y=curve / (curve_scale if curve_scale > 0 else 1.0),
             mode='lines',
             line=dict(color='black', width=2),
             name=metric,
         ))
-        fig.update_layout(xaxis_title='Normalized flux', yaxis_title='Wavelength (Å)')
+        fig.update_layout(xaxis_title='Wavelength (Å)', yaxis_title='Normalized flux')
 
     if norm_factor_data is not None:
-        idx_scat = np.arange(0, len(norm_factor_data), max(1, len(norm_factor_data) // 200))
         fig.add_trace(go.Scatter(
-            x=idx_scat if mode == 'heatmap' else norm_factor_data[idx_scat],
-            y=norm_factor_data[idx_scat] if mode == 'heatmap' else wavelength[:len(idx_scat)],
+            x=np.arange(len(norm_factor_data)),
+            y=norm_factor_data,
             mode='markers',
             marker=dict(size=3, color='crimson', opacity=0.4),
             name='Norm factors',
-            xaxis='x2' if mode == 'heatmap' else 'x',
+            xaxis='x2', yaxis='y2',
         ))
+        fig.update_layout(
+            xaxis2=dict(title='Spectrum index', overlaying='x', side='top',
+                        showgrid=False, zeroline=False),
+            yaxis2=dict(title='Norm factor', overlaying='y', side='right',
+                        showgrid=False, zeroline=False),
+        )
 
     fig.update_layout(
         title=f'{h5_path.stem} — {template_array} | {mode} | {metric}',
