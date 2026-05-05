@@ -337,7 +337,7 @@ def half_sample_mode(arr, axis=1):
             mode_val, x_clean = _hsm_1d(arr[i, :])
             mode_arr[i] = mode_val
 
-            if not np.isnan(mode_val) and len(x_clean) > 0:
+            if not np.isnan(mode_val):
                 mad = np.median(np.abs(x_clean - mode_val))
                 disp_arr[i] = 1.4826 * mad
             else:

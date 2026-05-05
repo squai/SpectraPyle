@@ -240,7 +240,7 @@ def plotting(output_filename, width=950, height=550):
     if 'spec16th' in percentile_columns and 'spec84th' in percentile_columns:
         fig.add_trace(go.Scatter(
             x=spectral_axis_midpoints,
-            y=percentile_columns['spec84th'],
+            y=percentile_columns['spec16th'],
             mode='lines',
             line=dict(width=0),
             fill=None,
@@ -251,7 +251,7 @@ def plotting(output_filename, width=950, height=550):
         ), row=2, col=1)
         fig.add_trace(go.Scatter(
             x=spectral_axis_midpoints,
-            y=percentile_columns['spec16th'],
+            y=percentile_columns['spec84th'],
             mode='lines',
             line=dict(width=0),
             fill='tonexty',
@@ -269,7 +269,7 @@ def plotting(output_filename, width=950, height=550):
             x=spectral_axis_midpoints,
             y=percentile_columns['spec98th'],
             mode='lines',
-            line=dict(dash='dash', width=1.5, color='steelblue'),
+            line=dict(width=0.75, color='steelblue'),
             name='98th percentile',
             visible='legendonly',
             showlegend=True
@@ -281,7 +281,7 @@ def plotting(output_filename, width=950, height=550):
             x=spectral_axis_midpoints,
             y=percentile_columns['spec99th'],
             mode='lines',
-            line=dict(dash='dot', width=1.5, color='darkslateblue'),
+            line=dict(width=0.75, color='darkslateblue'),
             name='99th percentile',
             visible='legendonly',
             showlegend=True
