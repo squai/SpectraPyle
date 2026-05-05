@@ -614,17 +614,24 @@ def plot_h5_heatmap(h5_path, fits_path, template_array='norm',
     wl_flat = wl_flat[valid]
     fl_flat = fl_flat[valid]
 
+    # y range derived from metric — used both for axis and histogram bins
+    c_min, c_max = np.nanmin(curve), np.nanmax(curve)
+    pad = 0.5 * (c_max - c_min) if c_max != c_min else 0.1 * abs(c_max)
+    yaxis_range = [c_min - pad, c_max + pad]
+
     fig = go.Figure()
 
     if mode == 'heatmap':
         # hist2d: counts how many spectra have a given flux at each wavelength bin
+        # ybins constrained to yaxis_range so bins match the visible area
+        ybin_size = (yaxis_range[1] - yaxis_range[0]) / 200
         fig.add_trace(go.Histogram2d(
             x=wl_flat,
             y=fl_flat,
             colorscale='hot_r',
             colorbar=dict(title='N spectra'),
             nbinsx=len(wavelength),
-            nbinsy=200,
+            ybins=dict(start=yaxis_range[0], end=yaxis_range[1], size=ybin_size),
             name='Density',
         ))
         fig.add_trace(go.Scatter(
@@ -682,11 +689,6 @@ def plot_h5_heatmap(h5_path, fits_path, template_array='norm',
             yaxis2=dict(title='Norm factor', overlaying='y', side='right',
                         showgrid=False, zeroline=False),
         )
-
-    # Constrain y-axis to metric range ± 50% padding to avoid extreme outliers
-    c_min, c_max = np.nanmin(curve), np.nanmax(curve)
-    pad = 0.5 * (c_max - c_min) if c_max != c_min else 0.1 * abs(c_max)
-    yaxis_range = [c_min - pad, c_max + pad]
 
     fig.update_layout(
         title=f'{h5_path.stem} — {template_array} | {mode} | {metric}',
