@@ -238,9 +238,12 @@ def readSpec(config, specid, grism):
     spectra_dir      = gcfg.get('spectra_dir')
     spectra_datafile = gcfg.get('spectra_datafile')
 
+    _PREFIX = {"red": "RGS", "blue": "BGS"}
+
     # ---- combined FITS ----
     if spectra_datafile:
         filepath = Path(spectra_dir) / f"{spectra_datafile}.fits"
+        prefix = _PREFIX.get(grism)
         with fits.open(filepath, memmap=True) as hdul:
 
             if str(specid) in hdul:
@@ -248,6 +251,10 @@ def readSpec(config, specid, grism):
 
             elif f"{specid}_{grism}" in hdul:
                 table1 = Table(hdul[f"{specid}_{grism}"].data)
+
+            elif f"{specid}_{prefix}" in hdul:
+                table1 = Table(hdul[f"{specid}_{prefix}"].data)
+            
 
             elif 'SPECTRA' in hdul:
                 data   = hdul['SPECTRA'].data

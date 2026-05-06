@@ -260,14 +260,34 @@ file formats, FITS column layouts, and configuration for each supported instrume
 <p>For API documentation, see <a class="reference internal" href="api/instruments.html"><span class="doc">instruments</span></a>.</p>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>SpectraPyle supports three instrument drivers:</p>
-<div class="line-block">
-<div class="line">Instrument | Grism(s) | Status | Best for |</div>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Instrument</p></th>
+<th class="head"><p>Grism(s)</p></th>
+<th class="head"><p>Status</p></th>
+<th class="head"><p>Best for</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Euclid NISP</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">red</span></code>, <code class="docutils literal notranslate"><span class="pre">blue</span></code></p></td>
+<td><p>Active</p></td>
+<td><p>Euclid NISP spectroscopy, multi-grism stacking</p></td>
+</tr>
+<tr class="row-odd"><td><p>DESI</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">merged</span></code></p></td>
+<td><p>Back-compat</p></td>
+<td><p>Euclid–DESI crossmatched catalogs only</p></td>
+</tr>
+<tr class="row-even"><td><p>Generic</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>Active</p></td>
+<td><p>Any standard FITS binary table or WCS-compliant image HDU</p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<p><a href="#id1"><span class="problematic" id="id2">|---|</span></a>—<a href="#id3"><span class="problematic" id="id4">|---|</span></a>—|
-| Euclid NISP | <cite>red</cite>, <cite>blue</cite> | Active | Euclid NISP spectroscopy, multi-grism stacking |
-| DESI | <cite>merged</cite> | Back-compat | Euclid–DESI crossmatched catalogs only |
-| Generic | <cite>default</cite> | Active | Any standard FITS binary table or WCS-compliant image HDU |</p>
 </section>
 <section id="spectra-modes">
 <h2>Spectra Modes<a class="headerlink" href="#spectra-modes" title="Link to this heading">¶</a></h2>
@@ -331,11 +351,11 @@ This is useful when spectra are scattered across many files or follow a non-stan
 <tbody>
 <tr class="row-even"><td><p>12345</p></td>
 <td><p>/data/batch1/12345.fits</p></td>
-<td><p>1</p></td>
+<td><p>15</p></td>
 </tr>
 <tr class="row-odd"><td><p>12346</p></td>
 <td><p>/data/batch2/12346.fits</p></td>
-<td><p>2</p></td>
+<td><p>265</p></td>
 </tr>
 </tbody>
 </table>
@@ -401,6 +421,7 @@ using aliases; the first match wins:</p>
 <ol class="arabic simple">
 <li><p>HDU named <code class="docutils literal notranslate"><span class="pre">{specid}</span></code> — per-spectrum binary table</p></li>
 <li><p>HDU named <code class="docutils literal notranslate"><span class="pre">{specid}_{grism}</span></code> — per-spectrum/grism binary table</p></li>
+<li><p>HDU named <code class="docutils literal notranslate"><span class="pre">{specid}_{prefix}</span></code> — per-spectrum/grism binary table ((where prefix is <code class="docutils literal notranslate"><span class="pre">RGS</span></code> for red, <code class="docutils literal notranslate"><span class="pre">BGS</span></code> for blue)</p></li>
 <li><p>A single <code class="docutils literal notranslate"><span class="pre">SPECTRA</span></code> table with an <code class="docutils literal notranslate"><span class="pre">ID_column_name</span></code> column to filter by <code class="docutils literal notranslate"><span class="pre">specid</span></code></p></li>
 </ol>
 <p><strong>Quality Filters</strong></p>
@@ -439,10 +460,12 @@ It is not under active development. For new DESI-only workflows, we recommend us
 <p><strong>Limitations</strong></p>
 <ul class="simple">
 <li><p>No bitmask or dither-count filtering (quality filters are not implemented)</p></li>
-<li><p>Filename patterns: always <code class="docutils literal notranslate"><span class="pre">{spectra_dir}/{specid}.fits</span></code> (no data-release variants)</p></li>
 <li><p>combined fits only matches HDU named <code class="docutils literal notranslate"><span class="pre">{specid}</span></code> (no <code class="docutils literal notranslate"><span class="pre">SPECTRA</span></code> table fallback)</p></li>
 <li><p>Older resource management (file handles not explicitly closed in some paths)</p></li>
 </ul>
+<p><strong>Filename patterns</strong></p>
+<p>Always <code class="docutils literal notranslate"><span class="pre">{spectra_dir}/{specid}.fits</span></code> (no data-release variants).
+Note: On ESA Datalabs, the DESI spectra cross-matched with Euclid Q1 are stored following the rule specid=Euclid{object_id}_DESI{desi_id}.fits</p>
 <p><strong>Wavelength Reference</strong></p>
 <p>Automatically retrieved from <code class="docutils literal notranslate"><span class="pre">instruments_rules.json</span></code>:</p>
 <ul class="simple">

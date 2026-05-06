@@ -513,11 +513,10 @@
             <span class="n">median_valid_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="n">finite_mask</span><span class="p">])</span>
             
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">median_valid_flux</span><span class="p">)</span> <span class="ow">or</span> <span class="n">median_valid_flux</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;grism not found in catalog or instruments&quot;</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Spectrum rejected: &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;non-positive median flux (</span><span class="si">{</span><span class="n">median_valid_flux</span><span class="si">}</span><span class="s2">) -&gt; would lead to negative/invalid normalization&quot;</span>
-                <span class="p">)</span>
+                    <span class="p">)</span>
             
             <span class="c1"># -------- Normalization --------</span>
             <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;no_normalization&#39;</span><span class="p">,</span> <span class="s1">&#39;template&#39;</span><span class="p">]:</span>
@@ -550,10 +549,7 @@
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Required column not found for grism </span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Normalization type </span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> not supported!&quot;</span>
-                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Normalization type </span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> not supported!&quot;</span><span class="p">)</span>
 
             <span class="c1"># -------- Resampling --------</span>
             <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;pixel_resampling_type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>

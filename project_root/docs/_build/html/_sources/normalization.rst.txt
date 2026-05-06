@@ -95,21 +95,38 @@ Interval Normalization
 
 **Config value:** ``"interval"``
 
-**Function:** :func:`~spectraPyle.spectrum.normalization.normSpecInterv`
+**Function:** :func:`spectraPyle.spectrum.normalization.normSpecInterv`
 
-**Formula:**
+**Definition**
 
 .. math::
 
    f_{\mathrm{norm}} = \frac{f}{S}
 
-where :math:`S` is one of four statistics computed on the flux over a rest-frame wavelength range :math:`[\lambda_{\mathrm{min}}, \lambda_{\mathrm{max}}]`:
+The normalization factor :math:`S` is computed from the flux within a rest-frame wavelength interval
+:math:`[\lambda_{\mathrm{min}}, \lambda_{\mathrm{max}}]`, using one of the following statistics:
 
 .. math::
 
    S \in \{\mathrm{median}, \mathrm{mean}, \mathrm{maximum}, \mathrm{minimum}\}
 
-**Use case:** Normalizing over a specific rest-frame wavelength interval where the continuum is expected to be well-defined and free of strong emission or absorption features. 
+**Description**
+
+This function normalizes a spectrum over a user-defined rest-frame wavelength range by dividing the flux
+by a representative statistic of that interval.
+
+**Guidelines for choosing** :math:`S`
+
+- :math:`\mathrm{median}` or :math:`\mathrm{mean}`  
+  Recommended when the continuum is well-defined and free of strong emission or absorption features.
+
+- :math:`\mathrm{maximum}`  
+  Useful for normalizing to the peak of an emission line. When stacking spectra, this approach preserves
+  the average full width at half maximum (FWHM) of the emission line.
+
+- :math:`\mathrm{minimum}`  
+  Analogous to ``maximum``, but suited for absorption features.
+
 
 **YAML Example:**
 

@@ -352,18 +352,31 @@
 <section id="interval-normalization">
 <h2>Interval Normalization<a class="headerlink" href="#interval-normalization" title="Link to this heading">¶</a></h2>
 <p><strong>Config value:</strong> <code class="docutils literal notranslate"><span class="pre">&quot;interval&quot;</span></code></p>
-<p><strong>Function:</strong> <a class="reference internal" href="api/spectrum.html#spectraPyle.spectrum.normalization.normSpecInterv" title="spectraPyle.spectrum.normalization.normSpecInterv"><code class="xref py py-func docutils literal notranslate"><span class="pre">normSpecInterv()</span></code></a></p>
-<p><strong>Formula:</strong></p>
+<p><strong>Function:</strong> <a class="reference internal" href="api/spectrum.html#spectraPyle.spectrum.normalization.normSpecInterv" title="spectraPyle.spectrum.normalization.normSpecInterv"><code class="xref py py-func docutils literal notranslate"><span class="pre">spectraPyle.spectrum.normalization.normSpecInterv()</span></code></a></p>
+<p><strong>Definition</strong></p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[f_{\mathrm{norm}} = \frac{f}{S}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(S\)</span> is one of four statistics computed on the flux over a rest-frame wavelength range <span class="math notranslate nohighlight">\([\lambda_{\mathrm{min}}, \lambda_{\mathrm{max}}]\)</span>:</p>
+<p>The normalization factor <span class="math notranslate nohighlight">\(S\)</span> is computed from the flux within a rest-frame wavelength interval
+<span class="math notranslate nohighlight">\([\lambda_{\mathrm{min}}, \lambda_{\mathrm{max}}]\)</span>, using one of the following statistics:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[S \in \{\mathrm{median}, \mathrm{mean}, \mathrm{maximum}, \mathrm{minimum}\}\]</div>
 </div>
-<p><strong>Use case:</strong> Normalizing over a specific rest-frame wavelength interval where the continuum is expected to be well-defined and free of strong emission or absorption features.</p>
+<p><strong>Description</strong></p>
+<p>This function normalizes a spectrum over a user-defined rest-frame wavelength range by dividing the flux
+by a representative statistic of that interval.</p>
+<p><strong>Guidelines for choosing</strong> <span class="math notranslate nohighlight">\(S\)</span></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathrm{median}\)</span> or <span class="math notranslate nohighlight">\(\mathrm{mean}\)</span>
+Recommended when the continuum is well-defined and free of strong emission or absorption features.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{maximum}\)</span>
+Useful for normalizing to the peak of an emission line. When stacking spectra, this approach preserves
+the average full width at half maximum (FWHM) of the emission line.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathrm{minimum}\)</span>
+Analogous to <code class="docutils literal notranslate"><span class="pre">maximum</span></code>, but suited for absorption features.</p></li>
+</ul>
 <p><strong>YAML Example:</strong></p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">norm</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">spectra_normalization</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;interval&quot;</span>

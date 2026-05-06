@@ -259,11 +259,10 @@ def process_spectrum_parallel(args):
             median_valid_flux = np.nanmedian(spec[finite_mask])
             
             if not np.isfinite(median_valid_flux) or median_valid_flux <= 0:
-                logger.error("grism not found in catalog or instruments")
-                raise ValueError(
+                logger.error(
                     f"Spectrum rejected: "
                     f"non-positive median flux ({median_valid_flux}) -> would lead to negative/invalid normalization"
-                )
+                    )
             
             # -------- Normalization --------
             if config['spectra_normalization'] in ['no_normalization', 'template']:
@@ -296,10 +295,7 @@ def process_spectrum_parallel(args):
                 )
 
             else:
-                logger.error(f"Required column not found for grism {grism}")
-                raise NameError(
-                    f"Normalization type {config['spectra_normalization']} not supported!"
-                )
+                logger.error(f"Normalization type {config['spectra_normalization']} not supported!")
 
             # -------- Resampling --------
             if config['pixel_resampling_type'] != 'none':

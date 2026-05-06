@@ -130,15 +130,118 @@ def _read_scale_factor(header):
     return 1.0
 
 
+def _find_table_hdu(hdul):
+    """Find first binary table HDU with known flux or wavelength column.
+
+    Scans all HDUs for a BinTableHDU or TableHDU containing at least one
+    of the known column aliases: wavelength, WAVE, LAMBDA, flux, FLUX, SIGNAL.
+
+    Parameters
+    ----------
+    hdul : astropy.io.fits.HDUList
+        Open FITS file.
+
+    Returns
+    -------
+    idx : int
+        Index of the usable table HDU.
+    hdu : astropy.io.fits.BinTableHDU or astropy.io.fits.TableHDU
+        The table HDU object.
+
+    Raises
+    ------
+    ValueError
+        If no usable table HDU is found.
+    """
+    known_cols = ['wavelength', 'WAVE', 'LAMBDA', 'flux', 'FLUX', 'SIGNAL']
+    for idx, hdu in enumerate(hdul):
+        if isinstance(hdu, (fits.BinTableHDU, fits.TableHDU)):
+            if any(col in hdu.columns.names for col in known_cols):
+                return idx, hdu
+    raise ValueError("No usable table HDU found in FITS file")
+
+
+def _find_image_hdu(hdul):
+    """Find first HDU with non-None, 1-D data array with length > 0.
+
+    Scans all HDUs (including PrimaryHDU) for a 1-D array. Skips empty arrays.
+
+    Parameters
+    ----------
+    hdul : astropy.io.fits.HDUList
+        Open FITS file.
+
+    Returns
+    -------
+    idx : int
+        Index of the usable image HDU.
+    hdu : astropy.io.fits.PrimaryHDU or astropy.io.fits.ImageHDU
+        The image HDU object.
+
+    Raises
+    ------
+    ValueError
+        If no usable image HDU is found.
+    """
+    for idx, hdu in enumerate(hdul):
+        if hdu.data is not None and np.ndim(hdu.data) == 1 and len(hdu.data) > 0:
+            return idx, hdu
+    raise ValueError("No usable image HDU (1-D array) found in FITS file")
+
+
+def _resolve_header(hdul, data_hdu_idx):
+    """Build merged header view with data HDU header as primary source.
+
+    For WCS and scale keywords, check data HDU's header first, then
+    fall back to hdul[0] header if keyword is missing.
+
+    Parameters
+    ----------
+    hdul : astropy.io.fits.HDUList
+        Open FITS file.
+    data_hdu_idx : int
+        Index of the HDU containing the spectrum data.
+
+    Returns
+    -------
+    merged_header : dict-like
+        A view of the data HDU's header with fallback to hdul[0] for missing keys.
+    """
+    data_header = hdul[data_hdu_idx].header
+    primary_header = hdul[0].header
+
+    class MergedHeader(dict):
+        """Fallback header view: check data HDU first, then primary."""
+        def __missing__(self, key):
+            if key in primary_header:
+                return primary_header[key]
+            raise KeyError(key)
+
+        def get(self, key, default=None):
+            if key in data_header:
+                return data_header[key]
+            elif key in primary_header:
+                return primary_header[key]
+            return default
+
+    merged = MergedHeader(data_header)
+    return merged
+
+
 def _extract_spectrum(hdul, mode):
     """Extract wavelength, flux, and error from FITS HDU.
+
+    Scans all HDUs to find usable table or image data. In table mode, uses
+    the first BinTableHDU with known columns. In image mode, uses the first
+    1-D array. WCS/scale keywords are resolved from the data HDU's header,
+    with fallback to hdul[0].
 
     Parameters
     ----------
     hdul : astropy.io.fits.HDUList
         Open FITS file.
     mode : str
-        Either 'table' (read hdul[1] as binary table) or 'image' (read hdul[0] as image).
+        Either 'table' (binary table) or 'image' (1-D array).
 
     Returns
     -------
@@ -155,19 +258,17 @@ def _extract_spectrum(hdul, mode):
         If required data or keywords are missing.
     """
     if mode == 'table':
-        # Try to read from binary table (hdul[1])
-        if len(hdul) < 2 or hdul[1].data is None:
-            raise ValueError("FITS file has no binary table HDU at index 1")
-
-        table = Table(hdul[1].data)
+        idx, table_hdu = _find_table_hdu(hdul)
+        table = Table(table_hdu.data)
         lbd = _read_wavelength_from_table(table)
 
         if lbd is None:
             # Wavelength not in table; try header WCS
-            naxis1 = hdul[0].header.get('NAXIS1')
+            header = _resolve_header(hdul, idx)
+            naxis1 = header.get('NAXIS1')
             if naxis1 is None:
                 raise ValueError("Cannot reconstruct wavelength: no column in table and NAXIS1 missing")
-            lbd = _read_wavelength_from_header(hdul[0].header, naxis1)
+            lbd = _read_wavelength_from_header(header, naxis1)
 
         # Extract flux and error columns
         flux = None
@@ -191,34 +292,33 @@ def _extract_spectrum(hdul, mode):
             error = np.sqrt(error)
 
         # Apply scale factor
-        scale = _read_scale_factor(hdul[0].header)
+        header = _resolve_header(hdul, idx)
+        scale = _read_scale_factor(header)
         flux = flux * scale
         error = error * scale
 
         return lbd, flux, error
 
     elif mode == 'image':
-        # Read from primary image HDU (hdul[0])
-        if hdul[0].data is None or hdul[0].data.ndim != 1:
-            raise ValueError("Primary HDU is not a 1-D image")
-
-        flux = np.asarray(hdul[0].data, dtype=float)
+        idx, image_hdu = _find_image_hdu(hdul)
+        flux = np.asarray(image_hdu.data, dtype=float)
         naxis1 = flux.shape[0]
 
-        # Try to read error from hdul[1] image if it exists
+        # Try to read error from next HDU if it exists and is 1-D with matching shape
         error = None
-        if len(hdul) > 1 and hdul[1].data is not None and hdul[1].data.ndim == 1:
-            if hdul[1].data.shape[0] == naxis1:
-                error = np.asarray(hdul[1].data, dtype=float)
+        if idx + 1 < len(hdul) and hdul[idx + 1].data is not None and hdul[idx + 1].data.ndim == 1:
+            if hdul[idx + 1].data.shape[0] == naxis1:
+                error = np.asarray(hdul[idx + 1].data, dtype=float)
 
         if error is None:
             error = np.full_like(flux, np.nan)
 
         # Reconstruct wavelength from header
-        lbd = _read_wavelength_from_header(hdul[0].header, naxis1)
+        header = _resolve_header(hdul, idx)
+        lbd = _read_wavelength_from_header(header, naxis1)
 
         # Apply scale factor
-        scale = _read_scale_factor(hdul[0].header)
+        scale = _read_scale_factor(header)
         flux = flux * scale
         error = error * scale
 

@@ -495,9 +495,12 @@
     <span class="n">spectra_dir</span>      <span class="o">=</span> <span class="n">gcfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;spectra_dir&#39;</span><span class="p">)</span>
     <span class="n">spectra_datafile</span> <span class="o">=</span> <span class="n">gcfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;spectra_datafile&#39;</span><span class="p">)</span>
 
+    <span class="n">_PREFIX</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;red&quot;</span><span class="p">:</span> <span class="s2">&quot;RGS&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">:</span> <span class="s2">&quot;BGS&quot;</span><span class="p">}</span>
+
     <span class="c1"># ---- combined FITS ----</span>
     <span class="k">if</span> <span class="n">spectra_datafile</span><span class="p">:</span>
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">spectra_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spectra_datafile</span><span class="si">}</span><span class="s2">.fits&quot;</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="n">_PREFIX</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grism</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">memmap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
 
             <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
@@ -505,6 +508,10 @@
 
             <span class="k">elif</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
                 <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
+                <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            
 
             <span class="k">elif</span> <span class="s1">&#39;SPECTRA&#39;</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
                 <span class="n">data</span>   <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="s1">&#39;SPECTRA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>

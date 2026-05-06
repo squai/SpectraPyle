@@ -9,13 +9,15 @@ For API documentation, see :doc:`/api/instruments`.
 Overview
 --------
 
-SpectraPyle supports three instrument drivers:
-
-| Instrument | Grism(s) | Status | Best for |
-|---|---|---|---|
-| Euclid NISP | `red`, `blue` | Active | Euclid NISP spectroscopy, multi-grism stacking |
-| DESI | `merged` | Back-compat | Euclid–DESI crossmatched catalogs only |
-| Generic | `default` | Active | Any standard FITS binary table or WCS-compliant image HDU |
++----------------+-------------------+-------------+--------------------------------------------------------------+
+| Instrument     | Grism(s)          | Status      | Best for                                                     |
++================+===================+=============+==============================================================+
+| Euclid NISP    | ``red``, ``blue`` | Active      | Euclid NISP spectroscopy, multi-grism stacking               |
++----------------+-------------------+-------------+--------------------------------------------------------------+
+| DESI           | ``merged``        | Back-compat | Euclid–DESI crossmatched catalogs only                       |
++----------------+-------------------+-------------+--------------------------------------------------------------+
+| Generic        | ``default``       | Active      | Any standard FITS binary table or WCS-compliant image HDU    |
++----------------+-------------------+-------------+--------------------------------------------------------------+
 
 Spectra Modes
 --------------
@@ -81,9 +83,9 @@ the first two.
   +---------+---------------------------+-----------+
   | specid  | fits_path_col             | hdu_index |
   +=========+===========================+===========+
-  | 12345   | /data/batch1/12345.fits   | 1         |
+  | 12345   | /data/batch1/12345.fits   | 15        |
   +---------+---------------------------+-----------+
-  | 12346   | /data/batch2/12346.fits   | 2         |
+  | 12346   | /data/batch2/12346.fits   | 265       |
   +---------+---------------------------+-----------+
 
 Euclid NISP
@@ -137,7 +139,8 @@ When using ``combined fits``, SpectraPyle tries three HDU-matching strategies (i
 
 1. HDU named ``{specid}`` — per-spectrum binary table
 2. HDU named ``{specid}_{grism}`` — per-spectrum/grism binary table
-3. A single ``SPECTRA`` table with an ``ID_column_name`` column to filter by ``specid``
+3. HDU named ``{specid}_{prefix}`` — per-spectrum/grism binary table ((where prefix is ``RGS`` for red, ``BGS`` for blue)
+4. A single ``SPECTRA`` table with an ``ID_column_name`` column to filter by ``specid``
 
 **Quality Filters**
 
@@ -191,9 +194,13 @@ DESI spectra use lowercase, strictly-matched column names. **No aliases are supp
 **Limitations**
 
 - No bitmask or dither-count filtering (quality filters are not implemented)
-- Filename patterns: always ``{spectra_dir}/{specid}.fits`` (no data-release variants)
 - combined fits only matches HDU named ``{specid}`` (no ``SPECTRA`` table fallback)
 - Older resource management (file handles not explicitly closed in some paths)
+
+**Filename patterns**
+
+Always ``{spectra_dir}/{specid}.fits`` (no data-release variants). 
+Note: On ESA Datalabs, the DESI spectra cross-matched with Euclid Q1 are stored following the rule specid=Euclid{object_id}_DESI{desi_id}.fits
 
 **Wavelength Reference**
 
