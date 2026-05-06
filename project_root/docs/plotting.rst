@@ -146,7 +146,6 @@ If the stacking is **not in observed frame** (i.e., ``z_type != 'observed_frame'
 
 **In observed frame:**
    - No automatic markers (static rest-frame lines are not applicable)
-   - User can manually overlay reference spectra if needed
 
 ---
 
@@ -183,7 +182,7 @@ When to Use Each Trace
 +---------+-------------------+----------------------------------------------+
 | Mean    | Reference         | Classical average; compare with median       |
 +---------+-------------------+----------------------------------------------+
-| Geom.   | Log-space         | Geometric average for ratios                 |
+| Geom.   | Log-space         | Geometric average                            |
 | Mean    | stacking          |                                              |
 +---------+-------------------+----------------------------------------------+
 | Strict  | Strict            | Check for wavelength regions with ≤0 flux   |
@@ -213,7 +212,6 @@ Two types of **uncertainty bands** are shown for each statistic:
    - Represents the **statistical uncertainty on the stacked value**
    - Computed from bootstrap resampling (percentile 16–84) or analytical formula
    - Smaller for larger samples (decreases as 1/√N)
-   - **Interpretation:** Expected scatter in the stacked value if the stacking were repeated
 
 **Dispersion band (`` ± Dispersion``):**
    - Represents the **intrinsic scatter of spectra around the statistic**
@@ -276,11 +274,100 @@ A typical stacked spectrum tells you:
 
 6. **98th/99th percentiles (red dashed/dotted):**
    - If they deviate far from median → presence of high-flux outliers
-   - May indicate contamination or rare blue objects in the sample
+   - May show contamination from misclassified redshift due to misinterpreted emission lines (see Euclid Collaboration, Quai S., Pozzetti L., et al. 2025, Astronomy & Astrophysics, DOI: 10.1051/0004-6361/202557329)
 
-7. **Geom. mean pixels (orange, top panel):**
+7. **Geom. mean pixels (green, top panel):**
    - If this count drops → some wavelengths have non-positive flux
-   - Indicates data quality issues or calibration artifacts
+   - Indicates noisiy spectra or calibration artifacts
+
+---
+
+2D Flux Distribution Viewer
+----------------------------
+
+After a stacking run, SpectraPyle writes an intermediate HDF5 file (``*_array.h5``)
+containing the full matrix of individual resampled spectra before combination.
+The :func:`plot_h5_heatmap` function and the companion notebook ``notebooks/plot_helper.ipynb``
+let you explore this matrix as a 2D flux distribution.
+
+**How to open:**
+
+Open ``notebooks/plot_helper.ipynb`` in JupyterLab after setting ``name_stack`` to the
+path of your stacked FITS file. The notebook derives the companion H5 path automatically
+and exposes all parameters as interactive widgets.
+
+**Modes:**
+
+- **heatmap** — 2D density map: each cell counts how many spectra have a given flux at a
+  given wavelength. The selected stacked statistic (e.g. ``specMedian``) is overlaid as a
+  cyan line for reference.
+- **lines** — individual spectra as thin, translucent overlapping traces normalized to
+  their own peak; useful for identifying outliers or non-standard spectral shapes.
+
+**Widgets (``plot_helper.ipynb``):**
+
++-------------------+--------------------------+-----------------------------------------------------+
+| Widget            | Default                  | Description                                         |
++===================+==========================+=====================================================+
+| Mode              | heatmap                  | Switch between heatmap and lines                    |
++-------------------+--------------------------+-----------------------------------------------------+
+| Array             | original                 | Raw array or template-normalized array (if present) |
++-------------------+--------------------------+-----------------------------------------------------+
+| Metric            | specMedian               | Stacked statistic to overlay on the heatmap         |
++-------------------+--------------------------+-----------------------------------------------------+
+| Norm factors      | off                      | Overlay per-spectrum normalization factors           |
+|                   |                          | as scatter on a right axis                          |
++-------------------+--------------------------+-----------------------------------------------------+
+| Max spectra       | 0 (all)                  | Subsample N random spectra (useful for large stacks)|
++-------------------+--------------------------+-----------------------------------------------------+
+| Line alpha        | 0.05                     | Opacity per trace in lines mode                     |
++-------------------+--------------------------+-----------------------------------------------------+
+| X bins            | n_pixels                 | Wavelength bins; default = one bin per original     |
+|                   |                          | pixel (pixel-exact, no redistribution)              |
++-------------------+--------------------------+-----------------------------------------------------+
+| Y bins            | 200                      | Flux bins                                           |
++-------------------+--------------------------+-----------------------------------------------------+
+
+**Binning and physical correctness:**
+
+The heatmap is computed with ``numpy.histogram2d`` using deterministic bin edges, avoiding
+rendering artefacts that Plotly's internal ``Histogram2d`` binning can introduce on
+non-uniform wavelength grids.
+
+- **X bins = n_pixels (default):** pixel-exact half-pixel edges are used. Each histogram
+  column maps one-to-one to one original wavelength pixel. No flux redistribution — physically
+  unbiased for both linear and log-linear grids.
+- **X bins < n_pixels:** uniform bin edges are applied over ``[λ_min, λ_max]``. A warning
+  is printed in the notebook output because flux is redistributed across bins on non-uniform
+  grids. Use this only for faster rendering when the exact per-pixel distribution is not needed.
+
+Cells with zero count are rendered transparent rather than white, so real gaps in the data
+(chip gaps between grisms, masked sky-line regions, or fully rejected spectra) remain visible
+and are distinguishable from rendering artefacts.
+
+**Python API:**
+
+.. code-block:: python
+
+   from spectraPyle.plot.plot import plot_h5_heatmap
+
+   fig = plot_h5_heatmap(
+       h5_path        = 'result_array.h5',
+       fits_path      = 'result_STACKING.fits',
+       template_array = 'original',   # 'norm' to use template-normalized array
+       metric         = 'specMedian',
+       mode           = 'heatmap',    # or 'lines'
+       nbinsx         = None,         # None → n_pixels (pixel-exact edges)
+       nbinsy         = 200,
+       max_spectra    = None,         # int to subsample randomly
+       line_alpha     = 0.05,
+   )
+   fig.show()
+
+.. note::
+   ``plot_h5_heatmap`` requires both the FITS output (``*_STACKING.fits``) and the
+   companion HDF5 file (``*_array.h5``) produced during the same stacking run.
+   The H5 file is written automatically when ``stacking.py`` runs.
 
 ---
 
@@ -288,6 +375,6 @@ API Reference
 -------------
 
 .. automodule:: spectraPyle.plot.plot
-   :members: plotting, read_fits_and_select_columns, get_header
+   :members: plotting, plot_h5_heatmap, read_fits_and_select_columns, get_header
    :undoc-members:
    :show-inheritance:

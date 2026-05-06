@@ -428,7 +428,6 @@
 </dd>
 <dt><strong>In observed frame:</strong></dt><dd><ul class="simple">
 <li><p>No automatic markers (static rest-frame lines are not applicable)</p></li>
-<li><p>User can manually overlay reference spectra if needed</p></li>
 </ul>
 </dd>
 </dl>
@@ -472,7 +471,6 @@
 <li><p>Represents the <strong>statistical uncertainty on the stacked value</strong></p></li>
 <li><p>Computed from bootstrap resampling (percentile 16–84) or analytical formula</p></li>
 <li><p>Smaller for larger samples (decreases as 1/√N)</p></li>
-<li><p><strong>Interpretation:</strong> Expected scatter in the stacked value if the stacking were repeated</p></li>
 </ul>
 </dd>
 <dt><strong>Dispersion band (`` ± Dispersion``):</strong></dt><dd><ul class="simple">
@@ -529,11 +527,70 @@
 - Compare with ±1σ error band to assess non-normality</p></li>
 <li><p><strong>98th/99th percentiles (red dashed/dotted):</strong>
 - If they deviate far from median → presence of high-flux outliers
-- May indicate contamination or rare blue objects in the sample</p></li>
-<li><p><strong>Geom. mean pixels (orange, top panel):</strong>
+- May show contamination from misclassified redshift due to misinterpreted emission lines (see Euclid Collaboration, Quai S., Pozzetti L., et al. 2025, Astronomy &amp; Astrophysics, DOI: 10.1051/0004-6361/202557329)</p></li>
+<li><p><strong>Geom. mean pixels (green, top panel):</strong>
 - If this count drops → some wavelengths have non-positive flux
-- Indicates data quality issues or calibration artifacts</p></li>
+- Indicates noisiy spectra or calibration artifacts</p></li>
 </ol>
+<p>—</p>
+</section>
+<section id="d-flux-distribution-viewer">
+<h2>2D Flux Distribution Viewer<a class="headerlink" href="#d-flux-distribution-viewer" title="Link to this heading">¶</a></h2>
+<p>After a stacking run, SpectraPyle writes an intermediate HDF5 file (<code class="docutils literal notranslate"><span class="pre">*_array.h5</span></code>)
+containing the full matrix of individual resampled spectra before combination.
+The <code class="xref py py-func docutils literal notranslate"><span class="pre">plot_h5_heatmap()</span></code> function and the companion notebook <code class="docutils literal notranslate"><span class="pre">notebooks/plot_helper.ipynb</span></code>
+let you explore this matrix as a 2D flux distribution.</p>
+<p><strong>How to open:</strong></p>
+<p>Open <code class="docutils literal notranslate"><span class="pre">notebooks/plot_helper.ipynb</span></code> in JupyterLab after setting <code class="docutils literal notranslate"><span class="pre">name_stack</span></code> to the
+path of your stacked FITS file. The notebook derives the companion H5 path automatically
+and exposes all parameters as interactive widgets.</p>
+<p><strong>Modes:</strong></p>
+<ul class="simple">
+<li><p><strong>heatmap</strong> — 2D density map: each cell counts how many spectra have a given flux at a
+given wavelength. The selected stacked statistic (e.g. <code class="docutils literal notranslate"><span class="pre">specMedian</span></code>) is overlaid as a
+cyan line for reference.</p></li>
+<li><p><strong>lines</strong> — individual spectra as thin, translucent overlapping traces normalized to
+their own peak; useful for identifying outliers or non-standard spectral shapes.</p></li>
+</ul>
+<p><strong>Widgets (``plot_helper.ipynb``):</strong></p>
+<p><strong>Binning and physical correctness:</strong></p>
+<p>The heatmap is computed with <code class="docutils literal notranslate"><span class="pre">numpy.histogram2d</span></code> using deterministic bin edges, avoiding
+rendering artefacts that Plotly’s internal <code class="docutils literal notranslate"><span class="pre">Histogram2d</span></code> binning can introduce on
+non-uniform wavelength grids.</p>
+<ul class="simple">
+<li><p><strong>X bins = n_pixels (default):</strong> pixel-exact half-pixel edges are used. Each histogram
+column maps one-to-one to one original wavelength pixel. No flux redistribution — physically
+unbiased for both linear and log-linear grids.</p></li>
+<li><p><strong>X bins &lt; n_pixels:</strong> uniform bin edges are applied over <code class="docutils literal notranslate"><span class="pre">[λ_min,</span> <span class="pre">λ_max]</span></code>. A warning
+is printed in the notebook output because flux is redistributed across bins on non-uniform
+grids. Use this only for faster rendering when the exact per-pixel distribution is not needed.</p></li>
+</ul>
+<p>Cells with zero count are rendered transparent rather than white, so real gaps in the data
+(chip gaps between grisms, masked sky-line regions, or fully rejected spectra) remain visible
+and are distinguishable from rendering artefacts.</p>
+<p><strong>Python API:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.plot.plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_h5_heatmap</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_h5_heatmap</span><span class="p">(</span>
+    <span class="n">h5_path</span>        <span class="o">=</span> <span class="s1">&#39;result_array.h5&#39;</span><span class="p">,</span>
+    <span class="n">fits_path</span>      <span class="o">=</span> <span class="s1">&#39;result_STACKING.fits&#39;</span><span class="p">,</span>
+    <span class="n">template_array</span> <span class="o">=</span> <span class="s1">&#39;original&#39;</span><span class="p">,</span>   <span class="c1"># &#39;norm&#39; to use template-normalized array</span>
+    <span class="n">metric</span>         <span class="o">=</span> <span class="s1">&#39;specMedian&#39;</span><span class="p">,</span>
+    <span class="n">mode</span>           <span class="o">=</span> <span class="s1">&#39;heatmap&#39;</span><span class="p">,</span>    <span class="c1"># or &#39;lines&#39;</span>
+    <span class="n">nbinsx</span>         <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>         <span class="c1"># None → n_pixels (pixel-exact edges)</span>
+    <span class="n">nbinsy</span>         <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="n">max_spectra</span>    <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>         <span class="c1"># int to subsample randomly</span>
+    <span class="n">line_alpha</span>     <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">plot_h5_heatmap</span></code> requires both the FITS output (<code class="docutils literal notranslate"><span class="pre">*_STACKING.fits</span></code>) and the
+companion HDF5 file (<code class="docutils literal notranslate"><span class="pre">*_array.h5</span></code>) produced during the same stacking run.
+The H5 file is written automatically when <code class="docutils literal notranslate"><span class="pre">stacking.py</span></code> runs.</p>
+</div>
 <p>—</p>
 </section>
 <section id="module-spectraPyle.plot.plot">
@@ -602,6 +659,34 @@ to distinguish from main statistics. Colors chosen for accessibility.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.plot.plot.plot_h5_heatmap">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.plot.plot.</span></span><span class="sig-name descname"><span class="pre">plot_h5_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fits_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'norm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'specMedian'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'heatmap'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_spectra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbinsx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbinsy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spectraPyle/plot/plot.html#plot_h5_heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.plot.plot.plot_h5_heatmap" title="Link to this definition">¶</a></dt>
+<dd><p>2D visualization of stacked spectra from H5 file with metrics from FITS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h5_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>Path</em>) – Path to <a href="#id1"><span class="problematic" id="id2">*</span></a>_array.h5 file.</p></li>
+<li><p><strong>fits_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>Path</em>) – Path to the companion <a href="#id3"><span class="problematic" id="id4">*</span></a>_STACKING.fits file (metrics read from here).</p></li>
+<li><p><strong>template_array</strong> (<em>{'norm'</em><em>, </em><em>'original'}</em>) – If ‘norm’ and stackArr_norm exists in H5, use it; else use stackArr.</p></li>
+<li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Column name from FITS STACKING_RESULTS table to overlay
+(e.g. ‘specMedian’, ‘specMean’, ‘specGeometricMean’).</p></li>
+<li><p><strong>norm_factors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, overlay norm_factors from H5 as a scatter trace.</p></li>
+<li><p><strong>mode</strong> (<em>{'heatmap'</em><em>, </em><em>'lines'}</em>) – ‘heatmap’ — 2D image, wavelength vs spectrum index (all spectra, fast).
+‘lines’   — individual spectra as thin overlapping traces.</p></li>
+<li><p><strong>max_spectra</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><em>None</em>) – Cap on number of spectra shown. None = all. Recommended ~300 for ‘lines’.</p></li>
+<li><p><strong>line_alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Opacity per trace in ‘lines’ mode (default 0.05).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>plotly.graph_objects.Figure</p>
 </dd>
 </dl>
 </dd></dl>
@@ -718,10 +803,12 @@ dispersion_columns, percentile_columns) — all as dicts keyed by column name.</
 <li><a class="reference internal" href="#error-vs-dispersion-bands">Error vs. Dispersion Bands</a></li>
 <li><a class="reference internal" href="#configuration">Configuration</a></li>
 <li><a class="reference internal" href="#example-interpreting-a-stack">Example: Interpreting a Stack</a></li>
+<li><a class="reference internal" href="#d-flux-distribution-viewer">2D Flux Distribution Viewer</a></li>
 <li><a class="reference internal" href="#module-spectraPyle.plot.plot">API Reference</a><ul>
 <li><a class="reference internal" href="#spectraPyle.plot.plot.add_absorption_features"><code class="docutils literal notranslate"><span class="pre">add_absorption_features()</span></code></a></li>
 <li><a class="reference internal" href="#spectraPyle.plot.plot.add_line_markers"><code class="docutils literal notranslate"><span class="pre">add_line_markers()</span></code></a></li>
 <li><a class="reference internal" href="#spectraPyle.plot.plot.get_header"><code class="docutils literal notranslate"><span class="pre">get_header()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.plot.plot.plot_h5_heatmap"><code class="docutils literal notranslate"><span class="pre">plot_h5_heatmap()</span></code></a></li>
 <li><a class="reference internal" href="#spectraPyle.plot.plot.plotting"><code class="docutils literal notranslate"><span class="pre">plotting()</span></code></a></li>
 <li><a class="reference internal" href="#spectraPyle.plot.plot.read_fits_and_select_columns"><code class="docutils literal notranslate"><span class="pre">read_fits_and_select_columns()</span></code></a></li>
 </ul>

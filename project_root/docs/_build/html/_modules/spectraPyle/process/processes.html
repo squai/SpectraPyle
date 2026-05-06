@@ -199,6 +199,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../normalization.html">Normalization Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../resampling.html">Resampling Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../statistics.html">Stacking Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">Interactive Plotting &amp; Visualization</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -409,18 +411,19 @@
             <span class="p">)</span>
         <span class="p">)</span>
     
-    <span class="c1"># Flatten results </span>
+    <span class="c1"># Flatten results</span>
     <span class="n">flat_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
-    
+
     <span class="c1"># -------- Unpack results --------</span>
-    <span class="n">specid_result</span><span class="p">,</span> <span class="n">specResampledArr</span><span class="p">,</span> <span class="n">errResampledArr</span><span class="p">,</span> <span class="n">normalization_factors</span><span class="p">,</span> <span class="n">spectra_not_found</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">flat_results</span><span class="p">)</span>
-    
+    <span class="n">specid_result</span><span class="p">,</span> <span class="n">grism_labels</span><span class="p">,</span> <span class="n">specResampledArr</span><span class="p">,</span> <span class="n">errResampledArr</span><span class="p">,</span> <span class="n">normalization_factors</span><span class="p">,</span> <span class="n">spectra_not_found</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">flat_results</span><span class="p">)</span>
+
     <span class="c1"># Convert to arrays</span>
     <span class="n">specid_result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">specid_result</span><span class="p">)</span>
-    
+    <span class="n">grism_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grism_labels</span><span class="p">)</span>
+
     <span class="n">specResampledArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">specResampledArr</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
     <span class="n">errResampledArr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">errResampledArr</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-    
+
     <span class="n">normalization_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">normalization_factors</span><span class="p">)</span>
     <span class="n">spectra_not_found</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spectra_not_found</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
 
@@ -429,7 +432,8 @@
         <span class="n">errResampledArr</span><span class="p">,</span>
         <span class="n">normalization_factors</span><span class="p">,</span>
         <span class="n">spectra_not_found</span><span class="p">,</span>
-        <span class="n">specid_result</span>
+        <span class="n">specid_result</span><span class="p">,</span>
+        <span class="n">grism_labels</span>
     <span class="p">)</span></div>
 
 
@@ -572,7 +576,8 @@
 
         <span class="c1"># append ONE result per grism</span>
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span>
-            <span class="n">specid</span><span class="p">,</span>  
+            <span class="n">specid</span><span class="p">,</span>
+            <span class="n">grism</span><span class="p">,</span>
             <span class="n">specResampled</span><span class="p">,</span>
             <span class="n">errResampled</span><span class="p">,</span>
             <span class="n">normalization_factor</span><span class="p">,</span>

@@ -171,6 +171,44 @@ with fits.open("result.fits") as hdu:
 
 ---
 
+## Visualization
+
+### Stacked spectrum plot
+
+After a run, SpectraPyle automatically generates an interactive Plotly figure with two panels: pixel counts (top) and all six stacked estimators with error/dispersion bands, percentile envelopes, and astrophysical line markers (bottom).
+
+```python
+from spectraPyle.plot.plot import plotting
+
+fig = plotting('result_STACKING.fits', width=1200, height=700)
+```
+
+### 2D flux distribution — H5 array viewer
+
+The intermediate HDF5 file (`*_array.h5`) stores the full matrix of individual resampled spectra before combination. Use `notebooks/plot_helper.ipynb` to inspect it interactively after a run:
+
+1. Open `plot_helper.ipynb` in JupyterLab
+2. Set `name_stack` to your FITS output path — the notebook derives the H5 path automatically
+3. Use the widgets to explore: mode (`heatmap` / `lines`), metric overlay, bin resolution
+
+Or call the function directly:
+
+```python
+from spectraPyle.plot.plot import plot_h5_heatmap
+
+fig = plot_h5_heatmap(
+    h5_path   = 'result_array.h5',
+    fits_path = 'result_STACKING.fits',
+    metric    = 'specMedian',
+    mode      = 'heatmap',   # or 'lines'
+)
+fig.show()
+```
+
+**Binning:** by default, one bin per original wavelength pixel with pixel-exact half-pixel edges. This preserves the physical spacing of linear and log-linear grids without any flux redistribution. Reducing `nbinsx` below `n_pixels` uses uniform bins and prints a warning.
+
+---
+
 ## Supported Instruments
 
 | Instrument | Grisms | Spectra modes |

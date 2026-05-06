@@ -579,14 +579,25 @@
                                                <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;wavelength_stacking&#39;</span><span class="p">]),</span> <span class="n">chunk_size</span><span class="p">),</span> 
                                                <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span> 
 
-                <span class="n">spectraIDlist_dset</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;object_id&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span>  
-                                <span class="n">maxshape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype_id</span><span class="p">,</span>  
-                                <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">,),</span>  
+                <span class="n">spectraIDlist_dset</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;object_id&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span>
+                                <span class="n">maxshape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype_id</span><span class="p">,</span>
+                                <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">,),</span>
                                 <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span> 
+
+                <span class="n">norm_factor_dset</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;norm_factor&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span>
+                                <span class="n">maxshape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+                                <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">,),</span>
+                                <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+
+                <span class="n">grism_label_dset</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;grism_label&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,),</span>
+                                <span class="n">maxshape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">h5py</span><span class="o">.</span><span class="n">special_dtype</span><span class="p">(</span><span class="n">vlen</span><span class="o">=</span><span class="nb">str</span><span class="p">),</span>
+                                <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">,))</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="n">stackArr_dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;stackArr&quot;</span><span class="p">]</span>
                 <span class="n">stackArrErr_dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;stackArrErr&quot;</span><span class="p">]</span>
                 <span class="n">spectraIDlist_dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;object_id&quot;</span><span class="p">]</span>
+                <span class="n">norm_factor_dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;norm_factor&quot;</span><span class="p">]</span>
+                <span class="n">grism_label_dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;grism_label&quot;</span><span class="p">]</span>
 
 
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_chunks</span><span class="p">):</span>
@@ -603,11 +614,11 @@
                 <span class="n">chunk_data_input</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data_input</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
                 <span class="c1"># ----- processing the spectra ------ #</span>
-                <span class="n">chunk_stackArr</span><span class="p">,</span> <span class="n">chunk_stackArrErr</span><span class="p">,</span> <span class="n">norm_factor</span><span class="p">,</span> <span class="n">spectra_not_found</span><span class="p">,</span> <span class="n">chunk_spectraIDlist</span> <span class="o">=</span> <span class="n">spr</span><span class="o">.</span><span class="n">main_parallel</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="p">,</span> <span class="n">chunk_specIDs</span><span class="p">,</span> <span class="n">chunk_redshift</span><span class="p">,</span> <span class="n">chunk_ebv_galactic</span><span class="p">,</span> 
+                <span class="n">chunk_stackArr</span><span class="p">,</span> <span class="n">chunk_stackArrErr</span><span class="p">,</span> <span class="n">norm_factor</span><span class="p">,</span> <span class="n">spectra_not_found</span><span class="p">,</span> <span class="n">chunk_spectraIDlist</span><span class="p">,</span> <span class="n">chunk_grism_labels</span> <span class="o">=</span> <span class="n">spr</span><span class="o">.</span><span class="n">main_parallel</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="p">,</span> <span class="n">chunk_specIDs</span><span class="p">,</span> <span class="n">chunk_redshift</span><span class="p">,</span> <span class="n">chunk_ebv_galactic</span><span class="p">,</span>
                         <span class="n">chunk_custom_norm_param</span><span class="p">,</span>
-                        <span class="n">wavelength_stacking_bins</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;pixelResampling&#39;</span><span class="p">],</span> 
-                        <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;z_stacking&#39;</span><span class="p">],</span> <span class="n">grismList</span><span class="p">,</span> <span class="n">chunk_data_input</span>  
+                        <span class="n">wavelength_stacking_bins</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;pixelResampling&#39;</span><span class="p">],</span>
+                        <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;z_stacking&#39;</span><span class="p">],</span> <span class="n">grismList</span><span class="p">,</span> <span class="n">chunk_data_input</span>
                     <span class="p">)</span>
 
                 <span class="c1"># Compute counts</span>
@@ -630,6 +641,8 @@
                 <span class="n">stackArrErr_dset</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">stackArrErr_dset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">new_size</span><span class="p">))</span>  <span class="c1"># Resize along num_spectra</span>
 
                 <span class="n">spectraIDlist_dset</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">new_size</span><span class="p">,))</span>  <span class="c1"># Resize along num_spectra</span>
+                <span class="n">norm_factor_dset</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">new_size</span><span class="p">,))</span>
+                <span class="n">grism_label_dset</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">new_size</span><span class="p">,))</span>
 
                 <span class="c1"># Correctly insert new chunk at the end of the dataset</span>
                 <span class="n">stackArr_dset</span><span class="p">[:,</span> <span class="n">current_spectra_count</span><span class="p">:</span><span class="n">new_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">chunk_stackArr</span>
@@ -637,6 +650,8 @@
 
                 <span class="n">chunk_spectraIDlist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">chunk_spectraIDlist</span><span class="p">)</span>
                 <span class="n">spectraIDlist_dset</span><span class="p">[</span><span class="n">current_spectra_count</span><span class="p">:</span><span class="n">new_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">chunk_spectraIDlist</span>
+                <span class="n">norm_factor_dset</span><span class="p">[</span><span class="n">current_spectra_count</span><span class="p">:</span><span class="n">new_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm_factor</span>
+                <span class="n">grism_label_dset</span><span class="p">[</span><span class="n">current_spectra_count</span><span class="p">:</span><span class="n">new_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">chunk_grism_labels</span>
 
                 <span class="c1"># Store in dictionary</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -673,7 +688,7 @@
             <span class="c1"># ------ francis+1991 like normalization -------</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;template&#39;</span><span class="p">:</span>
                 <span class="n">pre_nan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">stackArr</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                <span class="n">stackArr</span><span class="p">,</span> <span class="n">stackArrErr</span> <span class="o">=</span> <span class="n">snorm</span><span class="o">.</span><span class="n">francis1991_normalize</span><span class="p">(</span>
+                <span class="n">stackArr</span><span class="p">,</span> <span class="n">stackArrErr</span><span class="p">,</span> <span class="n">alphas</span> <span class="o">=</span> <span class="n">snorm</span><span class="o">.</span><span class="n">francis1991_normalize</span><span class="p">(</span>
                 <span class="n">stackArr</span><span class="p">,</span>
                 <span class="n">stackArrErr</span><span class="p">,</span>
                 <span class="n">norm_stat</span><span class="o">=</span><span class="s2">&quot;median&quot;</span>
@@ -682,6 +697,9 @@
                 <span class="n">templateNormMaskedCount</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">stackArr</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">pre_nan</span>
                 <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;templateNormMaskedCount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">templateNormMaskedCount</span>
                 <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;goodPixelCount&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">templateNormMaskedCount</span>
+
+                <span class="c1"># update norm_factor with actual alpha values from template normalization</span>
+                <span class="n">f</span><span class="p">[</span><span class="s1">&#39;norm_factor&#39;</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">alphas</span>
 
                 <span class="c1"># write new datasets (do NOT overwrite originals)</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;stackArr_norm&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">stackArr</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">)</span>
@@ -874,6 +892,12 @@
 
     <span class="k">return</span> <span class="n">run_stacking</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span></div>
 
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Spectral stacking pipeline&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to config file (YAML or JSON)&quot;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
 </pre></div>
         </article>
       </div>
