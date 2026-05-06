@@ -1,77 +1,91 @@
 """
 Auto-generation of output FITS filenames from configuration.
 
-Provides :func:`build_filename` which constructs descriptive, self-documenting
-filenames encoding instrument, grisms, redshift type, normalization, and sample size.
+Provides :func:`build_filename` which constructs a short, structured filename
+encoding instrument, survey, grisms, data release, redshift column,
+normalization, sigma clipping, resampling, and an 8-char config hash.
 """
+
+import hashlib
+import json
+from pathlib import Path
+
+_NORM_CODE = {
+    "no_normalization": "nonorm",
+    "median": "med",
+    "mean": "mean",
+    "interval": "intv",
+    "custom": "cust",
+    "template": "tmpl",
+}
+
+_HASH_FIELDS = [
+    "instrument_name", "survey_name", "grisms", "data_release",
+    "filename_in", "redshift_column_name",
+    "spectra_normalization", "lambda_norm_min", "lambda_norm_max",
+    "sigma_clipping_conditions",
+    "pixel_resampling", "pixel_resampling_type",
+    "bootstrapping_R",
+    "pixel_mask", "n_min_dithers",
+]
+
+
+def _config_hash(cfg):
+    """Return the first 8 hex chars of SHA-256 over science-relevant config fields."""
+    science = {k: cfg.get(k) for k in _HASH_FIELDS}
+    serialised = json.dumps(science, sort_keys=True, default=str)
+    return hashlib.sha256(serialised.encode()).hexdigest()[:8]
 
 
 def build_filename(cfg):
     """Auto-generate the output FITS filename stem from config fields.
 
-    Constructs a descriptive name encoding instrument, grisms, redshift type,
-    normalization, and sample size so output files are self-documenting.
-
     Parameters
     ----------
-    config : dict
-        Flat stacking config dict.
+    cfg : dict
+        Flat stacking config dict (produced by ``flatten_schema_model``).
 
     Returns
     -------
     str
         Filename stem (without ``.fits`` extension).
     """
-
     parts = []
 
-    # ---------- BASE ----------
-    parts.append(cfg["filename_in"])
+    # instrument context
+    parts.append(cfg["survey_name"])
+    parts.append("-".join(cfg["grisms"]))
+    parts.append(cfg["data_release"])
 
-    parts.append(f"idCol_{cfg['ID_column_name']}")
+    # catalog
+    parts.append(Path(cfg["filename_in"]).stem)
 
-    if cfg["redshift_column_name"]:
-        parts.append(f"zCol_{cfg['redshift_column_name']}")
+    # redshift column (omit if not set)
+    zcol = cfg.get("redshift_column_name")
+    if zcol:
+        parts.append(zcol)
 
-    parts.append(f"zType_{cfg['z_type']}")
+    # normalization
+    norm = cfg["spectra_normalization"]
+    parts.append(_NORM_CODE.get(norm, norm))
 
-    parts.append(f"galExtCol_{cfg['gal_ext_column_name']}")
-
-    parts.append(f"conservation_{cfg['conservation']}")
-
-    parts.append(f"spectraNormalization_{cfg['spectra_normalization']}")
-
-    # ---------- NORMALIZATION EXTRAS ----------
-    if cfg["spectra_normalization"] == "interval" and cfg["lambda_norm_rest"]:
+    if norm == "interval":
         l0, l1 = cfg["lambda_norm_rest"]
-        parts.append(f"lbdRest_{l0}_{l1}")
+        parts.append(f"{int(l0)}-{int(l1)}")
 
-    if cfg["spectra_normalization"] == "custom" and cfg["custom_column_name"]:
-        parts.append(f"normParam_{cfg['custom_column_name']}")
-
-    # ---------- RESAMPLING ----------
-    if cfg["pixel_resampling"]:
-        parts.append(f"pxlResamp_{cfg['pixel_resampling']}")
-
-    # ---------- QUALITY ----------
+    # sigma clipping
     sigma = cfg["sigma_clipping_conditions"]
-    parts.append(f"sigmaClip_{sigma}")
-        
-    
-    parts.append(f"bootstrapping_{cfg['bootstrapping_R']}")
+    parts.append(f"s{sigma:g}")
 
-    # ---------- INSTRUMENT QC ----------
-    
-    masked_bits = cfg.get("pixel_mask", [])
-    masked_str = ""
+    # resampling (always present)
+    px = cfg.get("pixel_resampling")
+    if px is not None:
+        restype = "log" if cfg.get("pixel_resampling_type") == "log" else "lin"
+        parts.append(f"px{px:g}{restype}")
+    else:
+        parts.append("pxauto")
 
-    if masked_bits:
-        "bitMask" + "_".join(map(str, masked_bits))
-        parts.append(masked_str)
+    # 8-char config hash
+    parts.append(_config_hash(cfg))
 
-    if cfg.get("n_min_dithers") not in [None, False]:
-        parts.append(f"NdithMask{cfg['n_min_dithers']}")
-
-    parts.append("STACKING")
-
-    return "__".join(parts)
+    return "_".join(parts)

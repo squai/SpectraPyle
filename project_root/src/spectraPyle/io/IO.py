@@ -12,6 +12,7 @@ import os
 import os.path
 import numpy as np
 import pandas as pd
+import yaml
 from astropy.io import fits
 from multiprocessing import Pool
 
@@ -366,7 +367,26 @@ def output_units(config):
         out_unit = 'arbitrary units'
         out_unit_scale_factor = 1
     return out_unit, out_unit_scale_factor
-        
+
+
+def _build_config_hdu(config):
+    """Serialise the flat config dict as YAML and return a BinTableHDU named CONFIG.
+
+    Each YAML line is stored as one row in a single 'line' column.
+    To recover: ``'\\n'.join(hdul['CONFIG'].data['line'])`` then ``yaml.safe_load()``.
+    """
+    skip = {"grism_io"}  # contains Path objects that are not cleanly serialisable
+    serialisable = {k: v for k, v in config.items() if k not in skip}
+    yaml_str = yaml.dump(serialisable, default_flow_style=False, sort_keys=True,
+                         allow_unicode=True)
+    lines = yaml_str.splitlines()
+    max_len = max(len(l) for l in lines) if lines else 1
+    col = fits.Column(name="line", format=f"A{max_len}", array=lines)
+    hdu = fits.BinTableHDU.from_columns([col])
+    hdu.name = "CONFIG"
+    return hdu
+
+
 def save_to_file(config, data_dict):
     """Save stacked spectra and metadata to a FITS file.
 
@@ -441,7 +461,8 @@ def save_to_file(config, data_dict):
     # Save to FITS file
     print (f"config['output_dir']: {config['output_dir']}, config['filename_out']:{config['filename_out']}")
     output_filename = f"{config['output_dir']}/{config['filename_out']}.fits"
-    hdul = fits.HDUList([primary_hdu, stacking_results_hdu])
+    config_hdu = _build_config_hdu(config)
+    hdul = fits.HDUList([primary_hdu, stacking_results_hdu, config_hdu])
     hdul.writeto(output_filename, overwrite=True)
 
     print(f"FITS file '{output_filename}' has been saved.")
