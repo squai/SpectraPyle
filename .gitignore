@@ -28,6 +28,7 @@ project_root/future/
 project_root/tests/**/output*/
 project_root/notebooks/old/
 project_root/notebooks/my_notebooks/
+project_root/docs/superpowers/
 
 *.json
 *.gui

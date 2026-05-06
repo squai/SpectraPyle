@@ -20,6 +20,7 @@ from astropy.io import fits
 from astropy.table import Table
 from pathlib import Path
 import logging
+from spectraPyle.instruments import _combined_fits_cache as _cache
 
 logger = logging.getLogger(__name__)
 
@@ -328,6 +329,61 @@ def _extract_spectrum(hdul, mode):
         raise ValueError(f"Unknown mode: {mode}")
 
 
+def _build_generic_index(hdul):
+    """Build HDU name index for generic combined FITS.
+
+    Parameters
+    ----------
+    hdul : astropy.io.fits.HDUList
+        Open FITS file.
+
+    Returns
+    -------
+    dict
+        Index dict with 'layout': 'per_hdu' and 'names': frozenset of HDU names.
+    """
+    names = frozenset(hdu.name for hdu in hdul)
+    return {'layout': 'per_hdu', 'names': names}
+
+
+def _lookup_generic(hdul, index, specid):
+    """Lookup and extract spectrum from generic combined FITS using cached index.
+
+    Parameters
+    ----------
+    hdul : astropy.io.fits.HDUList
+        Open FITS file (from cache).
+    index : dict
+        Index dict with 'names': frozenset of HDU names.
+    specid : str or int
+        Spectrum identifier to look up.
+
+    Returns
+    -------
+    lbd : ndarray
+        Wavelength array.
+    flux : ndarray
+        Flux array.
+    error : ndarray
+        Error array.
+
+    Raises
+    ------
+    ValueError
+        If spectrum HDU not found.
+    """
+    names = index['names']
+    primary = hdul[0]
+    if str(specid) in names:
+        return _extract_spectrum(fits.HDUList([primary, hdul[str(specid)]]), 'table')
+    if f"{specid}_default" in names:
+        return _extract_spectrum(fits.HDUList([primary, hdul[f"{specid}_default"]]), 'table')
+    raise ValueError(
+        f"Spectrum '{specid}' not found in combined FITS. "
+        f"Expected HDU named '{specid}' or '{specid}_default'."
+    )
+
+
 def readSpec(config, specid, grism):
     """Read a single spectrum from individual or combined FITS.
 
@@ -374,18 +430,21 @@ def readSpec(config, specid, grism):
     if spectra_mode == 'combined fits' and spectra_datafile:
         # Combined FITS: multiple spectra in one file
         filepath = Path(spectra_dir) / f"{spectra_datafile}.fits"
-        with fits.open(filepath, memmap=True) as hdul:
-            # Try per-spectrum HDUs first
-            if str(specid) in hdul:
-                lbd, flux, error = _extract_spectrum(fits.HDUList([hdul[0], hdul[str(specid)]]), 'table')
-            elif f"{specid}_default" in hdul:
-                lbd, flux, error = _extract_spectrum(fits.HDUList([hdul[0], hdul[f"{specid}_default"]]), 'table')
-            else:
-                # Try primary HDU (image) lookup by name
-                try:
-                    # Fall back to assuming per-spectrum HDUs with the specid as a direct lookup
-                    raise KeyError(f"HDU {specid} or {specid}_default not found")
-                except KeyError:
+        grism_key = 'default'
+        if _cache.is_active(grism_key):
+            hdul = _cache.get_hdul(grism_key)
+            index = _cache.get_index(grism_key)
+            if index is None:
+                index = _build_generic_index(hdul)
+                _cache.set_index(grism_key, index)
+            lbd, flux, error = _lookup_generic(hdul, index, specid)
+        else:
+            with fits.open(filepath, memmap=True) as hdul:
+                if str(specid) in hdul:
+                    lbd, flux, error = _extract_spectrum(fits.HDUList([hdul[0], hdul[str(specid)]]), 'table')
+                elif f"{specid}_default" in hdul:
+                    lbd, flux, error = _extract_spectrum(fits.HDUList([hdul[0], hdul[f"{specid}_default"]]), 'table')
+                else:
                     raise ValueError(
                         f"Spectrum '{specid}' not found in {spectra_datafile}.fits. "
                         f"Expected HDU named '{specid}' or '{specid}_default'."

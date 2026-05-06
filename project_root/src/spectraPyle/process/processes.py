@@ -13,7 +13,7 @@ from astropy.io import fits
 from multiprocessing import Pool
 import logging
 import logging.handlers
-
+from pathlib import Path
 
 import spectraPyle.spectrum.spectra as sspec
 import spectraPyle.spectrum.normalization as snorm
@@ -22,6 +22,7 @@ import spectraPyle.spectrum.resampling as sres
 from tqdm import tqdm
 
 from spectraPyle.utils.log import get_logger
+from spectraPyle.instruments._combined_fits_cache import init_file_handles, close_file_handles
 
 logger = get_logger(__name__)
 
@@ -38,6 +39,20 @@ def _worker_logging_init(queue):
     root.setLevel(logging.DEBUG)
     root.handlers.clear()
     root.addHandler(logging.handlers.QueueHandler(queue))
+
+def _worker_init(log_queue, grism_paths):
+    """Initialize worker process with logging and combined FITS cache handles.
+
+    Parameters
+    ----------
+    log_queue : multiprocessing.Queue
+        Queue to send log records to the main process.
+    grism_paths : dict or None
+        Mapping of grism names to combined FITS file paths.
+    """
+    _worker_logging_init(log_queue)
+    if grism_paths:
+        init_file_handles(grism_paths)
 
 def main_parallel(
     self,
@@ -127,6 +142,16 @@ def main_parallel(
         )
     ]
 
+    # -------- Build grism_paths for combined FITS cache --------
+    spectra_mode = config.get('spectra_mode')
+    grism_paths = {}
+    if spectra_mode == 'combined fits':
+        for grism in grismList:
+            gcfg = config.get('grism_io', {}).get(grism, {})
+            datafile = gcfg.get('spectra_datafile')
+            if datafile:
+                grism_paths[grism] = Path(gcfg['spectra_dir']) / f"{datafile}.fits"
+
     # -------- Multiprocessing --------
     parent_handlers = logging.getLogger("spectraPyle").handlers[:]
 
@@ -140,8 +165,8 @@ def main_parallel(
         try:
             with Pool(
                 processes=self.num_cpus,
-                initializer=_worker_logging_init,
-                initargs=(log_queue,)
+                initializer=_worker_init,
+                initargs=(log_queue, grism_paths)
             ) as pool:
                 results = list(
                     tqdm(
@@ -153,13 +178,19 @@ def main_parallel(
         finally:
             listener.stop()
     else:
-        results = list(
-            tqdm(
-                map(process_spectrum_parallel, args),
-                total=len(args),
-                desc="Processing Files"
+        if grism_paths:
+            init_file_handles(grism_paths)
+        try:
+            results = list(
+                tqdm(
+                    map(process_spectrum_parallel, args),
+                    total=len(args),
+                    desc="Processing Files"
+                )
             )
-        )
+        finally:
+            if grism_paths:
+                close_file_handles()
     
     # Flatten results
     flat_results = [item for sublist in results for item in sublist]

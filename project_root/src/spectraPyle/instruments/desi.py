@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 from spectraPyle.utils.log import get_logger
+from spectraPyle.instruments import _combined_fits_cache as _cache
 
 logger = get_logger(__name__)
 
@@ -98,6 +99,17 @@ def int_to_bin7(mask_spec, list_bits_to_be_masked = [0,2,6]):
     return masked_array
 """
 
+def _build_desi_index(hdul):
+    names = frozenset(hdu.name for hdu in hdul)
+    return {'layout': 'per_hdu', 'names': names}
+
+
+def _lookup_desi(hdul, index, specid):
+    if str(specid) in index['names']:
+        return Table(hdul[str(specid)].data)
+    raise NameError(f"Spectrum '{specid}' not found in combined FITS.")
+
+
 def readSpec(config, specid, grism):
     """Read a single spectrum for the given grism.
 
@@ -139,13 +151,21 @@ def readSpec(config, specid, grism):
 
     if spectra_datafile:
         filepath = Path(spectra_dir) / f"{spectra_datafile}.fits"
-        with fits.open(filepath) as hdul:
-            for hdu in hdul:
-                if hdu.name == str(specid):
-                    table1 = Table(hdu.data)
-                    break
-            else:
-                raise NameError(f"Spectrum '{specid}' not found in {spectra_datafile}.fits.")
+        if _cache.is_active(grism):
+            hdul = _cache.get_hdul(grism)
+            index = _cache.get_index(grism)
+            if index is None:
+                index = _build_desi_index(hdul)
+                _cache.set_index(grism, index)
+            table1 = _lookup_desi(hdul, index, specid)
+        else:
+            with fits.open(filepath, memmap=True) as hdul:
+                for hdu in hdul:
+                    if hdu.name == str(specid):
+                        table1 = Table(hdu.data)
+                        break
+                else:
+                    raise NameError(f"Spectrum '{specid}' not found in {spectra_datafile}.fits.")
     else:
         if not spectra_dir:
             raise ValueError(f"spectra_dir not configured for grism '{grism}'. Check config['grism_io'].")
@@ -228,33 +248,33 @@ def readSpec_metadata(config, specid, metadata_name, hdu_indx):
 
     path_name = metadata_name
 
-    hdul = fits.open(path_name)
-    data = hdul[hdu_indx].data
+    with fits.open(path_name) as hdul:
+        data = hdul[hdu_indx].data
 
-    lbd = data.field('wavelength')
-    flux = data.field('flux')
-    error = data.field('noise')
-    """
-    mask = data.field('MASK')
-    ndith = data.field('NDITH')
-    
-    # Apply pixel bitmask:
-    if pixel_mask and mask is not None:
-        indxBadPixels = int_to_bin7(mask, list_bits_to_be_masked=pixel_mask)
-        flux[indxBadPixels] = np.nan
-        error[indxBadPixels] = np.nan
-        
-    # Apply dithers filter:
-    if n_min_dithers > 0 and ndith is not None:
-        flux = np.where(ndith < n_min_dithers, np.nan, flux)
-        error = np.where(ndith < n_min_dithers, np.nan, error)
-    """
+        lbd = data.field('wavelength')
+        flux = data.field('flux')
+        error = data.field('noise')
+        """
+        mask = data.field('MASK')
+        ndith = data.field('NDITH')
 
-    if spectrum_edges is not None:
-        flux[:spectrum_edges[0]] = np.nan
-        error[:spectrum_edges[0]] = np.nan
-        
-        flux[spectrum_edges[1]:] = np.nan
-        error[spectrum_edges[1]:] = np.nan
+        # Apply pixel bitmask:
+        if pixel_mask and mask is not None:
+            indxBadPixels = int_to_bin7(mask, list_bits_to_be_masked=pixel_mask)
+            flux[indxBadPixels] = np.nan
+            error[indxBadPixels] = np.nan
+
+        # Apply dithers filter:
+        if n_min_dithers > 0 and ndith is not None:
+            flux = np.where(ndith < n_min_dithers, np.nan, flux)
+            error = np.where(ndith < n_min_dithers, np.nan, error)
+        """
+
+        if spectrum_edges is not None:
+            flux[:spectrum_edges[0]] = np.nan
+            error[:spectrum_edges[0]] = np.nan
+
+            flux[spectrum_edges[1]:] = np.nan
+            error[spectrum_edges[1]:] = np.nan
 
     return lbd, flux, error

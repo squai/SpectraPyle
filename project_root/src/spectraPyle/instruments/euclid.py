@@ -13,6 +13,8 @@ from astropy.io import fits
 from astropy.table import Table
 from pathlib import Path
 
+from spectraPyle.instruments import _combined_fits_cache as _cache
+
 
 # ---------------------------------------------------------------------------
 # Filename resolution — Strategy pattern per data release
@@ -192,6 +194,94 @@ def int_to_bin7(mask_spec, list_bits_to_be_masked=None):
 
 
 # ---------------------------------------------------------------------------
+# Spectrum reading — helper functions for combined FITS
+# ---------------------------------------------------------------------------
+
+def _build_euclid_index(hdul, grism, config):
+    """Build a spectrum index from combined FITS HDU structure.
+
+    Returns a dict describing the layout and indexing strategy:
+    - If 'SPECTRA' HDU exists: maps ID column to row indices
+    - Otherwise: lists all HDU names for per-HDU lookup
+
+    Parameters
+    ----------
+    hdul : astropy.io.fits.HDUList
+        Open combined FITS file.
+    grism : str
+        Grism name (for context only).
+    config : dict
+        Flat config with 'ID_column_name'.
+
+    Returns
+    -------
+    dict
+        Layout description with 'layout' key and per-layout data.
+    """
+    if 'SPECTRA' in hdul:
+        id_col = config['ID_column_name']
+        if id_col not in hdul['SPECTRA'].columns.names:
+            raise NameError(f"ID column '{id_col}' not found in HDU 'SPECTRA'")
+        rows = {str(v): i for i, v in enumerate(hdul['SPECTRA'].data[id_col])}
+        return {'layout': 'spectra_table', 'rows': rows}
+    names = frozenset(hdu.name for hdu in hdul)
+    return {'layout': 'per_hdu', 'names': names}
+
+
+def _lookup_euclid(hdul, index, specid, grism, config):
+    """Look up a spectrum in combined FITS using pre-built index.
+
+    Supports two layouts:
+    - 'spectra_table': all spectra in single 'SPECTRA' table HDU
+    - 'per_hdu': one spectrum per HDU, tries multiple naming conventions
+
+    Parameters
+    ----------
+    hdul : astropy.io.fits.HDUList
+        Open combined FITS file.
+    index : dict
+        Pre-built index from _build_euclid_index().
+    specid : str or int
+        Spectrum identifier.
+    grism : str
+        Grism name.
+    config : dict
+        Flat config.
+
+    Returns
+    -------
+    astropy.table.Table
+        Spectrum data table.
+
+    Raises
+    ------
+    NameError
+        If spectrum not found in expected HDU.
+    """
+    _PREFIX = {"red": "RGS", "blue": "BGS"}
+    prefix = _PREFIX.get(grism)
+
+    if index['layout'] == 'spectra_table':
+        key = str(specid)
+        if key not in index['rows']:
+            raise NameError(f"Spectrum '{specid}' not found in combined FITS.")
+        row_idx = index['rows'][key]
+        return Table(hdul['SPECTRA'].data[[row_idx]])
+
+    names = index['names']
+    if str(specid) in names:
+        return Table(hdul[str(specid)].data)
+    if f"{specid}_{grism}" in names:
+        return Table(hdul[f"{specid}_{grism}"].data)
+    if prefix and f"{specid}_{prefix}" in names:
+        return Table(hdul[f"{specid}_{prefix}"].data)
+    raise NameError(
+        f"Spectrum '{specid}' not found in combined FITS. "
+        "Expected per-spectrum HDUs or a 'SPECTRA' table HDU."
+    )
+
+
+# ---------------------------------------------------------------------------
 # Spectrum reading
 # ---------------------------------------------------------------------------
 
@@ -242,35 +332,41 @@ def readSpec(config, specid, grism):
 
     # ---- combined FITS ----
     if spectra_datafile:
-        filepath = Path(spectra_dir) / f"{spectra_datafile}.fits"
-        prefix = _PREFIX.get(grism)
-        with fits.open(filepath, memmap=True) as hdul:
-
-            if str(specid) in hdul:
-                table1 = Table(hdul[str(specid)].data)
-
-            elif f"{specid}_{grism}" in hdul:
-                table1 = Table(hdul[f"{specid}_{grism}"].data)
-
-            elif f"{specid}_{prefix}" in hdul:
-                table1 = Table(hdul[f"{specid}_{prefix}"].data)
-            
-
-            elif 'SPECTRA' in hdul:
-                data   = hdul['SPECTRA'].data
-                id_col = config['ID_column_name']
-                if id_col not in hdul['SPECTRA'].columns.names:
-                    raise NameError(f"ID column '{id_col}' not found in HDU 'SPECTRA'")
-                mask_id = data[id_col] == int(specid)
-                if not np.any(mask_id):
-                    raise NameError(f"Spectrum '{specid}' not found in {spectra_datafile}.fits")
-                table1 = Table(data[mask_id])
-
-            else:
-                raise NameError(
-                    f"Unrecognised FITS layout in {spectra_datafile}.fits. "
-                    "Expected: per-spectrum HDUs or a 'SPECTRA' table HDU."
-                )
+        filepath = spectra_dir / f"{spectra_datafile}.fits"
+        if _cache.is_active(grism):
+            hdul = _cache.get_hdul(grism)
+            index = _cache.get_index(grism)
+            if index is None:
+                index = _build_euclid_index(hdul, grism, config)
+                _cache.set_index(grism, index)
+            table1 = _lookup_euclid(hdul, index, specid, grism, config)
+        else:
+            prefix = _PREFIX.get(grism)
+            with fits.open(filepath, memmap=True) as hdul:
+                if str(specid) in hdul:
+                    table1 = Table(hdul[str(specid)].data)
+                elif f"{specid}_{grism}" in hdul:
+                    table1 = Table(hdul[f"{specid}_{grism}"].data)
+                elif prefix and f"{specid}_{prefix}" in hdul:
+                    table1 = Table(hdul[f"{specid}_{prefix}"].data)
+                elif 'SPECTRA' in hdul:
+                    data   = hdul['SPECTRA'].data
+                    id_col = config['ID_column_name']
+                    if id_col not in hdul['SPECTRA'].columns.names:
+                        raise NameError(f"ID column '{id_col}' not found in HDU 'SPECTRA'")
+                    try:
+                        spec_id_int = int(specid)
+                    except (ValueError, TypeError):
+                        raise NameError(f"Spectrum ID '{specid}' is not numeric, cannot match SPECTRA table column '{id_col}'")
+                    mask_id = data[id_col] == spec_id_int
+                    if not np.any(mask_id):
+                        raise NameError(f"Spectrum '{specid}' not found in {spectra_datafile}.fits")
+                    table1 = Table(data[mask_id])
+                else:
+                    raise NameError(
+                        f"Unrecognised FITS layout in {spectra_datafile}.fits. "
+                        "Expected: per-spectrum HDUs or a 'SPECTRA' table HDU."
+                    )
 
     # ---- individual FITS ----
     else:
