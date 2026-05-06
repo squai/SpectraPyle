@@ -194,6 +194,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../instruments.html">Instruments &amp; Input Data Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -254,6 +255,10 @@
         <article role="main" id="furo-main-content">
           <section id="instruments">
 <h1>instruments<a class="headerlink" href="#instruments" title="Link to this heading">¶</a></h1>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../instruments.html"><span class="doc">Instruments &amp; Input Data Formats</span></a> — User guide for input data formats and how to prepare your data for each instrument.</p>
+</div>
 <section id="module-spectraPyle.instruments.euclid">
 <span id="euclid"></span><h2>Euclid<a class="headerlink" href="#module-spectraPyle.instruments.euclid" title="Link to this heading">¶</a></h2>
 <p>Euclid NISP instrument driver for SpectraPyle.</p>
@@ -418,9 +423,9 @@ according to <code class="docutils literal notranslate"><span class="pre">data_r
 </dd></dl>
 
 </section>
-<section id="module-spectraPyle.instruments.desi">
-<span id="desi"></span><h2>DESI<a class="headerlink" href="#module-spectraPyle.instruments.desi" title="Link to this heading">¶</a></h2>
-<p>DESI instrument driver for SpectraPyle.</p>
+<section id="desi">
+<h2>DESI<a class="headerlink" href="#desi" title="Link to this heading">¶</a></h2>
+<p id="module-spectraPyle.instruments.desi">DESI instrument driver for SpectraPyle.</p>
 <p>Implements the instrument interface for DESI spectra (grism: <code class="docutils literal notranslate"><span class="pre">merged</span></code>):
 <a class="reference internal" href="#spectraPyle.instruments.desi.readSpec" title="spectraPyle.instruments.desi.readSpec"><code class="xref py py-func docutils literal notranslate"><span class="pre">readSpec()</span></code></a>, <a class="reference internal" href="#spectraPyle.instruments.desi.readSpec_metadata" title="spectraPyle.instruments.desi.readSpec_metadata"><code class="xref py py-func docutils literal notranslate"><span class="pre">readSpec_metadata()</span></code></a>, <a class="reference internal" href="#spectraPyle.instruments.desi.prepare_stacking" title="spectraPyle.instruments.desi.prepare_stacking"><code class="xref py py-func docutils literal notranslate"><span class="pre">prepare_stacking()</span></code></a>,
 <code class="xref py py-func docutils literal notranslate"><span class="pre">_resolve_filepath()</span></code>.</p>
@@ -511,6 +516,101 @@ individual FITS (one spectrum per file).</p>
 </dd></dl>
 
 </section>
+<section id="module-spectraPyle.instruments.generic">
+<span id="generic"></span><h2>Generic<a class="headerlink" href="#module-spectraPyle.instruments.generic" title="Link to this heading">¶</a></h2>
+<p>Generic FITS instrument driver for SpectraPyle.</p>
+<p>Supports standard astronomical FITS formats without instrument-specific assumptions.
+Reads from binary table columns (with fallback to WCS header) and enables rapid
+stacking analysis for any single-grism spectrograph.</p>
+<p>Implements the instrument interface required by the stacking pipeline:
+<a class="reference internal" href="#spectraPyle.instruments.generic.readSpec" title="spectraPyle.instruments.generic.readSpec"><code class="xref py py-func docutils literal notranslate"><span class="pre">readSpec()</span></code></a>, <a class="reference internal" href="#spectraPyle.instruments.generic.readSpec_metadata" title="spectraPyle.instruments.generic.readSpec_metadata"><code class="xref py py-func docutils literal notranslate"><span class="pre">readSpec_metadata()</span></code></a>, and <a class="reference internal" href="#spectraPyle.instruments.generic.prepare_stacking" title="spectraPyle.instruments.generic.prepare_stacking"><code class="xref py py-func docutils literal notranslate"><span class="pre">prepare_stacking()</span></code></a>.</p>
+<p>Supported features:
+- Column aliases: wavelength, flux, error (with automatic fallback)
+- Wavelength reconstruction: binary table columns OR WCS header (linear/log/SDSS-style COEFF)
+- Flux scale factor: auto-read from FITS header (BSCALE, FLUXSCAL, FLUX_SCALE)
+- Spectra mode: individual FITS or combined FITS</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.instruments.generic.prepare_stacking">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.instruments.generic.</span></span><span class="sig-name descname"><span class="pre">prepare_stacking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_stacking</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zMin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zMax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_edges</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/instruments/generic.html#prepare_stacking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.instruments.generic.prepare_stacking" title="Link to this definition">¶</a></dt>
+<dd><p>Compute wavelength grid bounds for stacking.</p>
+<p>If lambda_edges is provided, uses it directly (shifted to observed frame).
+Otherwise, reads the first spectrum to auto-detect the wavelength range and
+logs a warning that all spectra are assumed to share this range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Flat config dict with I/O settings and catalog info.</p></li>
+<li><p><strong>z_stacking</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Stacking redshift reference.</p></li>
+<li><p><strong>zMin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Minimum source redshift in sample.</p></li>
+<li><p><strong>zMax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Maximum source redshift in sample.</p></li>
+<li><p><strong>lambda_edges</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>] or </em><em>None</em>) – Rest-frame wavelength override (Å); if given, overrides auto-detection.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>lbd_min</strong> (<em>float</em>) – Minimum wavelength for stacking (observed frame, Å).</p></li>
+<li><p><strong>lbd_max</strong> (<em>float</em>) – Maximum wavelength for stacking (observed frame, Å).</p></li>
+<li><p><strong>grismList</strong> (<em>list of str</em>) – List of grisms to iterate over (always [‘default’] for generic).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.instruments.generic.readSpec">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.instruments.generic.</span></span><span class="sig-name descname"><span class="pre">readSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grism</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/instruments/generic.html#readSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.instruments.generic.readSpec" title="Link to this definition">¶</a></dt>
+<dd><p>Read a single spectrum from individual or combined FITS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Flat config dict with I/O and quality settings.</p></li>
+<li><p><strong>specid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Spectrum identifier.</p></li>
+<li><p><strong>grism</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Grism name (must be ‘default’ for generic instrument).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>lbd</strong> (<em>ndarray</em>) – Wavelength array (Angstroms).</p></li>
+<li><p><strong>flux</strong> (<em>ndarray</em>) – Flux array.</p></li>
+<li><p><strong>error</strong> (<em>ndarray</em>) – Error array.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – If the spectrum file does not exist.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the FITS format is not recognized or required data is missing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="spectraPyle.instruments.generic.readSpec_metadata">
+<span class="sig-prename descclassname"><span class="pre">spectraPyle.instruments.generic.</span></span><span class="sig-name descname"><span class="pre">readSpec_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdu_indx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/instruments/generic.html#readSpec_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.instruments.generic.readSpec_metadata" title="Link to this definition">¶</a></dt>
+<dd><p>Read spectrum from metadata-provided FITS path and HDU index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Flat config dict with quality settings.</p></li>
+<li><p><strong>specid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Spectrum identifier (unused; included for interface compatibility).</p></li>
+<li><p><strong>metadata_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Full path to FITS file.</p></li>
+<li><p><strong>hdu_indx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – HDU index to read from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>lbd</strong> (<em>ndarray</em>) – Wavelength array (Angstroms).</p></li>
+<li><p><strong>flux</strong> (<em>ndarray</em>) – Flux array.</p></li>
+<li><p><strong>error</strong> (<em>ndarray</em>) – Error array.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 </section>
 
         </article>
@@ -577,10 +677,16 @@ individual FITS (one spectrum per file).</p>
 <li><a class="reference internal" href="#spectraPyle.instruments.euclid.readSpec_metadata"><code class="docutils literal notranslate"><span class="pre">readSpec_metadata()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-spectraPyle.instruments.desi">DESI</a><ul>
+<li><a class="reference internal" href="#desi">DESI</a><ul>
 <li><a class="reference internal" href="#spectraPyle.instruments.desi.prepare_stacking"><code class="docutils literal notranslate"><span class="pre">prepare_stacking()</span></code></a></li>
 <li><a class="reference internal" href="#spectraPyle.instruments.desi.readSpec"><code class="docutils literal notranslate"><span class="pre">readSpec()</span></code></a></li>
 <li><a class="reference internal" href="#spectraPyle.instruments.desi.readSpec_metadata"><code class="docutils literal notranslate"><span class="pre">readSpec_metadata()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-spectraPyle.instruments.generic">Generic</a><ul>
+<li><a class="reference internal" href="#spectraPyle.instruments.generic.prepare_stacking"><code class="docutils literal notranslate"><span class="pre">prepare_stacking()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.instruments.generic.readSpec"><code class="docutils literal notranslate"><span class="pre">readSpec()</span></code></a></li>
+<li><a class="reference internal" href="#spectraPyle.instruments.generic.readSpec_metadata"><code class="docutils literal notranslate"><span class="pre">readSpec_metadata()</span></code></a></li>
 </ul>
 </li>
 </ul>

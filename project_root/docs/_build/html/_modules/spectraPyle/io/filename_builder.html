@@ -193,12 +193,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../instruments.html">Instruments &amp; Input Data Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../normalization.html">Normalization Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../resampling.html">Resampling Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../statistics.html">Stacking Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">Interactive Plotting &amp; Visualization</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -247,9 +250,50 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Auto-generation of output FITS filenames from configuration.</span>
 
-<span class="sd">Provides :func:`build_filename` which constructs descriptive, self-documenting</span>
-<span class="sd">filenames encoding instrument, grisms, redshift type, normalization, and sample size.</span>
+<span class="sd">Provides :func:`build_filename` which constructs a short, structured filename::</span>
+
+<span class="sd">    &lt;SURVEY&gt;_&lt;GRISMS&gt;_&lt;DR&gt;_&lt;CATALOG&gt;_&lt;ZCOL&gt;_&lt;NORM&gt;[_&lt;L0&gt;-&lt;L1&gt;]_s&lt;SIGMA&gt;_&lt;PXTOKEN&gt;_&lt;HASH8&gt;</span>
+
+<span class="sd">``&lt;PXTOKEN&gt;`` encodes resampling mode and value:</span>
+
+<span class="sd">- ``pixel_resampling`` set   → ``px&lt;value&gt;lin`` / ``px&lt;value&gt;log``</span>
+<span class="sd">- ``pixel_resampling`` None  → ``pxLin&lt;nyq&gt;Nyq`` / ``pxLog&lt;nyq&gt;Nyq``</span>
+
+<span class="sd">Examples::</span>
+
+<span class="sd">    EWS_red_Q1_targets_Z_SPEC_intv_7000-8000_s3_px5lin_3f8a2b1c</span>
+<span class="sd">    DESI_merged_DR1_catalog_spe_z_med_s3_pxLin5Nyq_70958031</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">_NORM_CODE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;no_normalization&quot;</span><span class="p">:</span> <span class="s2">&quot;nonorm&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;median&quot;</span><span class="p">:</span> <span class="s2">&quot;med&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;interval&quot;</span><span class="p">:</span> <span class="s2">&quot;intv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;custom&quot;</span><span class="p">:</span> <span class="s2">&quot;cust&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="s2">&quot;tmpl&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">_HASH_FIELDS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;instrument_name&quot;</span><span class="p">,</span> <span class="s2">&quot;survey_name&quot;</span><span class="p">,</span> <span class="s2">&quot;grisms&quot;</span><span class="p">,</span> <span class="s2">&quot;data_release&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;filename_in&quot;</span><span class="p">,</span> <span class="s2">&quot;redshift_column_name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;spectra_normalization&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda_norm_min&quot;</span><span class="p">,</span> <span class="s2">&quot;lambda_norm_max&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sigma_clipping_conditions&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pixel_resampling&quot;</span><span class="p">,</span> <span class="s2">&quot;pixel_resampling_type&quot;</span><span class="p">,</span> <span class="s2">&quot;nyquist_sampling&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bootstrapping_R&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pixel_mask&quot;</span><span class="p">,</span> <span class="s2">&quot;n_min_dithers&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_config_hash</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the first 8 hex chars of SHA-256 over science-relevant config fields.&quot;&quot;&quot;</span>
+    <span class="n">science</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">_HASH_FIELDS</span><span class="p">}</span>
+    <span class="n">serialised</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">science</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">serialised</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="build_filename">
@@ -257,72 +301,58 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">build_filename</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Auto-generate the output FITS filename stem from config fields.</span>
 
-<span class="sd">    Constructs a descriptive name encoding instrument, grisms, redshift type,</span>
-<span class="sd">    normalization, and sample size so output files are self-documenting.</span>
-
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    config : dict</span>
-<span class="sd">        Flat stacking config dict.</span>
+<span class="sd">    cfg : dict</span>
+<span class="sd">        Flat stacking config dict (produced by ``flatten_schema_model``).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        Filename stem (without ``.fits`` extension).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="c1"># ---------- BASE ----------</span>
-    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;filename_in&quot;</span><span class="p">])</span>
+    <span class="c1"># instrument context</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;survey_name&quot;</span><span class="p">])</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;grisms&quot;</span><span class="p">]))</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;data_release&quot;</span><span class="p">])</span>
 
-    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;idCol_</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;ID_column_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># catalog</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;filename_in&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;redshift_column_name&quot;</span><span class="p">]:</span>
-        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;zCol_</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;redshift_column_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># redshift column (omit if not set)</span>
+    <span class="n">zcol</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;redshift_column_name&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">zcol</span><span class="p">:</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zcol</span><span class="p">)</span>
 
-    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;zType_</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;z_type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># normalization</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;spectra_normalization&quot;</span><span class="p">]</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_NORM_CODE</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm</span><span class="p">,</span> <span class="n">norm</span><span class="p">))</span>
 
-    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;galExtCol_</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;gal_ext_column_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;conservation_</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;conservation&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;spectraNormalization_</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;spectra_normalization&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="c1"># ---------- NORMALIZATION EXTRAS ----------</span>
-    <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;spectra_normalization&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;interval&quot;</span> <span class="ow">and</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;lambda_norm_rest&quot;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">norm</span> <span class="o">==</span> <span class="s2">&quot;interval&quot;</span><span class="p">:</span>
         <span class="n">l0</span><span class="p">,</span> <span class="n">l1</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;lambda_norm_rest&quot;</span><span class="p">]</span>
-        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;lbdRest_</span><span class="si">{</span><span class="n">l0</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">l1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">l0</span><span class="p">)</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">l1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;spectra_normalization&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;custom&quot;</span> <span class="ow">and</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;custom_column_name&quot;</span><span class="p">]:</span>
-        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;normParam_</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;custom_column_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="c1"># ---------- RESAMPLING ----------</span>
-    <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;pixel_resampling&quot;</span><span class="p">]:</span>
-        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pxlResamp_</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;pixel_resampling&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="c1"># ---------- QUALITY ----------</span>
+    <span class="c1"># sigma clipping</span>
     <span class="n">sigma</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;sigma_clipping_conditions&quot;</span><span class="p">]</span>
-    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sigmaClip_</span><span class="si">{</span><span class="n">sigma</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        
-    
-    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bootstrapping_</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;bootstrapping_R&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;s</span><span class="si">{</span><span class="n">sigma</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="c1"># ---------- INSTRUMENT QC ----------</span>
-    
-    <span class="n">masked_bits</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pixel_mask&quot;</span><span class="p">,</span> <span class="p">[])</span>
-    <span class="n">masked_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="c1"># resampling (always present)</span>
+    <span class="n">px</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pixel_resampling&quot;</span><span class="p">)</span>
+    <span class="n">restype_key</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pixel_resampling_type&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">px</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">restype</span> <span class="o">=</span> <span class="s2">&quot;log&quot;</span> <span class="k">if</span> <span class="n">restype_key</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span> <span class="k">else</span> <span class="s2">&quot;lin&quot;</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;px</span><span class="si">{</span><span class="n">px</span><span class="si">:</span><span class="s2">g</span><span class="si">}{</span><span class="n">restype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nyq</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nyquist_sampling&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">restype</span> <span class="o">=</span> <span class="s2">&quot;Log&quot;</span> <span class="k">if</span> <span class="n">restype_key</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span> <span class="k">else</span> <span class="s2">&quot;Lin&quot;</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;px</span><span class="si">{</span><span class="n">restype</span><span class="si">}{</span><span class="n">nyq</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">Nyq&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">masked_bits</span><span class="p">:</span>
-        <span class="s2">&quot;bitMask&quot;</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">masked_bits</span><span class="p">))</span>
-        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">masked_str</span><span class="p">)</span>
+    <span class="c1"># 8-char config hash</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_config_hash</span><span class="p">(</span><span class="n">cfg</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;n_min_dithers&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
-        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NdithMask</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;n_min_dithers&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;STACKING&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="s2">&quot;__&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

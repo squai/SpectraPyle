@@ -194,6 +194,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="instruments.html">Instruments &amp; Input Data Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -572,8 +573,8 @@ and are distinguishable from rendering artefacts.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.plot.plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_h5_heatmap</span>
 
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_h5_heatmap</span><span class="p">(</span>
-    <span class="n">h5_path</span>        <span class="o">=</span> <span class="s1">&#39;result_array.h5&#39;</span><span class="p">,</span>
-    <span class="n">fits_path</span>      <span class="o">=</span> <span class="s1">&#39;result_STACKING.fits&#39;</span><span class="p">,</span>
+    <span class="n">h5_path</span>        <span class="o">=</span> <span class="s1">&#39;EWS_red_Q1_targets_Z_SPEC_med_s3_pxLin5Nyq_3f8a2b1c_array.h5&#39;</span><span class="p">,</span>
+    <span class="n">fits_path</span>      <span class="o">=</span> <span class="s1">&#39;EWS_red_Q1_targets_Z_SPEC_med_s3_pxLin5Nyq_3f8a2b1c.fits&#39;</span><span class="p">,</span>
     <span class="n">template_array</span> <span class="o">=</span> <span class="s1">&#39;original&#39;</span><span class="p">,</span>   <span class="c1"># &#39;norm&#39; to use template-normalized array</span>
     <span class="n">metric</span>         <span class="o">=</span> <span class="s1">&#39;specMedian&#39;</span><span class="p">,</span>
     <span class="n">mode</span>           <span class="o">=</span> <span class="s1">&#39;heatmap&#39;</span><span class="p">,</span>    <span class="c1"># or &#39;lines&#39;</span>
@@ -587,9 +588,12 @@ and are distinguishable from rendering artefacts.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><code class="docutils literal notranslate"><span class="pre">plot_h5_heatmap</span></code> requires both the FITS output (<code class="docutils literal notranslate"><span class="pre">*_STACKING.fits</span></code>) and the
-companion HDF5 file (<code class="docutils literal notranslate"><span class="pre">*_array.h5</span></code>) produced during the same stacking run.
-The H5 file is written automatically when <code class="docutils literal notranslate"><span class="pre">stacking.py</span></code> runs.</p>
+<p><code class="docutils literal notranslate"><span class="pre">plot_h5_heatmap</span></code> requires both the FITS output and the companion HDF5 file
+(<code class="docutils literal notranslate"><span class="pre">*_array.h5</span></code>) produced during the same stacking run. Both are written automatically
+when <code class="docutils literal notranslate"><span class="pre">stacking.py</span></code> runs. Filenames follow the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">SURVEY</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">GRISMS</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">DR</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">CATALOG</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">ZCOL</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">NORM</span><span class="o">&gt;</span><span class="p">[</span><span class="n">_</span><span class="o">&lt;</span><span class="n">L0</span><span class="o">&gt;-&lt;</span><span class="n">L1</span><span class="o">&gt;</span><span class="p">]</span><span class="n">_s</span><span class="o">&lt;</span><span class="n">SIGMA</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">PXTOKEN</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">HASH8</span><span class="o">&gt;.</span><span class="n">fits</span>
+</pre></div>
+</div>
 </div>
 <p>—</p>
 </section>

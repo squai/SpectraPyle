@@ -1,0 +1,705 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Citation &amp; Acknowledgments" href="citation.html"><link rel="prev" title="GUI Guided Tour" href="gui-tour.html">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>Instruments &amp; Input Data Formats - SpectraPyle 5.0.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">SpectraPyle 5.0.2 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  <span class="sidebar-brand-text">SpectraPyle 5.0.2 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Instruments &amp; Input Data Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation &amp; Acknowledgments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="normalization.html">Normalization Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resampling.html">Resampling Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statistics.html">Stacking Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">Interactive Plotting &amp; Visualization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/stacking.html">stacking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/schema.html">schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/processes.html">process</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/instruments.html">instruments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/io.html">io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/spectrum.html">spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/statistic.html">statistic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/utils.html">utils</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/instruments.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="instruments-input-data-formats">
+<h1>Instruments &amp; Input Data Formats<a class="headerlink" href="#instruments-input-data-formats" title="Link to this heading">¶</a></h1>
+<p>This guide explains how to prepare your data for SpectraPyle. It covers the expected
+file formats, FITS column layouts, and configuration for each supported instrument driver.</p>
+<p>For API documentation, see <a class="reference internal" href="api/instruments.html"><span class="doc">instruments</span></a>.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>SpectraPyle supports three instrument drivers:</p>
+<div class="line-block">
+<div class="line">Instrument | Grism(s) | Status | Best for |</div>
+</div>
+<p><a href="#id1"><span class="problematic" id="id2">|---|</span></a>—<a href="#id3"><span class="problematic" id="id4">|---|</span></a>—|
+| Euclid NISP | <cite>red</cite>, <cite>blue</cite> | Active | Euclid NISP spectroscopy, multi-grism stacking |
+| DESI | <cite>merged</cite> | Back-compat | Euclid–DESI crossmatched catalogs only |
+| Generic | <cite>default</cite> | Active | Any standard FITS binary table or WCS-compliant image HDU |</p>
+</section>
+<section id="spectra-modes">
+<h2>Spectra Modes<a class="headerlink" href="#spectra-modes" title="Link to this heading">¶</a></h2>
+<p>SpectraPyle supports three ways to locate and load individual spectra. All three modes
+work with Euclid (with metadata path limitations). DESI supports all three. Generic supports
+the first two.</p>
+<p><strong>individual fits</strong></p>
+<blockquote>
+<div><p>Each spectrum lives in its own FITS file. SpectraPyle builds the path as:
+<code class="docutils literal notranslate"><span class="pre">{spectra_dir}/{specid}.fits</span></code> (generic) or with per-release naming variants (Euclid).
+The spectrum is extracted from the file and returned to the stacking pipeline.</p>
+<p><em>Config:</em></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">io</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">spectra_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">individual fits</span>
+<span class="w">  </span><span class="nt">grism_io</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">red</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">spectra_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/spectra/red</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>combined fits</strong></p>
+<blockquote>
+<div><p>Multiple spectra are stored in a single FITS file, identified by HDU name or table row.
+SpectraPyle opens the file and extracts the spectrum matching <code class="docutils literal notranslate"><span class="pre">specid</span></code>.</p>
+<p><em>Config:</em></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">io</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">spectra_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">combined fits</span>
+<span class="w">  </span><span class="nt">grism_io</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">red</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">spectra_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/combined/</span>
+<span class="w">      </span><span class="nt">spectra_datafile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_combined_spectra.fits</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>metadata path</strong></p>
+<blockquote>
+<div><p>The input catalog contains explicit columns pointing to the FITS path and HDU index for each spectrum.
+This is useful when spectra are scattered across many files or follow a non-standard naming scheme.</p>
+<p>Requires two catalog columns:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">metadata_name</span></code> (config key <code class="docutils literal notranslate"><span class="pre">catalog_columns.metadata_name</span></code>) — absolute path to FITS file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hdu_indx</span></code> (config key <code class="docutils literal notranslate"><span class="pre">catalog_columns.hdu_indx</span></code>) — HDU index (integer)</p></li>
+</ul>
+<p><em>Config:</em></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">io</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">spectra_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metadata path</span>
+<span class="w">  </span><span class="nt">catalog_columns</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fits_path_col</span>
+<span class="w">    </span><span class="nt">hdu_indx</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hdu_index_col</span>
+</pre></div>
+</div>
+<p><em>Example catalog columns:</em></p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>specid</p></th>
+<th class="head"><p>fits_path_col</p></th>
+<th class="head"><p>hdu_index</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>12345</p></td>
+<td><p>/data/batch1/12345.fits</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>12346</p></td>
+<td><p>/data/batch2/12346.fits</p></td>
+<td><p>2</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></blockquote>
+</section>
+<section id="euclid-nisp">
+<h2>Euclid NISP<a class="headerlink" href="#euclid-nisp" title="Link to this heading">¶</a></h2>
+<p>Euclid provides a mature, well-tested driver with multi-grism support and per-data-release
+filename pattern handling.</p>
+<p><strong>Grisms</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">red</span></code> (wavelength 11900–19002 Å, R~600) and <code class="docutils literal notranslate"><span class="pre">blue</span></code> (wavelength 9260–13660 Å, R~600)</p>
+</div></blockquote>
+<p><strong>Supported spectra modes</strong></p>
+<blockquote>
+<div><p>All three: <code class="docutils literal notranslate"><span class="pre">individual</span> <span class="pre">fits</span></code>, <code class="docutils literal notranslate"><span class="pre">combined</span> <span class="pre">fits</span></code>, <code class="docutils literal notranslate"><span class="pre">metadata</span> <span class="pre">path</span></code></p>
+</div></blockquote>
+<p><strong>FITS Binary Table Format</strong></p>
+<p>Euclid spectra are stored in FITS binary table HDUs. SpectraPyle auto-detects column names
+using aliases; the first match wins:</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Physical quantity</p></th>
+<th class="head"><p>Column name aliases</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Wavelength</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">WAVELENGTH</span></code>, <code class="docutils literal notranslate"><span class="pre">wave</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Flux</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SIGNAL</span></code>, <code class="docutils literal notranslate"><span class="pre">flux</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Error/Variance</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">VAR</span></code> (sqrt’d to sigma),
+<code class="docutils literal notranslate"><span class="pre">error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Quality mask</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MASK</span></code> (optional, bitmask)</p></td>
+</tr>
+<tr class="row-even"><td><p>Dither count</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NDITH</span></code> (optional, dither flag)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Data Release Filename Patterns</strong></p>
+<p>When using <code class="docutils literal notranslate"><span class="pre">individual</span> <span class="pre">fits</span></code> mode, SpectraPyle resolves filenames per data release:</p>
+<ul class="simple">
+<li><p><strong>Q1</strong> — Simple naming: <code class="docutils literal notranslate"><span class="pre">{spectra_dir}/{specid}.fits</span></code></p></li>
+<li><p><strong>DR1</strong> — Variant patterns (tries in order):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">{spectra_dir}/{specid}.fits</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{spectra_dir}/{specid}_{grism}.fits</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{spectra_dir}/SPECTRA_{prefix}-sedm</span> <span class="pre">{specid}.fits</span></code> (where prefix is <code class="docutils literal notranslate"><span class="pre">RGS</span></code> for red, <code class="docutils literal notranslate"><span class="pre">BGS</span></code> for blue)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>combined fits Layout</strong></p>
+<p>When using <code class="docutils literal notranslate"><span class="pre">combined</span> <span class="pre">fits</span></code>, SpectraPyle tries three HDU-matching strategies (in order):</p>
+<ol class="arabic simple">
+<li><p>HDU named <code class="docutils literal notranslate"><span class="pre">{specid}</span></code> — per-spectrum binary table</p></li>
+<li><p>HDU named <code class="docutils literal notranslate"><span class="pre">{specid}_{grism}</span></code> — per-spectrum/grism binary table</p></li>
+<li><p>A single <code class="docutils literal notranslate"><span class="pre">SPECTRA</span></code> table with an <code class="docutils literal notranslate"><span class="pre">ID_column_name</span></code> column to filter by <code class="docutils literal notranslate"><span class="pre">specid</span></code></p></li>
+</ol>
+<p><strong>Quality Filters</strong></p>
+<p>Euclid supports bitmask-based quality filtering. Configure in the <code class="docutils literal notranslate"><span class="pre">io</span></code> block:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">io</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pixel_mask</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">]</span><span class="w">              </span><span class="c1"># Bit positions to NaN out (default: [0])</span>
+<span class="w">  </span><span class="nt">n_min_dithers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">             </span><span class="c1"># Min dither count; below this → NaN (default: 3)</span>
+<span class="w">  </span><span class="nt">spectrum_edges</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-10</span><span class="p p-Indicator">]</span><span class="w">    </span><span class="c1"># Pixel indices to NaN (leading/trailing)</span>
+</pre></div>
+</div>
+<p><strong>Wavelength Reference</strong></p>
+<p>Automatically retrieved from <code class="docutils literal notranslate"><span class="pre">instruments_rules.json</span></code>:</p>
+<ul class="simple">
+<li><p>Red: 11900–19002 Å, R = 600, reference wavelength 16000 Å</p></li>
+<li><p>Blue: 9260–13660 Å, R = 600, reference wavelength 16000 Å</p></li>
+<li><p>Flux units: <code class="docutils literal notranslate"><span class="pre">erg</span> <span class="pre">/</span> <span class="pre">s</span> <span class="pre">/</span> <span class="pre">cm²</span> <span class="pre">/</span> <span class="pre">Å</span></code>, scale factor 1e-16</p></li>
+</ul>
+</section>
+<section id="desi-back-compatibility">
+<h2>DESI (Back-Compatibility)<a class="headerlink" href="#desi-back-compatibility" title="Link to this heading">¶</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The DESI driver is maintained <strong>only for back-compatibility with Euclid–DESI crossmatched samples</strong>.
+It is not under active development. For new DESI-only workflows, we recommend using the Generic driver instead.</p>
+</div>
+<p><strong>Grism</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">merged</span></code> only (no red/blue separation)</p>
+</div></blockquote>
+<p><strong>Supported spectra modes</strong></p>
+<blockquote>
+<div><p>All three: <code class="docutils literal notranslate"><span class="pre">individual</span> <span class="pre">fits</span></code>, <code class="docutils literal notranslate"><span class="pre">combined</span> <span class="pre">fits</span></code>, <code class="docutils literal notranslate"><span class="pre">metadata</span> <span class="pre">path</span></code></p>
+</div></blockquote>
+<p><strong>FITS Binary Table Format</strong></p>
+<p>DESI spectra use lowercase, strictly-matched column names. <strong>No aliases are supported:</strong></p>
+<p><strong>Limitations</strong></p>
+<ul class="simple">
+<li><p>No bitmask or dither-count filtering (quality filters are not implemented)</p></li>
+<li><p>Filename patterns: always <code class="docutils literal notranslate"><span class="pre">{spectra_dir}/{specid}.fits</span></code> (no data-release variants)</p></li>
+<li><p>combined fits only matches HDU named <code class="docutils literal notranslate"><span class="pre">{specid}</span></code> (no <code class="docutils literal notranslate"><span class="pre">SPECTRA</span></code> table fallback)</p></li>
+<li><p>Older resource management (file handles not explicitly closed in some paths)</p></li>
+</ul>
+<p><strong>Wavelength Reference</strong></p>
+<p>Automatically retrieved from <code class="docutils literal notranslate"><span class="pre">instruments_rules.json</span></code>:</p>
+<ul class="simple">
+<li><p>Merged: 3600–9824 Å, R = 5200, reference wavelength 9824 Å</p></li>
+<li><p>Flux units: <code class="docutils literal notranslate"><span class="pre">erg</span> <span class="pre">/</span> <span class="pre">s</span> <span class="pre">/</span> <span class="pre">cm²</span> <span class="pre">/</span> <span class="pre">Å</span></code>, scale factor 1e-17</p></li>
+</ul>
+</section>
+<section id="generic-instrument">
+<h2>Generic Instrument<a class="headerlink" href="#generic-instrument" title="Link to this heading">¶</a></h2>
+<p>The Generic driver is highly flexible and auto-detects FITS column layouts, making it
+ideal for non-standard or external data formats.</p>
+<p><strong>Grism</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">default</span></code> (the only option)</p>
+</div></blockquote>
+<p><strong>Supported spectra modes</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">individual</span> <span class="pre">fits</span></code> and <code class="docutils literal notranslate"><span class="pre">combined</span> <span class="pre">fits</span></code> (metadata path not supported)</p>
+</div></blockquote>
+<p><strong>Wavelength Auto-Detection</strong></p>
+<p>The Generic driver has three fallback strategies for wavelength reconstruction (tried in order):</p>
+<ol class="arabic">
+<li><p><strong>SDSS-style log spacing</strong> — if <code class="docutils literal notranslate"><span class="pre">COEFF0</span></code> and <code class="docutils literal notranslate"><span class="pre">COEFF1</span></code> keywords exist in the HDU header:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>wavelength = 10^(COEFF0 + COEFF1 * arange(NAXIS1))
+</pre></div>
+</div>
+</li>
+<li><p><strong>Log-linear WCS</strong> — if <code class="docutils literal notranslate"><span class="pre">CTYPE1</span></code> contains <code class="docutils literal notranslate"><span class="pre">'LOG'</span></code> and WCS keywords (<code class="docutils literal notranslate"><span class="pre">CRVAL1</span></code>, <code class="docutils literal notranslate"><span class="pre">CDELT1</span></code>, <code class="docutils literal notranslate"><span class="pre">CRPIX1</span></code>) are present:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>log_wavelength = CRVAL1 + CDELT1 * (arange(NAXIS1) - (CRPIX1 - 1))
+wavelength = 10^log_wavelength
+</pre></div>
+</div>
+</li>
+<li><p><strong>Linear WCS (default)</strong> — uses standard WCS keywords:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>wavelength = CRVAL1 + CDELT1 * (arange(NAXIS1) - (CRPIX1 - 1))
+</pre></div>
+</div>
+</li>
+</ol>
+<p>If none of these work, set <code class="docutils literal notranslate"><span class="pre">lambda_edges</span></code> in your config (see below).</p>
+<p><strong>Binary Table Format</strong></p>
+<p>Column auto-detection (first match wins):</p>
+<p><strong>1-D Image HDU Format</strong></p>
+<p>If the FITS has 1-D image HDUs instead of tables:</p>
+<ul class="simple">
+<li><p><strong>Flux</strong> — extracted from the first 1-D image HDU</p></li>
+<li><p><strong>Error</strong> — extracted from the next HDU if it exists and shape matches; else NaN</p></li>
+<li><p><strong>Wavelength</strong> — always reconstructed from WCS header keywords (strategies 1–3 above)</p></li>
+</ul>
+<p><strong>Flux Scale Factor</strong></p>
+<p>Auto-read from the header (first match wins):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>BSCALE → FLUXSCAL → FLUX_SCALE (defaults to 1.0)
+</pre></div>
+</div>
+<p><strong>Wavelength Range</strong></p>
+<p>Two options:</p>
+<ol class="arabic">
+<li><p><strong>Manual: set</strong> <code class="docutils literal notranslate"><span class="pre">lambda_edges</span></code> <strong>in config</strong> (recommended for reproducibility):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">instrument</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">lambda_edges</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3500</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9500</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># [min, max] in Ångströms</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Auto-detect:</strong> Leave <code class="docutils literal notranslate"><span class="pre">lambda_edges</span></code> unset. SpectraPyle reads the first spectrum
+in the catalog and infers the wavelength range from its header. <strong>A warning is printed;</strong>
+all spectra are assumed to share the same range. Use this only for homogeneous catalogs.</p></li>
+</ol>
+<p><strong>Pixel Size Type</strong></p>
+<p>The Generic driver does <strong>not</strong> support automatic instrumental or Nyquist pixel sizing.
+You <strong>must</strong> specify <code class="docutils literal notranslate"><span class="pre">pixel_size_type:</span> <span class="pre">manual</span></code> and set <code class="docutils literal notranslate"><span class="pre">pixel_resampling</span></code> explicitly:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">resampling</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pixel_resampling_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lambda</span><span class="w">      </span><span class="c1"># or log_lambda</span>
+<span class="w">  </span><span class="nt">pixel_size_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manual</span><span class="w">            </span><span class="c1"># Required</span>
+<span class="w">  </span><span class="nt">pixel_resampling</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span><span class="w">              </span><span class="c1"># Å per pixel (for lambda) or dex per pixel (for log_lambda)</span>
+</pre></div>
+</div>
+</section>
+<section id="config-quick-reference">
+<h2>Config Quick Reference<a class="headerlink" href="#config-quick-reference" title="Link to this heading">¶</a></h2>
+<p>Sample configurations for each instrument:</p>
+<p><strong>Euclid (multi-grism)</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">instrument</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instrument_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">euclid</span>
+<span class="w">  </span><span class="nt">survey_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wide</span>
+<span class="w">  </span><span class="nt">grisms</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">red</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">blue</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">data_release</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DR1</span>
+
+<span class="nt">io</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">spectra_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">individual fits</span>
+<span class="w">  </span><span class="nt">input_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/catalog</span>
+<span class="w">  </span><span class="nt">filename_in</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">euclid_catalog</span>
+<span class="w">  </span><span class="nt">output_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/output</span>
+<span class="w">  </span><span class="nt">pixel_mask</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">n_min_dithers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">spectrum_edges</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-10</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">grism_io</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">red</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">spectra_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/euclid/red</span>
+<span class="w">    </span><span class="nt">blue</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">spectra_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/euclid/blue</span>
+
+<span class="nt">resampling</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pixel_resampling_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lambda</span>
+<span class="w">  </span><span class="nt">pixel_size_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">instrumental</span>
+<span class="w">  </span><span class="nt">nyquist_sampling</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span>
+</pre></div>
+</div>
+<p><strong>DESI (back-compat with crossmatched Euclid)</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">instrument</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instrument_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">desi</span>
+<span class="w">  </span><span class="nt">grisms</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">merged</span><span class="p p-Indicator">]</span>
+
+<span class="nt">io</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">spectra_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">individual fits</span>
+<span class="w">  </span><span class="nt">input_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/catalog</span>
+<span class="w">  </span><span class="nt">filename_in</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">euclid_desi_xmatch</span>
+<span class="w">  </span><span class="nt">output_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/output</span>
+<span class="w">  </span><span class="nt">grism_io</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">merged</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">spectra_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/desi/spectra</span>
+
+<span class="nt">resampling</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pixel_resampling_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">log_lambda</span>
+<span class="w">  </span><span class="nt">pixel_size_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manual</span>
+<span class="w">  </span><span class="nt">pixel_resampling</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0001</span>
+</pre></div>
+</div>
+<p><strong>Generic (any standard FITS)</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">instrument</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instrument_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">generic</span>
+<span class="w">  </span><span class="nt">grisms</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">default</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">lambda_edges</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3500</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9500</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># Manual wavelength range</span>
+
+<span class="nt">io</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">spectra_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">individual fits</span>
+<span class="w">  </span><span class="nt">input_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/catalog</span>
+<span class="w">  </span><span class="nt">filename_in</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_catalog</span>
+<span class="w">  </span><span class="nt">output_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/output</span>
+<span class="w">  </span><span class="nt">grism_io</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">default</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">spectra_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/my_spectra</span>
+
+<span class="nt">resampling</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pixel_resampling_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lambda</span>
+<span class="w">  </span><span class="nt">pixel_size_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manual</span>
+<span class="w">  </span><span class="nt">pixel_resampling</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+</pre></div>
+</div>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<p><strong>“No such column” error in Euclid/DESI</strong></p>
+<blockquote>
+<div><p>Check that your FITS has the expected binary table columns (with correct case and aliases).
+Use <code class="docutils literal notranslate"><span class="pre">fitsio</span></code> or <code class="docutils literal notranslate"><span class="pre">astropy.io.fits</span></code> to inspect:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;spectrum.fits&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>“Could not infer wavelength range” for Generic</strong></p>
+<blockquote>
+<div><p>Either set <code class="docutils literal notranslate"><span class="pre">lambda_edges</span></code> in your config, or ensure the first spectrum in your catalog
+has proper WCS keywords (<code class="docutils literal notranslate"><span class="pre">CRVAL1</span></code>, <code class="docutils literal notranslate"><span class="pre">CDELT1</span></code>, <code class="docutils literal notranslate"><span class="pre">CRPIX1</span></code>) or SDSS-style keywords
+(<code class="docutils literal notranslate"><span class="pre">COEFF0</span></code>, <code class="docutils literal notranslate"><span class="pre">COEFF1</span></code>).</p>
+</div></blockquote>
+<p><strong>Generic driver not finding wavelength column</strong></p>
+<blockquote>
+<div><p>If none of the aliases (<code class="docutils literal notranslate"><span class="pre">wavelength</span></code>, <code class="docutils literal notranslate"><span class="pre">WAVE</span></code>, <code class="docutils literal notranslate"><span class="pre">LAMBDA</span></code>) match and WCS reconstruction fails,
+manually verify your FITS structure and consider using <code class="docutils literal notranslate"><span class="pre">WAVE</span></code> as the column name.</p>
+</div></blockquote>
+<p><strong>Pixel size type “manual” is required for Generic</strong></p>
+<blockquote>
+<div><p>The Generic driver has no built-in instrumental constant (R value, reference wavelength).
+You must set <code class="docutils literal notranslate"><span class="pre">pixel_size_type:</span> <span class="pre">manual</span></code> and provide <code class="docutils literal notranslate"><span class="pre">pixel_resampling</span></code> in Å/pixel or dex/pixel.</p>
+</div></blockquote>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="citation.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Citation &amp; Acknowledgments</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="gui-tour.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">GUI Guided Tour</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Salvatore Quai
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Instruments &amp; Input Data Formats</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#spectra-modes">Spectra Modes</a></li>
+<li><a class="reference internal" href="#euclid-nisp">Euclid NISP</a></li>
+<li><a class="reference internal" href="#desi-back-compatibility">DESI (Back-Compatibility)</a></li>
+<li><a class="reference internal" href="#generic-instrument">Generic Instrument</a></li>
+<li><a class="reference internal" href="#config-quick-reference">Config Quick Reference</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=5df4c8d1"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

@@ -193,6 +193,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../instruments.html">Instruments &amp; Input Data Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -260,6 +261,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
 
@@ -632,7 +634,26 @@
         <span class="n">out_unit_scale_factor</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">out_unit</span><span class="p">,</span> <span class="n">out_unit_scale_factor</span></div>
 
-        
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_config_hdu</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Serialise the flat config dict as YAML and return a BinTableHDU named CONFIG.</span>
+
+<span class="sd">    Each YAML line is stored as one row in a single &#39;line&#39; column.</span>
+<span class="sd">    To recover: ``&#39;\\n&#39;.join(hdul[&#39;CONFIG&#39;].data[&#39;line&#39;])`` then ``yaml.safe_load()``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">skip</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;grism_io&quot;</span><span class="p">}</span>  <span class="c1"># contains Path objects that are not cleanly serialisable</span>
+    <span class="n">serialisable</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skip</span><span class="p">}</span>
+    <span class="n">yaml_str</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">serialisable</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">yaml_str</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+    <span class="n">max_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">)</span> <span class="k">if</span> <span class="n">lines</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;A</span><span class="si">{</span><span class="n">max_len</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">lines</span><span class="p">)</span>
+    <span class="n">hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">BinTableHDU</span><span class="o">.</span><span class="n">from_columns</span><span class="p">([</span><span class="n">col</span><span class="p">])</span>
+    <span class="n">hdu</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;CONFIG&quot;</span>
+    <span class="k">return</span> <span class="n">hdu</span>
+
+
 <div class="viewcode-block" id="save_to_file">
 <a class="viewcode-back" href="../../../api/io.html#spectraPyle.io.IO.save_to_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">save_to_file</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">):</span>
@@ -709,7 +730,8 @@
     <span class="c1"># Save to FITS file</span>
     <span class="nb">print</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;config[&#39;output_dir&#39;]: </span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, config[&#39;filename_out&#39;]:</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;filename_out&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">output_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;filename_out&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.fits&quot;</span>
-    <span class="n">hdul</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">HDUList</span><span class="p">([</span><span class="n">primary_hdu</span><span class="p">,</span> <span class="n">stacking_results_hdu</span><span class="p">])</span>
+    <span class="n">config_hdu</span> <span class="o">=</span> <span class="n">_build_config_hdu</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">hdul</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">HDUList</span><span class="p">([</span><span class="n">primary_hdu</span><span class="p">,</span> <span class="n">stacking_results_hdu</span><span class="p">,</span> <span class="n">config_hdu</span><span class="p">])</span>
     <span class="n">hdul</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">output_filename</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FITS file &#39;</span><span class="si">{</span><span class="n">output_filename</span><span class="si">}</span><span class="s2">&#39; has been saved.&quot;</span><span class="p">)</span>

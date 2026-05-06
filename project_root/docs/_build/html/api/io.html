@@ -194,6 +194,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../instruments.html">Instruments &amp; Input Data Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -450,17 +451,27 @@ pixel counts, etc.</p></li>
 <section id="module-spectraPyle.io.filename_builder">
 <span id="filename-builder"></span><h2>Filename Builder<a class="headerlink" href="#module-spectraPyle.io.filename_builder" title="Link to this heading">¶</a></h2>
 <p>Auto-generation of output FITS filenames from configuration.</p>
-<p>Provides <a class="reference internal" href="#spectraPyle.io.filename_builder.build_filename" title="spectraPyle.io.filename_builder.build_filename"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_filename()</span></code></a> which constructs descriptive, self-documenting
-filenames encoding instrument, grisms, redshift type, normalization, and sample size.</p>
+<p>Provides <a class="reference internal" href="#spectraPyle.io.filename_builder.build_filename" title="spectraPyle.io.filename_builder.build_filename"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_filename()</span></code></a> which constructs a short, structured filename:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">SURVEY</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">GRISMS</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">DR</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">CATALOG</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">ZCOL</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">NORM</span><span class="o">&gt;</span><span class="p">[</span><span class="n">_</span><span class="o">&lt;</span><span class="n">L0</span><span class="o">&gt;-&lt;</span><span class="n">L1</span><span class="o">&gt;</span><span class="p">]</span><span class="n">_s</span><span class="o">&lt;</span><span class="n">SIGMA</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">PXTOKEN</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">HASH8</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;PXTOKEN&gt;</span></code> encodes resampling mode and value:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pixel_resampling</span></code> set   → <code class="docutils literal notranslate"><span class="pre">px&lt;value&gt;lin</span></code> / <code class="docutils literal notranslate"><span class="pre">px&lt;value&gt;log</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pixel_resampling</span></code> None  → <code class="docutils literal notranslate"><span class="pre">pxLin&lt;nyq&gt;Nyq</span></code> / <code class="docutils literal notranslate"><span class="pre">pxLog&lt;nyq&gt;Nyq</span></code></p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">EWS_red_Q1_targets_Z_SPEC_intv_7000</span><span class="o">-</span><span class="mi">8000</span><span class="n">_s3_px5lin_3f8a2b1c</span>
+<span class="n">DESI_merged_DR1_catalog_spe_z_med_s3_pxLin5Nyq_70958031</span>
+</pre></div>
+</div>
 <dl class="py function">
 <dt class="sig sig-object py" id="spectraPyle.io.filename_builder.build_filename">
 <span class="sig-prename descclassname"><span class="pre">spectraPyle.io.filename_builder.</span></span><span class="sig-name descname"><span class="pre">build_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/spectraPyle/io/filename_builder.html#build_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spectraPyle.io.filename_builder.build_filename" title="Link to this definition">¶</a></dt>
 <dd><p>Auto-generate the output FITS filename stem from config fields.</p>
-<p>Constructs a descriptive name encoding instrument, grisms, redshift type,
-normalization, and sample size so output files are self-documenting.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Flat stacking config dict.</p>
+<dd class="field-odd"><p><strong>cfg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Flat stacking config dict (produced by <code class="docutils literal notranslate"><span class="pre">flatten_schema_model</span></code>).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Filename stem (without <code class="docutils literal notranslate"><span class="pre">.fits</span></code> extension).</p>

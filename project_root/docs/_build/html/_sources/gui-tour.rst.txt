@@ -58,7 +58,7 @@ The **Instrument** tab lets you select the survey, instrument type, and associat
    :width: 100%
    :align: center
 
-   *Figure 2: Currently, the Instrument tab allows you to select Euclid or DESI (matched with Euclid), choose grisms/slits, and specify the data release.*
+   *Figure 2: The Instrument tab allows you to select Euclid, DESI, or Generic, choose grisms/slits, and specify the data release.*
 
 Key controls in this tab:
 
@@ -66,12 +66,13 @@ Key controls in this tab:
 
   - ``Euclid`` (grisms: ``red``, ``blue``, or both)
   - ``DESI`` (grism: ``merged``)
+  - ``Generic`` (grism: ``default``) — reads any standard astronomical FITS file; no instrument-specific assumptions
 
-  See :mod:`~spectraPyle.instruments.euclid` and :mod:`~spectraPyle.instruments.desi` for instrument-specific implementation details.
+  See :mod:`~spectraPyle.instruments.euclid`, :mod:`~spectraPyle.instruments.desi`, and :mod:`~spectraPyle.instruments.generic` for instrument-specific implementation details.
 
-- **Survey Dropdown**: When available, select your survey (e.g., Euclid Deep Survey:  ``deep``). This controls available data releases and QC defaults.
+- **Survey Dropdown**: When available, select your survey (e.g., Euclid Deep Survey: ``deep``; Generic: ``generic``). This controls available data releases and QC defaults.
 
-- **Grisms/slits Selector**: For multi-grism surveys (Euclid), choose which grisms to include in the stack. For each selected grism, you must provide input spectra in the "Input/Output" tab.
+- **Grisms/slits Selector**: For multi-grism surveys (Euclid), choose which grisms to include in the stack. For each selected grism, you must provide input spectra in the "Input/Output" tab. For Generic, a single grism named ``default`` is always used.
 
 - **Data Release Dropdown**: Select the spectral data version. Each data release may have different file naming conventions and directory structures, all resolved automatically via :file:`instruments/_resolve_filepath()`.
 

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Citation &amp; Acknowledgments" href="citation.html"><link rel="prev" title="Quick Start" href="quickstart.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Instruments &amp; Input Data Formats" href="instruments.html"><link rel="prev" title="Quick Start" href="quickstart.html">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>GUI Guided Tour - SpectraPyle 5.0.2 documentation</title>
@@ -194,6 +194,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="instruments.html">Instruments &amp; Input Data Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -299,7 +300,7 @@
 <a class="reference internal image-reference" href="_images/gui_instrument.png"><img alt="SpectraPyle GUI Instrument tab, showing survey, instrument, and grism selectors" src="_images/gui_instrument.png" style="width: 100%;" />
 </a>
 <figcaption>
-<p><span class="caption-text"><em>Figure 2: Currently, the Instrument tab allows you to select Euclid or DESI (matched with Euclid), choose grisms/slits, and specify the data release.</em></span><a class="headerlink" href="#id4" title="Link to this image">¶</a></p>
+<p><span class="caption-text"><em>Figure 2: The Instrument tab allows you to select Euclid, DESI, or Generic, choose grisms/slits, and specify the data release.</em></span><a class="headerlink" href="#id4" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <p>Key controls in this tab:</p>
@@ -308,11 +309,12 @@
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Euclid</span></code> (grisms: <code class="docutils literal notranslate"><span class="pre">red</span></code>, <code class="docutils literal notranslate"><span class="pre">blue</span></code>, or both)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DESI</span></code> (grism: <code class="docutils literal notranslate"><span class="pre">merged</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Generic</span></code> (grism: <code class="docutils literal notranslate"><span class="pre">default</span></code>) — reads any standard astronomical FITS file; no instrument-specific assumptions</p></li>
 </ul>
-<p>See <a class="reference internal" href="api/instruments.html#module-spectraPyle.instruments.euclid" title="spectraPyle.instruments.euclid"><code class="xref py py-mod docutils literal notranslate"><span class="pre">euclid</span></code></a> and <a class="reference internal" href="api/instruments.html#module-spectraPyle.instruments.desi" title="spectraPyle.instruments.desi"><code class="xref py py-mod docutils literal notranslate"><span class="pre">desi</span></code></a> for instrument-specific implementation details.</p>
+<p>See <a class="reference internal" href="api/instruments.html#module-spectraPyle.instruments.euclid" title="spectraPyle.instruments.euclid"><code class="xref py py-mod docutils literal notranslate"><span class="pre">euclid</span></code></a>, <a class="reference internal" href="api/instruments.html#module-spectraPyle.instruments.desi" title="spectraPyle.instruments.desi"><code class="xref py py-mod docutils literal notranslate"><span class="pre">desi</span></code></a>, and <a class="reference internal" href="api/instruments.html#module-spectraPyle.instruments.generic" title="spectraPyle.instruments.generic"><code class="xref py py-mod docutils literal notranslate"><span class="pre">generic</span></code></a> for instrument-specific implementation details.</p>
 </li>
-<li><p><strong>Survey Dropdown</strong>: When available, select your survey (e.g., Euclid Deep Survey:  <code class="docutils literal notranslate"><span class="pre">deep</span></code>). This controls available data releases and QC defaults.</p></li>
-<li><p><strong>Grisms/slits Selector</strong>: For multi-grism surveys (Euclid), choose which grisms to include in the stack. For each selected grism, you must provide input spectra in the “Input/Output” tab.</p></li>
+<li><p><strong>Survey Dropdown</strong>: When available, select your survey (e.g., Euclid Deep Survey: <code class="docutils literal notranslate"><span class="pre">deep</span></code>; Generic: <code class="docutils literal notranslate"><span class="pre">generic</span></code>). This controls available data releases and QC defaults.</p></li>
+<li><p><strong>Grisms/slits Selector</strong>: For multi-grism surveys (Euclid), choose which grisms to include in the stack. For each selected grism, you must provide input spectra in the “Input/Output” tab. For Generic, a single grism named <code class="docutils literal notranslate"><span class="pre">default</span></code> is always used.</p></li>
 <li><p><strong>Data Release Dropdown</strong>: Select the spectral data version. Each data release may have different file naming conventions and directory structures, all resolved automatically via <code class="file docutils literal notranslate"><span class="pre">instruments/_resolve_filepath()</span></code>.</p></li>
 <li><p><strong>Advanced: Quality Control Section</strong> (collapsible): Fine-tune per-wavelength quality thresholds, dispersion limits, and other QC parameters. These are pre-populated from <code class="file docutils literal notranslate"><span class="pre">instruments/instruments_rules.json</span></code> but can be overridden.</p></li>
 </ul>
@@ -451,12 +453,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="citation.html">
+          <a class="next-page" href="instruments.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Citation &amp; Acknowledgments</div>
+                <div class="title">Instruments &amp; Input Data Formats</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

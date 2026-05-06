@@ -6,7 +6,7 @@ It shifts spectra to a common rest frame, normalizes, resamples, sigma-clips,
 and combines them using six stacking estimators: mean, median, geometric mean (lenient & strict),
 mode (HSM), and weighted mean. Includes bootstrap uncertainty estimation and interactive plots.
 
-**Supported instruments:** Euclid (NISP) · DESI
+**Supported instruments:** Euclid (NISP) · DESI · Generic (any standard FITS)
 
 **Development team:** S. Quai, L. Pozzetti, M. Moresco, M. Talia, Z. Mao, X. Lopez Lopez, E. Lusso, S. Fotopoulou
 **Maintainer:** Salvatore Quai (salvatore.quai@unibo.it)
@@ -18,6 +18,7 @@ mode (HSM), and weighted mean. Includes bootstrap uncertainty estimation and int
 
    quickstart
    gui-tour
+   instruments
    citation
 
 .. toctree::

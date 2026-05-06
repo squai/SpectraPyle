@@ -194,6 +194,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui-tour.html">GUI Guided Tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="instruments.html">Instruments &amp; Input Data Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -258,7 +259,7 @@
 It shifts spectra to a common rest frame, normalizes, resamples, sigma-clips,
 and combines them using six stacking estimators: mean, median, geometric mean (lenient &amp; strict),
 mode (HSM), and weighted mean. Includes bootstrap uncertainty estimation and interactive plots.</p>
-<p><strong>Supported instruments:</strong> Euclid (NISP) · DESI</p>
+<p><strong>Supported instruments:</strong> Euclid (NISP) · DESI · Generic (any standard FITS)</p>
 <p><strong>Development team:</strong> S. Quai, L. Pozzetti, M. Moresco, M. Talia, Z. Mao, X. Lopez Lopez, E. Lusso, S. Fotopoulou
 <strong>Maintainer:</strong> Salvatore Quai (<a class="reference external" href="mailto:salvatore&#46;quai&#37;&#52;&#48;unibo&#46;it">salvatore<span>&#46;</span>quai<span>&#64;</span>unibo<span>&#46;</span>it</a>)
 <strong>License:</strong> MIT</p>
@@ -281,6 +282,16 @@ mode (HSM), and weighted mean. Includes bootstrap uncertainty estimation and int
 <li class="toctree-l2"><a class="reference internal" href="gui-tour.html#stack-parameters-tab">Stack Parameters Tab</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gui-tour.html#running-your-stack">Running Your Stack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gui-tour.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="instruments.html">Instruments &amp; Input Data Formats</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="instruments.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="instruments.html#spectra-modes">Spectra Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="instruments.html#euclid-nisp">Euclid NISP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="instruments.html#desi-back-compatibility">DESI (Back-Compatibility)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="instruments.html#generic-instrument">Generic Instrument</a></li>
+<li class="toctree-l2"><a class="reference internal" href="instruments.html#config-quick-reference">Config Quick Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="instruments.html#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citation &amp; Acknowledgments</a><ul>
@@ -387,7 +398,8 @@ mode (HSM), and weighted mean. Includes bootstrap uncertainty estimation and int
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/instruments.html">instruments</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/instruments.html#module-spectraPyle.instruments.euclid">Euclid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/instruments.html#module-spectraPyle.instruments.desi">DESI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/instruments.html#desi">DESI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/instruments.html#module-spectraPyle.instruments.generic">Generic</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/io.html">io</a><ul>
