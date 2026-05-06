@@ -1,9 +1,19 @@
 """
 Auto-generation of output FITS filenames from configuration.
 
-Provides :func:`build_filename` which constructs a short, structured filename
-encoding instrument, survey, grisms, data release, redshift column,
-normalization, sigma clipping, resampling, and an 8-char config hash.
+Provides :func:`build_filename` which constructs a short, structured filename::
+
+    <SURVEY>_<GRISMS>_<DR>_<CATALOG>_<ZCOL>_<NORM>[_<L0>-<L1>]_s<SIGMA>_<PXTOKEN>_<HASH8>
+
+``<PXTOKEN>`` encodes resampling mode and value:
+
+- ``pixel_resampling`` set   → ``px<value>lin`` / ``px<value>log``
+- ``pixel_resampling`` None  → ``pxLin<nyq>Nyq`` / ``pxLog<nyq>Nyq``
+
+Examples::
+
+    EWS_red_Q1_targets_Z_SPEC_intv_7000-8000_s3_px5lin_3f8a2b1c
+    DESI_merged_DR1_catalog_spe_z_med_s3_pxLin5Nyq_70958031
 """
 
 import hashlib
@@ -24,7 +34,7 @@ _HASH_FIELDS = [
     "filename_in", "redshift_column_name",
     "spectra_normalization", "lambda_norm_min", "lambda_norm_max",
     "sigma_clipping_conditions",
-    "pixel_resampling", "pixel_resampling_type",
+    "pixel_resampling", "pixel_resampling_type", "nyquist_sampling",
     "bootstrapping_R",
     "pixel_mask", "n_min_dithers",
 ]
@@ -79,11 +89,14 @@ def build_filename(cfg):
 
     # resampling (always present)
     px = cfg.get("pixel_resampling")
+    restype_key = cfg.get("pixel_resampling_type")
     if px is not None:
-        restype = "log" if cfg.get("pixel_resampling_type") == "log" else "lin"
+        restype = "log" if restype_key == "log" else "lin"
         parts.append(f"px{px:g}{restype}")
     else:
-        parts.append("pxauto")
+        nyq = cfg.get("nyquist_sampling", 5)
+        restype = "Log" if restype_key == "log" else "Lin"
+        parts.append(f"px{restype}{nyq:g}Nyq")
 
     # 8-char config hash
     parts.append(_config_hash(cfg))

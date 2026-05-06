@@ -126,7 +126,7 @@ Key config blocks: `instrument`, `io` (with `grism_io`), `cosmology`, `redshift`
 
 ## Development Patterns
 - **Update documentation** Always ask for updating documentation and .rst files fter adding/modifying/removing features or manipulating any part of the code. Use the lowest number of tokens for this task
-- **DO NOT COMMIT** I'll handle the commit and interface with github repository
+- **DO NOT COMMIT** Salvatore will handles the commit and interface with github repository, after manually testing the outcomes. Please, remind Salvatore to run manual tests\
 - **Memory Management**: When modifying `stacking.py` or `processes.py`, do NOT read the entire file if only one method needs changes. Use `grep` or partial reading.
 - **Workflow**: 1. Plan change -> 2. Review `schema.py` impact -> 3. Implement -> 4. Manual check via `stacking.py --config`.
 - **Avoid Loops**: Do not attempt to run `pytest` as it is currently a placeholder. Verify logic via dry-runs or by inspecting Pydantic models.

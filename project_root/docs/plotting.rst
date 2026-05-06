@@ -352,8 +352,8 @@ and are distinguishable from rendering artefacts.
    from spectraPyle.plot.plot import plot_h5_heatmap
 
    fig = plot_h5_heatmap(
-       h5_path        = 'result_array.h5',
-       fits_path      = 'result_STACKING.fits',
+       h5_path        = 'EWS_red_Q1_targets_Z_SPEC_med_s3_pxLin5Nyq_3f8a2b1c_array.h5',
+       fits_path      = 'EWS_red_Q1_targets_Z_SPEC_med_s3_pxLin5Nyq_3f8a2b1c.fits',
        template_array = 'original',   # 'norm' to use template-normalized array
        metric         = 'specMedian',
        mode           = 'heatmap',    # or 'lines'
@@ -365,9 +365,11 @@ and are distinguishable from rendering artefacts.
    fig.show()
 
 .. note::
-   ``plot_h5_heatmap`` requires both the FITS output (``*_STACKING.fits``) and the
-   companion HDF5 file (``*_array.h5``) produced during the same stacking run.
-   The H5 file is written automatically when ``stacking.py`` runs.
+   ``plot_h5_heatmap`` requires both the FITS output and the companion HDF5 file
+   (``*_array.h5``) produced during the same stacking run. Both are written automatically
+   when ``stacking.py`` runs. Filenames follow the format::
+
+      <SURVEY>_<GRISMS>_<DR>_<CATALOG>_<ZCOL>_<NORM>[_<L0>-<L1>]_s<SIGMA>_<PXTOKEN>_<HASH8>.fits
 
 ---
 
