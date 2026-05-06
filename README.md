@@ -11,7 +11,7 @@ to a common rest frame, normalizes, resamples, sigma-clips, and combines them us
 mean, weighted mean, or geometric mean statistics. Output is a FITS file ready for
 scientific analysis.
 
-**Supported instruments:** Euclid (NISP, grisms `red`/`blue`) · DESI (`merged`)
+**Supported instruments:** Euclid (NISP, grisms `red`/`blue`) · DESI (`merged`, back-compatibility only) · Generic (any standard FITS, grism `default`)
 
 ---
 
@@ -101,7 +101,7 @@ Stacking(flat_dict).run()     stacking/stacking.py
 
 | Block | Purpose |
 |---|---|
-| `instrument` | `instrument_name` (`euclid`/`desi`), `grisms` list |
+| `instrument` | `instrument_name` (`euclid`/`desi`/`generic`), `grisms` list |
 | `io` / `grism_io` | Input catalog, output dir, per-grism spectra paths |
 | `redshift` | `z_type` (`rest_frame`, `observed_frame`, `custom`, …), `z_value` |
 | `norm` | Normalization method and wavelength range |
@@ -214,7 +214,10 @@ fig.show()
 | Instrument | Grisms | Spectra modes |
 |---|---|---|
 | Euclid (NISP) | `red`, `blue` | `individual fits`, `combined fits`, `metadata path` |
-| DESI | `merged` | `individual fits`, `combined fits`, `metadata path` |
+| DESI *(back-compat)* | `merged` | `individual fits`, `combined fits`, `metadata path` |
+| Generic | `default` | `individual fits`, `combined fits` |
+
+> **DESI note:** The DESI driver is maintained for back-compatibility with Euclid–DESI crossmatched samples. It is not under active development. For new DESI-only workflows, consider using the Generic driver.
 
 ---
 
@@ -245,7 +248,8 @@ Stacking(flat_dict).run()     stacking/stacking.py
 | `stacking/stacking.py` | `Stacking` class: orchestrates the full run. Chunks spectra (500/chunk), writes HDF5, sigma-clips, computes statistics, saves FITS. |
 | `process/processes.py` | `main_parallel()`: multiprocessing loop — read → shift → resample → normalize. |
 | `instruments/euclid.py` | `readSpec()`, `readSpec_metadata()`, `prepare_stacking()`, `_resolve_filepath()`. |
-| `instruments/desi.py` | DESI equivalent of `euclid.py`. |
+| `instruments/desi.py` | DESI driver (back-compatibility with Euclid crossmatched samples only). |
+| `instruments/generic.py` | Generic FITS driver: binary table + WCS header fallback, auto-detects wavelength range. |
 | `instruments/instruments_rules.json` | Authoritative per-instrument constants, quality defaults, grisms, data releases. |
 | `io/IO.py` | Catalog reader, wavelength grid builder, FITS output writer. |
 | `io/filename_builder.py` | Auto-generates `filename_out` from config fields. |
