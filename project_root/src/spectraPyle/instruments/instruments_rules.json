@@ -62,6 +62,26 @@
       "grism": "merged",
       "data_release": "Q1"
     }
+  },
+
+  "generic": {
+    "constants": {
+      "units": "from_header",
+      "units_scale_factor": 1.0
+    },
+
+    "surveys": {
+      "generic": {
+        "grisms": ["default"],
+        "data_release": ["v1"]
+      }
+    },
+
+    "defaults": {
+      "survey": "generic",
+      "grism": "default",
+      "data_release": "v1"
+    }
   }
 }
 
