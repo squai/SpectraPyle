@@ -267,6 +267,73 @@
 </ol>
 <p>This approach is ideal for stacking large samples where you want to avoid the overhead of downloading thousands of FITS files.</p>
 </section>
+<section id="launching-the-gui-on-datalabs">
+<h2>Launching the GUI on Datalabs<a class="headerlink" href="#launching-the-gui-on-datalabs" title="Link to this heading">¶</a></h2>
+<p>SpectraPyle includes a web-based configuration GUI (Voilà) that works on Datalabs through JupyterHub’s server proxy mechanism.</p>
+<p><strong>Installation</strong></p>
+<p>When you install SpectraPyle with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">&quot;.[all]&quot;</span></code>, the GUI dependencies (including <code class="docutils literal notranslate"><span class="pre">jupyter-server-proxy</span></code>) are installed automatically.</p>
+<p><strong>First-time setup</strong></p>
+<blockquote>
+<div><ol class="arabic">
+<li><p>Install SpectraPyle on Datalabs (if not already done):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[all]&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Restart your personal JupyterLab server:</p>
+<ul class="simple">
+<li><p>Click the <strong>Hub</strong> menu in JupyterLab → <strong>Control Panel</strong></p></li>
+<li><p>Click <strong>Stop My Server</strong></p></li>
+<li><p>Wait a few seconds, then click <strong>Start My Server</strong></p></li>
+</ul>
+</li>
+</ol>
+<p>This allows the newly installed <code class="docutils literal notranslate"><span class="pre">jupyter-server-proxy</span></code> to register with the Datalabs platform.</p>
+</div></blockquote>
+<p><strong>Launching the GUI</strong></p>
+<blockquote>
+<div><p>Datalabs does not expose standard JupyterHub environment variables. To get a directly clickable URL, set the <code class="docutils literal notranslate"><span class="pre">SPECTRAPYLE_HOST</span></code> environment variable once — just the hostname, without any path. The session-specific path (which changes with each notebook) is detected automatically.</p>
+<ol class="arabic">
+<li><p>Open a terminal in JupyterLab</p></li>
+<li><p>Set your Datalabs hostname. This is stable and the same for every session:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">SPECTRAPYLE_HOST</span><span class="o">=</span>https://euclid.dataspace.esa.int
+</pre></div>
+</div>
+<p>You can add this line to your <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code> or <code class="docutils literal notranslate"><span class="pre">~/.profile</span></code> so it persists across sessions.</p>
+</li>
+<li><p>Navigate to the notebooks directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>project_root/notebooks
+</pre></div>
+</div>
+</li>
+<li><p>Run the GUI launcher:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>run_gui.py
+</pre></div>
+</div>
+</li>
+<li><p>The terminal will print a fully clickable URL, with the correct session path detected automatically:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[SpectraPyle] GUI starting on port 45678
+[SpectraPyle] Open in browser: https://euclid.dataspace.esa.int/data-analysis/apps/my-notebook/proxy/45678/
+</pre></div>
+</div>
+</li>
+<li><p>Click or copy the URL and open it in your browser. The SpectraPyle GUI will load in a clean browser window with no notebook code visible.</p></li>
+</ol>
+<p><strong>Without</strong> <code class="docutils literal notranslate"><span class="pre">SPECTRAPYLE_HOST</span></code>: The script still prints a relative proxy path and a hint on how to set the variable. You can manually prepend your Datalabs hostname to construct the full URL.</p>
+</div></blockquote>
+<p><strong>GUI workflow</strong></p>
+<blockquote>
+<div><p>Once the GUI is open, you can:</p>
+<ul class="simple">
+<li><p>Load a previous configuration (<code class="docutils literal notranslate"><span class="pre">.gui</span></code> file)</p></li>
+<li><p>Configure the instrument, I/O paths, and processing parameters</p></li>
+<li><p>Export your configuration as YAML, JSON, or <code class="docutils literal notranslate"><span class="pre">.gui</span></code> format</p></li>
+<li><p>Run the stacking pipeline directly and monitor progress</p></li>
+<li><p>View the output log and resulting stacked spectrum</p></li>
+</ul>
+<p>See <a class="reference internal" href="gui-tour.html"><span class="doc">GUI Guided Tour</span></a> for a full walkthrough.</p>
+</div></blockquote>
+</section>
 <section id="accessing-internal-euclid-data">
 <h2>Accessing Internal Euclid Data<a class="headerlink" href="#accessing-internal-euclid-data" title="Link to this heading">¶</a></h2>
 <p><strong>Authentication</strong></p>
@@ -441,6 +508,7 @@
             <ul>
 <li><a class="reference internal" href="#">ESA Datalabs Users</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#launching-the-gui-on-datalabs">Launching the GUI on Datalabs</a></li>
 <li><a class="reference internal" href="#accessing-internal-euclid-data">Accessing Internal Euclid Data</a></li>
 <li><a class="reference internal" href="#querying-the-sir-catalogue">Querying the SIR Catalogue</a></li>
 <li><a class="reference internal" href="#why-three-metadata-columns">Why Three Metadata Columns?</a></li>

@@ -17,6 +17,79 @@ On ESA Datalabs, Euclid spectroscopic data is stored across the local Datalabs f
 
 This approach is ideal for stacking large samples where you want to avoid the overhead of downloading thousands of FITS files.
 
+Launching the GUI on Datalabs
+-----------------------------
+
+SpectraPyle includes a web-based configuration GUI (Voilà) that works on Datalabs through JupyterHub's server proxy mechanism.
+
+**Installation**
+
+When you install SpectraPyle with ``pip install -e ".[all]"``, the GUI dependencies (including ``jupyter-server-proxy``) are installed automatically.
+
+**First-time setup**
+
+  1. Install SpectraPyle on Datalabs (if not already done):
+
+     .. code-block:: bash
+
+       pip install -e ".[all]"
+
+  2. Restart your personal JupyterLab server:
+
+     - Click the **Hub** menu in JupyterLab → **Control Panel**
+     - Click **Stop My Server**
+     - Wait a few seconds, then click **Start My Server**
+
+  This allows the newly installed ``jupyter-server-proxy`` to register with the Datalabs platform.
+
+**Launching the GUI**
+
+  Datalabs does not expose standard JupyterHub environment variables. To get a directly clickable URL, set the ``SPECTRAPYLE_HOST`` environment variable once — just the hostname, without any path. The session-specific path (which changes with each notebook) is detected automatically.
+
+  1. Open a terminal in JupyterLab
+  2. Set your Datalabs hostname. This is stable and the same for every session:
+
+     .. code-block:: bash
+
+       export SPECTRAPYLE_HOST=https://euclid.dataspace.esa.int
+
+     You can add this line to your ``~/.bashrc`` or ``~/.profile`` so it persists across sessions.
+
+  3. Navigate to the notebooks directory:
+
+     .. code-block:: bash
+
+       cd project_root/notebooks
+
+  4. Run the GUI launcher:
+
+     .. code-block:: bash
+
+       python run_gui.py
+
+  5. The terminal will print a fully clickable URL, with the correct session path detected automatically:
+
+     .. code-block:: text
+
+       [SpectraPyle] GUI starting on port 45678
+       [SpectraPyle] Open in browser: https://euclid.dataspace.esa.int/data-analysis/apps/my-notebook/proxy/45678/
+
+  6. Click or copy the URL and open it in your browser. The SpectraPyle GUI will load in a clean browser window with no notebook code visible.
+
+  **Without** ``SPECTRAPYLE_HOST``: The script still prints a relative proxy path and a hint on how to set the variable. You can manually prepend your Datalabs hostname to construct the full URL.
+
+**GUI workflow**
+
+  Once the GUI is open, you can:
+
+  - Load a previous configuration (``.gui`` file)
+  - Configure the instrument, I/O paths, and processing parameters
+  - Export your configuration as YAML, JSON, or ``.gui`` format
+  - Run the stacking pipeline directly and monitor progress
+  - View the output log and resulting stacked spectrum
+
+  See :doc:`gui-tour` for a full walkthrough.
+
 Accessing Internal Euclid Data
 -------------------------------
 

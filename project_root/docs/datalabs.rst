@@ -40,31 +40,43 @@ When you install SpectraPyle with ``pip install -e ".[all]"``, the GUI dependenc
      - Click **Stop My Server**
      - Wait a few seconds, then click **Start My Server**
 
-  This allows the newly installed ``jupyter-server-proxy`` to register with JupyterHub.
+  This allows the newly installed ``jupyter-server-proxy`` to register with the Datalabs platform.
 
 **Launching the GUI**
 
+  Datalabs does not expose standard JupyterHub environment variables. To get a directly clickable URL, set the ``SPECTRAPYLE_HOST`` environment variable once — just the hostname, without any path. The session-specific path (which changes with each notebook) is detected automatically.
+
   1. Open a terminal in JupyterLab
-  2. Navigate to the notebooks directory:
+  2. Set your Datalabs hostname. This is stable and the same for every session:
+
+     .. code-block:: bash
+
+       export SPECTRAPYLE_HOST=https://euclid.dataspace.esa.int
+
+     You can add this line to your ``~/.bashrc`` or ``~/.profile`` so it persists across sessions.
+
+  3. Navigate to the notebooks directory:
 
      .. code-block:: bash
 
        cd project_root/notebooks
 
-  3. Run the GUI launcher:
+  4. Run the GUI launcher:
 
      .. code-block:: bash
 
        python run_gui.py
 
-  4. The terminal will print a URL like:
+  5. The terminal will print a fully clickable URL, with the correct session path detected automatically:
 
      .. code-block:: text
 
-       [SpectraPyle] GUI starting on port 8866
-       [SpectraPyle] Open in browser: /user/<your-username>/proxy/8866/
+       [SpectraPyle] GUI starting on port 45678
+       [SpectraPyle] Open in browser: https://euclid.dataspace.esa.int/data-analysis/apps/my-notebook/proxy/45678/
 
-  5. Copy that URL, prepend your Datalabs base URL (e.g., ``https://datalabs.esac.esa.int``), and paste it into a new browser tab. The SpectraPyle GUI will load in a clean browser window with no notebook code visible.
+  6. Click or copy the URL and open it in your browser. The SpectraPyle GUI will load in a clean browser window with no notebook code visible.
+
+  **Without** ``SPECTRAPYLE_HOST``: The script still prints a relative proxy path and a hint on how to set the variable. You can manually prepend your Datalabs hostname to construct the full URL.
 
 **GUI workflow**
 
