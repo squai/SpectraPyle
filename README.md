@@ -219,6 +219,8 @@ fig.show()
 
 > **DESI note:** The DESI driver is maintained for back-compatibility with Euclid–DESI crossmatched samples. It is not under active development. For new DESI-only workflows, consider using the Generic driver.
 
+> **ESA Datalabs users:** If you are working on the Datalabs platform with Euclid internal data, use `spectra_mode: metadata path` and map the three SIR catalogue columns (`datalabs_path`, `file_name`, `hdu_index`) to SpectraPyle's metadata configuration. Access to internal data releases requires Datalabs authentication. See the [ESA Datalabs guide](project_root/docs/datalabs.rst) for a complete walkthrough with example YAML configuration.
+
 ---
 
 ## Architecture

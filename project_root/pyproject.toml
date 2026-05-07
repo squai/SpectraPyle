@@ -55,7 +55,8 @@ dependencies = [
 # Jupyter / GUI usage
 notebook = [
     "ipywidgets>=8.0",
-    "ipython>=8.0"
+    "ipython>=8.0",
+    "jupyter-server-proxy>=4.0",
 ]
 
 # Dev tools
@@ -77,6 +78,7 @@ docs = [
 all = [
     "ipywidgets>=8.0",
     "ipython>=8.0",
+    "jupyter-server-proxy>=4.0",
     "pytest",
     "black",
     "ruff",

@@ -17,6 +17,67 @@ On ESA Datalabs, Euclid spectroscopic data is stored across the local Datalabs f
 
 This approach is ideal for stacking large samples where you want to avoid the overhead of downloading thousands of FITS files.
 
+Launching the GUI on Datalabs
+-----------------------------
+
+SpectraPyle includes a web-based configuration GUI (Voilà) that works on Datalabs through JupyterHub's server proxy mechanism.
+
+**Installation**
+
+When you install SpectraPyle with ``pip install -e ".[all]"``, the GUI dependencies (including ``jupyter-server-proxy``) are installed automatically.
+
+**First-time setup**
+
+  1. Install SpectraPyle on Datalabs (if not already done):
+
+     .. code-block:: bash
+
+       pip install -e ".[all]"
+
+  2. Restart your personal JupyterLab server:
+
+     - Click the **Hub** menu in JupyterLab → **Control Panel**
+     - Click **Stop My Server**
+     - Wait a few seconds, then click **Start My Server**
+
+  This allows the newly installed ``jupyter-server-proxy`` to register with JupyterHub.
+
+**Launching the GUI**
+
+  1. Open a terminal in JupyterLab
+  2. Navigate to the notebooks directory:
+
+     .. code-block:: bash
+
+       cd project_root/notebooks
+
+  3. Run the GUI launcher:
+
+     .. code-block:: bash
+
+       python run_gui.py
+
+  4. The terminal will print a URL like:
+
+     .. code-block:: text
+
+       [SpectraPyle] GUI starting on port 8866
+       [SpectraPyle] Open in browser: /user/<your-username>/proxy/8866/
+
+  5. Copy that URL, prepend your Datalabs base URL (e.g., ``https://datalabs.esac.esa.int``), and paste it into a new browser tab. The SpectraPyle GUI will load in a clean browser window with no notebook code visible.
+
+**GUI workflow**
+
+  Once the GUI is open, you can:
+
+  - Load a previous configuration (``.gui`` file)
+  - Configure the instrument, I/O paths, and processing parameters
+  - Export your configuration as YAML, JSON, or ``.gui`` format
+  - Run the stacking pipeline directly and monitor progress
+  - View the output log and resulting stacked spectrum
+
+  See :doc:`gui-tour` for a full walkthrough.
+
 Accessing Internal Euclid Data
 -------------------------------
 
