@@ -20,6 +20,8 @@ scientific analysis.
 ### Install
 
 ```bash
+git clone https://github.com/squai/SpectraPyle
+cd SpectraPyle
 pip install -e ".[all]"
 ```
 
