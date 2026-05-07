@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Citation &amp; Acknowledgments" href="citation.html"><link rel="prev" title="GUI Guided Tour" href="gui-tour.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="ESA Datalabs Users" href="datalabs.html"><link rel="prev" title="GUI Guided Tour" href="gui-tour.html">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>Instruments &amp; Input Data Formats - SpectraPyle 5.0.2 documentation</title>
@@ -195,6 +195,7 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui-tour.html">GUI Guided Tour</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Instruments &amp; Input Data Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datalabs.html">ESA Datalabs Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -324,19 +325,24 @@ SpectraPyle opens the file and extracts the spectrum matching <code class="docut
 </div></blockquote>
 <p><strong>metadata path</strong></p>
 <blockquote>
-<div><p>The input catalog contains explicit columns pointing to the FITS path and HDU index for each spectrum.
+<div><p>The input catalog contains explicit columns pointing to the FITS directory, filename, and HDU index for each spectrum.
 This is useful when spectra are scattered across many files or follow a non-standard naming scheme.</p>
-<p>Requires two catalog columns:</p>
+<p>Requires three catalog columns:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">metadata_name</span></code> (config key <code class="docutils literal notranslate"><span class="pre">catalog_columns.metadata_name</span></code>) — absolute path to FITS file</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">hdu_indx</span></code> (config key <code class="docutils literal notranslate"><span class="pre">catalog_columns.hdu_indx</span></code>) — HDU index (integer)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metadata_path_column_name</span></code> (config key <code class="docutils literal notranslate"><span class="pre">catalog_columns.metadata.metadata_path_column_name</span></code>) — column name containing FITS directory path</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metadata_file_column_name</span></code> (config key <code class="docutils literal notranslate"><span class="pre">catalog_columns.metadata.metadata_file_column_name</span></code>) — column name containing FITS filename</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metadata_indx_column_name</span></code> (config key <code class="docutils literal notranslate"><span class="pre">catalog_columns.metadata.metadata_indx_column_name</span></code>) — column name containing HDU index (integer)</p></li>
 </ul>
+<p>SpectraPyle combines the first two to form the full path: <code class="docutils literal notranslate"><span class="pre">{path}/{filename}</span></code>, then reads HDU <code class="docutils literal notranslate"><span class="pre">{index}</span></code>.</p>
 <p><em>Config:</em></p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">io</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">spectra_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metadata path</span>
-<span class="w">  </span><span class="nt">catalog_columns</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">metadata_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fits_path_col</span>
-<span class="w">    </span><span class="nt">hdu_indx</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hdu_index_col</span>
+
+<span class="nt">catalog_columns</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata_path_column_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fits_path_col</span>
+<span class="w">    </span><span class="nt">metadata_file_column_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fits_file_col</span>
+<span class="w">    </span><span class="nt">metadata_indx_column_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hdu_index_col</span>
 </pre></div>
 </div>
 <p><em>Example catalog columns:</em></p>
@@ -345,20 +351,27 @@ This is useful when spectra are scattered across many files or follow a non-stan
 <thead>
 <tr class="row-odd"><th class="head"><p>specid</p></th>
 <th class="head"><p>fits_path_col</p></th>
+<th class="head"><p>fits_file_col</p></th>
 <th class="head"><p>hdu_index</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>12345</p></td>
-<td><p>/data/batch1/12345.fits</p></td>
-<td><p>15</p></td>
+<td><p>/data/batch1/</p></td>
+<td><p>12345.fits</p></td>
+<td><p>1</p></td>
 </tr>
 <tr class="row-odd"><td><p>12346</p></td>
-<td><p>/data/batch2/12346.fits</p></td>
-<td><p>265</p></td>
+<td><p>/data/batch2/</p></td>
+<td><p>spec_12346.fits</p></td>
+<td><p>2</p></td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>ESA Datalabs users:</strong> If you are working on Datalabs with Euclid data exported from the SAS catalogue query, map the three SIR catalogue columns (<code class="docutils literal notranslate"><span class="pre">datalabs_path</span></code>, <code class="docutils literal notranslate"><span class="pre">file_name</span></code>, <code class="docutils literal notranslate"><span class="pre">hdu_index</span></code>) to the configuration above. See <a class="reference internal" href="datalabs.html"><span class="doc">ESA Datalabs Users</span></a> for a complete walkthrough and example configuration.</p>
 </div>
 </div></blockquote>
 </section>
@@ -651,12 +664,12 @@ You must set <code class="docutils literal notranslate"><span class="pre">pixel_
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="citation.html">
+          <a class="next-page" href="datalabs.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Citation &amp; Acknowledgments</div>
+                <div class="title">ESA Datalabs Users</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

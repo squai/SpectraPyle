@@ -194,6 +194,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../gui-tour.html">GUI Guided Tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../instruments.html">Instruments &amp; Input Data Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datalabs.html">ESA Datalabs Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -261,6 +262,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.instruments</span><span class="w"> </span><span class="kn">import</span> <span class="n">_combined_fits_cache</span> <span class="k">as</span> <span class="n">_cache</span>
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
@@ -447,6 +450,94 @@
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Spectrum reading — helper functions for combined FITS</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_euclid_index</span><span class="p">(</span><span class="n">hdul</span><span class="p">,</span> <span class="n">grism</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a spectrum index from combined FITS HDU structure.</span>
+
+<span class="sd">    Returns a dict describing the layout and indexing strategy:</span>
+<span class="sd">    - If &#39;SPECTRA&#39; HDU exists: maps ID column to row indices</span>
+<span class="sd">    - Otherwise: lists all HDU names for per-HDU lookup</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hdul : astropy.io.fits.HDUList</span>
+<span class="sd">        Open combined FITS file.</span>
+<span class="sd">    grism : str</span>
+<span class="sd">        Grism name (for context only).</span>
+<span class="sd">    config : dict</span>
+<span class="sd">        Flat config with &#39;ID_column_name&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Layout description with &#39;layout&#39; key and per-layout data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;SPECTRA&#39;</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
+        <span class="n">id_col</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;ID_column_name&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">id_col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">[</span><span class="s1">&#39;SPECTRA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ID column &#39;</span><span class="si">{</span><span class="n">id_col</span><span class="si">}</span><span class="s2">&#39; not found in HDU &#39;SPECTRA&#39;&quot;</span><span class="p">)</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">):</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="s1">&#39;SPECTRA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">id_col</span><span class="p">])}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;layout&#39;</span><span class="p">:</span> <span class="s1">&#39;spectra_table&#39;</span><span class="p">,</span> <span class="s1">&#39;rows&#39;</span><span class="p">:</span> <span class="n">rows</span><span class="p">}</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">hdu</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">hdu</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;layout&#39;</span><span class="p">:</span> <span class="s1">&#39;per_hdu&#39;</span><span class="p">,</span> <span class="s1">&#39;names&#39;</span><span class="p">:</span> <span class="n">names</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lookup_euclid</span><span class="p">(</span><span class="n">hdul</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">specid</span><span class="p">,</span> <span class="n">grism</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Look up a spectrum in combined FITS using pre-built index.</span>
+
+<span class="sd">    Supports two layouts:</span>
+<span class="sd">    - &#39;spectra_table&#39;: all spectra in single &#39;SPECTRA&#39; table HDU</span>
+<span class="sd">    - &#39;per_hdu&#39;: one spectrum per HDU, tries multiple naming conventions</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hdul : astropy.io.fits.HDUList</span>
+<span class="sd">        Open combined FITS file.</span>
+<span class="sd">    index : dict</span>
+<span class="sd">        Pre-built index from _build_euclid_index().</span>
+<span class="sd">    specid : str or int</span>
+<span class="sd">        Spectrum identifier.</span>
+<span class="sd">    grism : str</span>
+<span class="sd">        Grism name.</span>
+<span class="sd">    config : dict</span>
+<span class="sd">        Flat config.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    astropy.table.Table</span>
+<span class="sd">        Spectrum data table.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    NameError</span>
+<span class="sd">        If spectrum not found in expected HDU.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_PREFIX</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;red&quot;</span><span class="p">:</span> <span class="s2">&quot;RGS&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">:</span> <span class="s2">&quot;BGS&quot;</span><span class="p">}</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">_PREFIX</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grism</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">index</span><span class="p">[</span><span class="s1">&#39;layout&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;spectra_table&#39;</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">index</span><span class="p">[</span><span class="s1">&#39;rows&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spectrum &#39;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">&#39; not found in combined FITS.&quot;</span><span class="p">)</span>
+        <span class="n">row_idx</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="s1">&#39;rows&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="s1">&#39;SPECTRA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="n">row_idx</span><span class="p">]])</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="s1">&#39;names&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">prefix</span> <span class="ow">and</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Spectrum &#39;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">&#39; not found in combined FITS. &quot;</span>
+        <span class="s2">&quot;Expected per-spectrum HDUs or a &#39;SPECTRA&#39; table HDU.&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
 <span class="c1"># Spectrum reading</span>
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
@@ -499,35 +590,41 @@
 
     <span class="c1"># ---- combined FITS ----</span>
     <span class="k">if</span> <span class="n">spectra_datafile</span><span class="p">:</span>
-        <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">spectra_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spectra_datafile</span><span class="si">}</span><span class="s2">.fits&quot;</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="n">_PREFIX</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grism</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">memmap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
-
-            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
-                <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-
-            <span class="k">elif</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
-                <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-
-            <span class="k">elif</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
-                <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-            
-
-            <span class="k">elif</span> <span class="s1">&#39;SPECTRA&#39;</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
-                <span class="n">data</span>   <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="s1">&#39;SPECTRA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
-                <span class="n">id_col</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;ID_column_name&#39;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">id_col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">[</span><span class="s1">&#39;SPECTRA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ID column &#39;</span><span class="si">{</span><span class="n">id_col</span><span class="si">}</span><span class="s2">&#39; not found in HDU &#39;SPECTRA&#39;&quot;</span><span class="p">)</span>
-                <span class="n">mask_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">id_col</span><span class="p">]</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask_id</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spectrum &#39;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">&#39; not found in </span><span class="si">{</span><span class="n">spectra_datafile</span><span class="si">}</span><span class="s2">.fits&quot;</span><span class="p">)</span>
-                <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">mask_id</span><span class="p">])</span>
-
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Unrecognised FITS layout in </span><span class="si">{</span><span class="n">spectra_datafile</span><span class="si">}</span><span class="s2">.fits. &quot;</span>
-                    <span class="s2">&quot;Expected: per-spectrum HDUs or a &#39;SPECTRA&#39; table HDU.&quot;</span>
-                <span class="p">)</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">spectra_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spectra_datafile</span><span class="si">}</span><span class="s2">.fits&quot;</span>
+        <span class="k">if</span> <span class="n">_cache</span><span class="o">.</span><span class="n">is_active</span><span class="p">(</span><span class="n">grism</span><span class="p">):</span>
+            <span class="n">hdul</span> <span class="o">=</span> <span class="n">_cache</span><span class="o">.</span><span class="n">get_hdul</span><span class="p">(</span><span class="n">grism</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">_cache</span><span class="o">.</span><span class="n">get_index</span><span class="p">(</span><span class="n">grism</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">_build_euclid_index</span><span class="p">(</span><span class="n">hdul</span><span class="p">,</span> <span class="n">grism</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+                <span class="n">_cache</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">grism</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="n">table1</span> <span class="o">=</span> <span class="n">_lookup_euclid</span><span class="p">(</span><span class="n">hdul</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">specid</span><span class="p">,</span> <span class="n">grism</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">_PREFIX</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grism</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">memmap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
+                    <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
+                    <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">prefix</span> <span class="ow">and</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
+                    <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="s1">&#39;SPECTRA&#39;</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
+                    <span class="n">data</span>   <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="s1">&#39;SPECTRA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+                    <span class="n">id_col</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;ID_column_name&#39;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">id_col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">[</span><span class="s1">&#39;SPECTRA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ID column &#39;</span><span class="si">{</span><span class="n">id_col</span><span class="si">}</span><span class="s2">&#39; not found in HDU &#39;SPECTRA&#39;&quot;</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">spec_id_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spectrum ID &#39;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">&#39; is not numeric, cannot match SPECTRA table column &#39;</span><span class="si">{</span><span class="n">id_col</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+                    <span class="n">mask_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">id_col</span><span class="p">]</span> <span class="o">==</span> <span class="n">spec_id_int</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask_id</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spectrum &#39;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">&#39; not found in </span><span class="si">{</span><span class="n">spectra_datafile</span><span class="si">}</span><span class="s2">.fits&quot;</span><span class="p">)</span>
+                    <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">mask_id</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Unrecognised FITS layout in </span><span class="si">{</span><span class="n">spectra_datafile</span><span class="si">}</span><span class="s2">.fits. &quot;</span>
+                        <span class="s2">&quot;Expected: per-spectrum HDUs or a &#39;SPECTRA&#39; table HDU.&quot;</span>
+                    <span class="p">)</span>
 
     <span class="c1"># ---- individual FITS ----</span>
     <span class="k">else</span><span class="p">:</span>

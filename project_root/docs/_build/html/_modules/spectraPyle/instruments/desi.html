@@ -194,6 +194,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../gui-tour.html">GUI Guided Tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../instruments.html">Instruments &amp; Input Data Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datalabs.html">ESA Datalabs Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -263,6 +264,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.instruments</span><span class="w"> </span><span class="kn">import</span> <span class="n">_combined_fits_cache</span> <span class="k">as</span> <span class="n">_cache</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -350,6 +352,17 @@
 <span class="sd">    return masked_array</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_desi_index</span><span class="p">(</span><span class="n">hdul</span><span class="p">):</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">hdu</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">hdu</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;layout&#39;</span><span class="p">:</span> <span class="s1">&#39;per_hdu&#39;</span><span class="p">,</span> <span class="s1">&#39;names&#39;</span><span class="p">:</span> <span class="n">names</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lookup_desi</span><span class="p">(</span><span class="n">hdul</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">specid</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)</span> <span class="ow">in</span> <span class="n">index</span><span class="p">[</span><span class="s1">&#39;names&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">)]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spectrum &#39;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">&#39; not found in combined FITS.&quot;</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="readSpec">
 <a class="viewcode-back" href="../../../api/instruments.html#spectraPyle.instruments.desi.readSpec">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">readSpec</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">specid</span><span class="p">,</span> <span class="n">grism</span><span class="p">):</span>
@@ -393,13 +406,21 @@
 
     <span class="k">if</span> <span class="n">spectra_datafile</span><span class="p">:</span>
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">spectra_dir</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spectra_datafile</span><span class="si">}</span><span class="s2">.fits&quot;</span>
-        <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">hdu</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">hdu</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">):</span>
-                    <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdu</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-                    <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spectrum &#39;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">&#39; not found in </span><span class="si">{</span><span class="n">spectra_datafile</span><span class="si">}</span><span class="s2">.fits.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_cache</span><span class="o">.</span><span class="n">is_active</span><span class="p">(</span><span class="n">grism</span><span class="p">):</span>
+            <span class="n">hdul</span> <span class="o">=</span> <span class="n">_cache</span><span class="o">.</span><span class="n">get_hdul</span><span class="p">(</span><span class="n">grism</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">_cache</span><span class="o">.</span><span class="n">get_index</span><span class="p">(</span><span class="n">grism</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">_build_desi_index</span><span class="p">(</span><span class="n">hdul</span><span class="p">)</span>
+                <span class="n">_cache</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">grism</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="n">table1</span> <span class="o">=</span> <span class="n">_lookup_desi</span><span class="p">(</span><span class="n">hdul</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">specid</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">memmap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">hdu</span> <span class="ow">in</span> <span class="n">hdul</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">hdu</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">specid</span><span class="p">):</span>
+                        <span class="n">table1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">hdu</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                        <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spectrum &#39;</span><span class="si">{</span><span class="n">specid</span><span class="si">}</span><span class="s2">&#39; not found in </span><span class="si">{</span><span class="n">spectra_datafile</span><span class="si">}</span><span class="s2">.fits.&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">spectra_dir</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;spectra_dir not configured for grism &#39;</span><span class="si">{</span><span class="n">grism</span><span class="si">}</span><span class="s2">&#39;. Check config[&#39;grism_io&#39;].&quot;</span><span class="p">)</span>
@@ -485,34 +506,34 @@
 
     <span class="n">path_name</span> <span class="o">=</span> <span class="n">metadata_name</span>
 
-    <span class="n">hdul</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path_name</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="n">hdu_indx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="n">hdu_indx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
 
-    <span class="n">lbd</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;wavelength&#39;</span><span class="p">)</span>
-    <span class="n">flux</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;flux&#39;</span><span class="p">)</span>
-    <span class="n">error</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;noise&#39;</span><span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    mask = data.field(&#39;MASK&#39;)</span>
-<span class="sd">    ndith = data.field(&#39;NDITH&#39;)</span>
-<span class="sd">    </span>
-<span class="sd">    # Apply pixel bitmask:</span>
-<span class="sd">    if pixel_mask and mask is not None:</span>
-<span class="sd">        indxBadPixels = int_to_bin7(mask, list_bits_to_be_masked=pixel_mask)</span>
-<span class="sd">        flux[indxBadPixels] = np.nan</span>
-<span class="sd">        error[indxBadPixels] = np.nan</span>
-<span class="sd">        </span>
-<span class="sd">    # Apply dithers filter:</span>
-<span class="sd">    if n_min_dithers &gt; 0 and ndith is not None:</span>
-<span class="sd">        flux = np.where(ndith &lt; n_min_dithers, np.nan, flux)</span>
-<span class="sd">        error = np.where(ndith &lt; n_min_dithers, np.nan, error)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+        <span class="n">lbd</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;wavelength&#39;</span><span class="p">)</span>
+        <span class="n">flux</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;flux&#39;</span><span class="p">)</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s1">&#39;noise&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        mask = data.field(&#39;MASK&#39;)</span>
+<span class="sd">        ndith = data.field(&#39;NDITH&#39;)</span>
 
-    <span class="k">if</span> <span class="n">spectrum_edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">flux</span><span class="p">[:</span><span class="n">spectrum_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="n">error</span><span class="p">[:</span><span class="n">spectrum_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        
-        <span class="n">flux</span><span class="p">[</span><span class="n">spectrum_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">]:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="n">error</span><span class="p">[</span><span class="n">spectrum_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">]:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="sd">        # Apply pixel bitmask:</span>
+<span class="sd">        if pixel_mask and mask is not None:</span>
+<span class="sd">            indxBadPixels = int_to_bin7(mask, list_bits_to_be_masked=pixel_mask)</span>
+<span class="sd">            flux[indxBadPixels] = np.nan</span>
+<span class="sd">            error[indxBadPixels] = np.nan</span>
+
+<span class="sd">        # Apply dithers filter:</span>
+<span class="sd">        if n_min_dithers &gt; 0 and ndith is not None:</span>
+<span class="sd">            flux = np.where(ndith &lt; n_min_dithers, np.nan, flux)</span>
+<span class="sd">            error = np.where(ndith &lt; n_min_dithers, np.nan, error)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">spectrum_edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">flux</span><span class="p">[:</span><span class="n">spectrum_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">error</span><span class="p">[:</span><span class="n">spectrum_edges</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+            <span class="n">flux</span><span class="p">[</span><span class="n">spectrum_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">]:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">error</span><span class="p">[</span><span class="n">spectrum_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">]:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
     <span class="k">return</span> <span class="n">lbd</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">error</span></div>
 

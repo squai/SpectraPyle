@@ -195,6 +195,7 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">GUI Guided Tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="instruments.html">Instruments &amp; Input Data Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datalabs.html">ESA Datalabs Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -337,7 +338,7 @@
 <ol class="arabic simple">
 <li><p><strong>Individual FITS</strong> — One FITS file per object, resolved by object ID (e.g., <code class="docutils literal notranslate"><span class="pre">&lt;object_id&gt;.fits</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;object_id&gt;_RGS.fits</span></code>)</p></li>
 <li><p><strong>Combined FITS</strong> — All spectra in a single FITS file, indexed by HDU or row number</p></li>
-<li><p><strong>Metadata Path</strong> — Path/filename/index sourced from catalogue columns (most flexible)</p></li>
+<li><p><strong>Metadata Path</strong> — Path/filename/index sourced from catalogue columns (most flexible). Three catalogue columns are required: directory path, filename, and HDU index. See <a class="reference internal" href="instruments.html"><span class="doc">Instruments &amp; Input Data Formats</span></a> for the full specification. <strong>Euclid Datalabs users:</strong> this mode works perfectly with the SAS SIR catalogue; see <a class="reference internal" href="datalabs.html"><span class="doc">ESA Datalabs Users</span></a> for a complete example.</p></li>
 </ol>
 </li>
 <li><p><strong>Per-Grism Spectra Directories</strong>: For each grism you selected in the Instrument tab, specify a directory containing spectra files. The pipeline will recursively search these directories for matching filenames.</p></li>
@@ -356,12 +357,20 @@
 </figcaption>
 </figure>
 <p>Key controls in this tab:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>ID Column</strong>: The name of the catalogue column containing unique object identifiers (e.g., <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">gal_id</span></code>, <code class="docutils literal notranslate"><span class="pre">object_id</span></code>). This is used to locate individual spectrum files.</p></li>
 <li><p><strong>Redshift Column</strong>: The name of the catalogue column containing object redshifts (e.g., <code class="docutils literal notranslate"><span class="pre">z</span></code>, <code class="docutils literal notranslate"><span class="pre">redshift</span></code>, <code class="docutils literal notranslate"><span class="pre">z_spec</span></code>). All spectra are shifted to the common redshift of the stacked spectrum using these values.</p></li>
 <li><p><strong>Metadata Columns</strong> (optional): If you want to include other data (e.g., magnitude, stellar mass, star-formation rate) in the catalogue for custom weighting, list the column names here. These are written to the output HDU for reference.</p></li>
 <li><p><strong>Galactic Extinction Correction</strong>: Toggle to apply Galactic dust extinction correction (via <a class="reference external" href="https://dust-extinction.readthedocs.io/">dust_extinction</a>). The name of the catalogue column containing the Galactic E(B-V) values for each object (e.g., <code class="docutils literal notranslate"><span class="pre">ebv_gal</span></code>). By default, it applies the model G23 (Gordon, 2024).</p></li>
 <li><p><strong>Custom Normalization Column</strong> (optional): If you have pre-computed normalization factors in your catalogue (e.g., continuum flux), specify the column name here to use it in the normalization mode (see <a class="reference internal" href="normalization.html"><span class="doc">Normalization Methods</span></a>).</p></li>
+<li><p><strong>Metadata Path Columns</strong> (appears when <strong>Metadata Path</strong> is selected in the I/O tab): Three additional fields are exposed:</p>
+<ul class="simple">
+<li><p><strong>Path Column</strong>: Catalogue column containing the directory path to the spectrum FITS files</p></li>
+<li><p><strong>Filename Column</strong>: Catalogue column containing the filename of the spectrum FITS</p></li>
+<li><p><strong>HDU Index Column</strong>: Catalogue column containing the HDU number within the FITS file</p></li>
+</ul>
+<p>These three fields allow SpectraPyle to locate and read spectra from scattered or non-standard file layouts. <strong>Euclid Datalabs users:</strong> when using the SAS SIR catalogue, set these to <code class="docutils literal notranslate"><span class="pre">datalabs_path</span></code>, <code class="docutils literal notranslate"><span class="pre">file_name</span></code>, and <code class="docutils literal notranslate"><span class="pre">hdu_index</span></code> respectively. See <a class="reference internal" href="datalabs.html"><span class="doc">ESA Datalabs Users</span></a> for a complete walkthrough.</p>
+</li>
 </ul>
 <p>—</p>
 </section>

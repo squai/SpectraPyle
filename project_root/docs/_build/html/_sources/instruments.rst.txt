@@ -60,13 +60,16 @@ the first two.
 
 **metadata path**
 
-  The input catalog contains explicit columns pointing to the FITS path and HDU index for each spectrum.
+  The input catalog contains explicit columns pointing to the FITS directory, filename, and HDU index for each spectrum.
   This is useful when spectra are scattered across many files or follow a non-standard naming scheme.
 
-  Requires two catalog columns:
+  Requires three catalog columns:
 
-  - ``metadata_name`` (config key ``catalog_columns.metadata_name``) — absolute path to FITS file
-  - ``hdu_indx`` (config key ``catalog_columns.hdu_indx``) — HDU index (integer)
+  - ``metadata_path_column_name`` (config key ``catalog_columns.metadata.metadata_path_column_name``) — column name containing FITS directory path
+  - ``metadata_file_column_name`` (config key ``catalog_columns.metadata.metadata_file_column_name``) — column name containing FITS filename
+  - ``metadata_indx_column_name`` (config key ``catalog_columns.metadata.metadata_indx_column_name``) — column name containing HDU index (integer)
+
+  SpectraPyle combines the first two to form the full path: ``{path}/{filename}``, then reads HDU ``{index}``.
 
   *Config:*
 
@@ -74,19 +77,26 @@ the first two.
 
     io:
       spectra_mode: metadata path
-      catalog_columns:
-        metadata_name: fits_path_col
-        hdu_indx: hdu_index_col
+
+    catalog_columns:
+      metadata:
+        metadata_path_column_name: fits_path_col
+        metadata_file_column_name: fits_file_col
+        metadata_indx_column_name: hdu_index_col
 
   *Example catalog columns:*
 
-  +---------+---------------------------+-----------+
-  | specid  | fits_path_col             | hdu_index |
-  +=========+===========================+===========+
-  | 12345   | /data/batch1/12345.fits   | 15        |
-  +---------+---------------------------+-----------+
-  | 12346   | /data/batch2/12346.fits   | 265       |
-  +---------+---------------------------+-----------+
+  +---------+------------------+------------------+-----------+
+  | specid  | fits_path_col    | fits_file_col    | hdu_index |
+  +=========+==================+==================+===========+
+  | 12345   | /data/batch1/    | 12345.fits       | 1         |
+  +---------+------------------+------------------+-----------+
+  | 12346   | /data/batch2/    | spec_12346.fits  | 2         |
+  +---------+------------------+------------------+-----------+
+
+  .. note::
+
+    **ESA Datalabs users:** If you are working on Datalabs with Euclid data exported from the SAS catalogue query, map the three SIR catalogue columns (``datalabs_path``, ``file_name``, ``hdu_index``) to the configuration above. See :doc:`datalabs` for a complete walkthrough and example configuration.
 
 Euclid NISP
 -----------

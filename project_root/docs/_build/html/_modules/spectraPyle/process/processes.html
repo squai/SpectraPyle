@@ -194,6 +194,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../gui-tour.html">GUI Guided Tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../instruments.html">Instruments &amp; Input Data Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datalabs.html">ESA Datalabs Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -262,7 +263,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging.handlers</span>
-
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.spectrum.spectra</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sspec</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">spectraPyle.spectrum.normalization</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">snorm</span>
@@ -271,6 +272,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spectraPyle.instruments._combined_fits_cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">init_file_handles</span><span class="p">,</span> <span class="n">close_file_handles</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -287,6 +289,20 @@
     <span class="n">root</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
     <span class="n">root</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
     <span class="n">root</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">QueueHandler</span><span class="p">(</span><span class="n">queue</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_worker_init</span><span class="p">(</span><span class="n">log_queue</span><span class="p">,</span> <span class="n">grism_paths</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize worker process with logging and combined FITS cache handles.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_queue : multiprocessing.Queue</span>
+<span class="sd">        Queue to send log records to the main process.</span>
+<span class="sd">    grism_paths : dict or None</span>
+<span class="sd">        Mapping of grism names to combined FITS file paths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_worker_logging_init</span><span class="p">(</span><span class="n">log_queue</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">grism_paths</span><span class="p">:</span>
+        <span class="n">init_file_handles</span><span class="p">(</span><span class="n">grism_paths</span><span class="p">)</span>
 
 <div class="viewcode-block" id="main_parallel">
 <a class="viewcode-back" href="../../../api/processes.html#spectraPyle.process.processes.main_parallel">[docs]</a>
@@ -378,6 +394,16 @@
         <span class="p">)</span>
     <span class="p">]</span>
 
+    <span class="c1"># -------- Build grism_paths for combined FITS cache --------</span>
+    <span class="n">spectra_mode</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;spectra_mode&#39;</span><span class="p">)</span>
+    <span class="n">grism_paths</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">spectra_mode</span> <span class="o">==</span> <span class="s1">&#39;combined fits&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">grism</span> <span class="ow">in</span> <span class="n">grismList</span><span class="p">:</span>
+            <span class="n">gcfg</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;grism_io&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grism</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">datafile</span> <span class="o">=</span> <span class="n">gcfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;spectra_datafile&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">datafile</span><span class="p">:</span>
+                <span class="n">grism_paths</span><span class="p">[</span><span class="n">grism</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">gcfg</span><span class="p">[</span><span class="s1">&#39;spectra_dir&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">datafile</span><span class="si">}</span><span class="s2">.fits&quot;</span>
+
     <span class="c1"># -------- Multiprocessing --------</span>
     <span class="n">parent_handlers</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;spectraPyle&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">handlers</span><span class="p">[:]</span>
 
@@ -391,8 +417,8 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span>
                 <span class="n">processes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_cpus</span><span class="p">,</span>
-                <span class="n">initializer</span><span class="o">=</span><span class="n">_worker_logging_init</span><span class="p">,</span>
-                <span class="n">initargs</span><span class="o">=</span><span class="p">(</span><span class="n">log_queue</span><span class="p">,)</span>
+                <span class="n">initializer</span><span class="o">=</span><span class="n">_worker_init</span><span class="p">,</span>
+                <span class="n">initargs</span><span class="o">=</span><span class="p">(</span><span class="n">log_queue</span><span class="p">,</span> <span class="n">grism_paths</span><span class="p">)</span>
             <span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
                 <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
                     <span class="n">tqdm</span><span class="p">(</span>
@@ -404,13 +430,19 @@
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">listener</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="n">tqdm</span><span class="p">(</span>
-                <span class="nb">map</span><span class="p">(</span><span class="n">process_spectrum_parallel</span><span class="p">,</span> <span class="n">args</span><span class="p">),</span>
-                <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">),</span>
-                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Processing Files&quot;</span>
+        <span class="k">if</span> <span class="n">grism_paths</span><span class="p">:</span>
+            <span class="n">init_file_handles</span><span class="p">(</span><span class="n">grism_paths</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">tqdm</span><span class="p">(</span>
+                    <span class="nb">map</span><span class="p">(</span><span class="n">process_spectrum_parallel</span><span class="p">,</span> <span class="n">args</span><span class="p">),</span>
+                    <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">),</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Processing Files&quot;</span>
+                <span class="p">)</span>
             <span class="p">)</span>
-        <span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">grism_paths</span><span class="p">:</span>
+                <span class="n">close_file_handles</span><span class="p">()</span>
     
     <span class="c1"># Flatten results</span>
     <span class="n">flat_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>

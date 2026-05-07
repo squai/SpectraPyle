@@ -19,6 +19,7 @@ mode (HSM), and weighted mean. Includes bootstrap uncertainty estimation and int
    quickstart
    gui-tour
    instruments
+   datalabs
    citation
 
 .. toctree::

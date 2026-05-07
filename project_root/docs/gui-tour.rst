@@ -100,7 +100,7 @@ Key controls in this tab:
 
   1. **Individual FITS** — One FITS file per object, resolved by object ID (e.g., ``<object_id>.fits``, ``<object_id>_RGS.fits``)
   2. **Combined FITS** — All spectra in a single FITS file, indexed by HDU or row number
-  3. **Metadata Path** — Path/filename/index sourced from catalogue columns (most flexible)
+  3. **Metadata Path** — Path/filename/index sourced from catalogue columns (most flexible). Three catalogue columns are required: directory path, filename, and HDU index. See :doc:`instruments` for the full specification. **Euclid Datalabs users:** this mode works perfectly with the SAS SIR catalogue; see :doc:`datalabs` for a complete example.
 
 - **Per-Grism Spectra Directories**: For each grism you selected in the Instrument tab, specify a directory containing spectra files. The pipeline will recursively search these directories for matching filenames.
 
@@ -131,6 +131,14 @@ Key controls in this tab:
 - **Galactic Extinction Correction**: Toggle to apply Galactic dust extinction correction (via `dust_extinction <https://dust-extinction.readthedocs.io/>`_). The name of the catalogue column containing the Galactic E(B-V) values for each object (e.g., ``ebv_gal``). By default, it applies the model G23 (Gordon, 2024). 
 
 - **Custom Normalization Column** (optional): If you have pre-computed normalization factors in your catalogue (e.g., continuum flux), specify the column name here to use it in the normalization mode (see :doc:`normalization`).
+
+- **Metadata Path Columns** (appears when **Metadata Path** is selected in the I/O tab): Three additional fields are exposed:
+
+  - **Path Column**: Catalogue column containing the directory path to the spectrum FITS files
+  - **Filename Column**: Catalogue column containing the filename of the spectrum FITS
+  - **HDU Index Column**: Catalogue column containing the HDU number within the FITS file
+
+  These three fields allow SpectraPyle to locate and read spectra from scattered or non-standard file layouts. **Euclid Datalabs users:** when using the SAS SIR catalogue, set these to ``datalabs_path``, ``file_name``, and ``hdu_index`` respectively. See :doc:`datalabs` for a complete walkthrough.
 
 ---
 

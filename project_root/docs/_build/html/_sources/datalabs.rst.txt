@@ -1,0 +1,139 @@
+.. _datalabs:
+
+===================================
+ESA Datalabs Users
+===================================
+
+This guide is for Euclid scientists working on the **ESA Datalabs** platform. If you are accessing Euclid spectroscopic data through the Datalabs infrastructure, you can configure SpectraPyle to read directly from your data using the Science Archive System (SAS) query results.
+
+Overview
+--------
+
+On ESA Datalabs, Euclid spectroscopic data is stored across the local Datalabs filesystem. Rather than downloading entire FITS files, you can:
+
+1. Query the **SIR catalogue** using the SAS portal
+2. Export the query results as a table (FITS, CSV, NPZ)
+3. Use SpectraPyle's ``metadata path`` spectra mode to read spectra directly from the Datalabs filesystem
+
+This approach is ideal for stacking large samples where you want to avoid the overhead of downloading thousands of FITS files.
+
+Accessing Internal Euclid Data
+-------------------------------
+
+**Authentication**
+
+  If you are working with **internal Euclid data releases** (e.g., ``IDR1``, ``IQ2``, etc), your Datalabs session must be authenticated with the Euclid collaboration. Public data releases do not require additional authentication.
+
+**Data Access**
+
+  Once logged into Datalabs, you can query the SAS catalogue interactively. The Euclid NISP spectra are organized per data release. The SAS portal allows you to filter by survey, quality flags, and other criteria.
+
+Querying the SIR Catalogue
+--------------------------
+
+The **SIR catalogue** contains metadata for all Euclid spectroscopic observations. When you export query results, the table includes:
+
+- **object_id** or **source_id** — unique Euclid object identifier
+- **redshift** — spectroscopic redshift (column name varies; check your query output)
+- **datalabs_path** — local directory on the Datalabs filesystem where the spectrum FITS is stored (e.g., ``/data/euclid/internal/DR1/blablabla``)
+- **file_name** — filename of the FITS file containing the spectrum (e.g., ``123456789101112131415.fits``)
+- **hdu_index** — HDU number within the FITS file where the combined 1D spectrum data is located
+
+The full path to the spectrum is: ``{datalabs_path}/{file_name}``, and the spectrum is read from HDU number ``{hdu_index}``.
+
+Why Three Metadata Columns?
+----------------------------
+
+SpectraPyle's ``metadata path`` spectra mode is designed to handle non-standard file layouts. Instead of assuming all spectra follow a fixed naming pattern (e.g., ``{spectra_dir}/{specid}.fits``), the mode reads file paths and HDU indices directly from your catalogue.
+
+The SIR catalogue splits this information across **three columns**:
+
+1. **datalabs_path** — the directory containing the spectrum (varies per batch/release)
+2. **file_name** — the filename within that directory (may not match the object ID)
+3. **hdu_index** — the HDU number within the file
+
+SpectraPyle combines the first two to form the full path (``datalabs_path + '/' + file_name``) and uses the third to select the correct HDU. This design is general-purpose: any workflow involving scattered or non-standard file layouts can use it. See :doc:`instruments` for the full specification.
+
+Configuring SpectraPyle for Datalabs
+------------------------------------
+
+**Step 1: Prepare your catalogue**
+
+  Export your SIR query results as a FITS, CSV, or NPZ file. Ensure the output includes columns for object ID, redshift, and the three path/index columns (``datalabs_path``, ``file_name``, ``hdu_index``).
+
+**Step 2: Configure spectra mode**
+
+  Set ``spectra_mode: metadata path`` and map the three catalogue columns to SpectraPyle's metadata configuration:
+
+  .. code-block:: yaml
+
+    io:
+      spectra_mode: metadata path
+
+    catalog_columns:
+      ID_column_name: object_id
+      redshift_column_name: redshift
+      metadata:
+        metadata_path_column_name: datalabs_path
+        metadata_file_column_name: file_name
+        metadata_indx_column_name: hdu_index
+
+**Step 3: Run the stack**
+
+  Via GUI or CLI. SpectraPyle will read each spectrum directly from the Datalabs filesystem using the three catalogue columns, with no intermediate downloads required.
+
+**Full Example Config**
+
+  .. code-block:: yaml
+
+    instrument:
+      instrument_name: euclid
+      survey_name: wide
+      grisms: [red]
+      data_release: DR1
+
+    io:
+      input_dir: /datalabs/my_analysis
+      filename_in: sir_catalogue_query
+      spectra_mode: metadata path
+      output_dir: /datalabs/my_analysis/output
+
+    catalog_columns:
+      ID_column_name: object_id
+      redshift_column_name: redshift
+      metadata:
+        metadata_path_column_name: datalabs_path
+        metadata_file_column_name: file_name
+        metadata_indx_column_name: hdu_index
+
+    redshift:
+      z_type: rest_frame
+
+    norm:
+      norm_type: median
+
+    resampling:
+      pixel_resampling_type: lambda
+      pixel_size_type: instrumental
+      nyquist_sampling: 5.0
+
+General Applicability
+---------------------
+
+While this guide focuses on Euclid data on Datalabs, the ``metadata path`` mode is **not Datalabs-specific**. Any scientific workflow where spectra are scattered across many files, or follow non-standard naming schemes, can use this mode. For example:
+
+- **Individual FITS files, all with spectrum in HDU[1]:** Add a constant ``hdu_index`` column (filled with ``1`` for all rows) and point ``metadata_path_column_name`` and ``metadata_file_column_name`` to your directory and filename columns.
+- **Legacy archive with mixed HDU layouts:** If HDU positions vary per file, explicitly list them in the ``hdu_index`` column and use ``metadata path`` mode.
+- **Cross-matched or composite catalogues:** Combine file paths from multiple sources using this mode.
+
+The SIR catalogue mapping is simply a concrete instance of this general mechanism.
+
+References
+----------
+
+For more details on the ``metadata path`` spectra mode, see :doc:`instruments`. For the full configuration reference, see :doc:`/api/schema`.
+
+External links:
+
+- **Euclid Data Space:** https://euclid.dataspace.esa.int/
+- **Euclid Collaboration:** https://www.euclid-ec.org/
