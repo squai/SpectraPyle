@@ -4,6 +4,7 @@
 __pycache__/
 *.py[cod]
 *.so
+test_generic_hdu_flexibility.py
 
 # =========================
 # Jupyter
@@ -19,6 +20,7 @@ __pycache__/
 # Packaging
 # =========================
 *.egg-info/
+tests/
 dist/
 build/
 project_root/future/
