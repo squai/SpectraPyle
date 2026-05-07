@@ -47,19 +47,25 @@ def get_jupyter_server_info():
     return None, None
 
 
+def load_saved_host(base: Path) -> str:
+    """Read saved host URL from .launcher_host, if present."""
+    host_file = base / ".launcher_host"
+    if host_file.exists():
+        return host_file.read_text().strip().rstrip("/")
+    return ""
+
+
 def launch_gui():
     """
     Launch the SpectraPyle configuration GUI.
 
-    Always generates gui_launcher.ipynb (code cells hidden) from make_config.ipynb,
-    then picks the right launch strategy for the environment:
+    Generates gui_launcher.ipynb (all code cells hidden) from make_config.ipynb, then:
+    - Remote Jupyter (e.g. Datalabs): prints a JupyterLab URL to open gui_launcher.ipynb.
+      Run modify_host.py once to configure (and update) the host URL.
+    - Local machine: starts Voilà on gui_launcher.ipynb, opens browser automatically.
 
-    - Local machine : starts Voilà on gui_launcher.ipynb, opens browser automatically.
-    - Remote Jupyter : prints a JupyterLab URL to open gui_launcher.ipynb directly.
-      Set SPECTRAPYLE_HOST=https://<your-host> for a fully clickable URL.
-
-    Remote Jupyter is detected when JUPYTERHUB env vars are present or the Jupyter
-    server's base_url is not '/'.
+    Remote mode is triggered by JUPYTERHUB env vars, a non-root Jupyter base_url,
+    or a saved host in .launcher_host. SPECTRAPYLE_HOST env var overrides all.
     """
     base = Path(__file__).resolve().parent
     source_nb = base / "make_config.ipynb"
@@ -68,36 +74,38 @@ def launch_gui():
     print("[SpectraPyle] Preparing gui_launcher.ipynb ...")
     generate_launcher_notebook(source_nb, launcher_nb)
 
-    spectrapyle_host = os.environ.get("SPECTRAPYLE_HOST", "").rstrip("/")
+    # Resolve host: env var > saved file > empty
+    spectrapyle_host = (
+        os.environ.get("SPECTRAPYLE_HOST", "").rstrip("/")
+        or load_saved_host(base)
+    )
     server_url = os.environ.get("JUPYTERHUB_SERVER_URL", "").rstrip("/")
     service_prefix = os.environ.get("JUPYTERHUB_SERVICE_PREFIX", "")
 
     base_url, root_dir = get_jupyter_server_info()
 
-    # Remote = standard JupyterHub vars present, OR non-root Jupyter base_url (e.g. Datalabs)
     is_remote = bool(
-        server_url
+        spectrapyle_host
+        or server_url
         or service_prefix
         or (base_url and base_url != "/")
     )
 
     if is_remote:
-        # Build the JupyterLab 'lab/tree/...' URL that opens gui_launcher.ipynb directly
+        # Build the JupyterLab lab/tree/... URL that opens gui_launcher.ipynb directly
         if server_url:
             lab_base = server_url.rstrip("/") + "/"
         elif service_prefix:
             pfx = service_prefix if service_prefix.endswith("/") else service_prefix + "/"
             lab_base = f"{spectrapyle_host}{pfx}" if spectrapyle_host else pfx
         else:
-            # Datalabs-style: SPECTRAPYLE_HOST + base_url from jupyter server list
             if spectrapyle_host and base_url:
                 lab_base = f"{spectrapyle_host}{base_url}"
             elif base_url:
-                lab_base = base_url  # relative path only — no host known
+                lab_base = base_url
             else:
                 lab_base = ""
 
-        # Compute path of launcher relative to Jupyter server root
         lab_file_path = None
         if root_dir:
             try:
@@ -108,12 +116,12 @@ def launch_gui():
         print("[SpectraPyle] gui_launcher.ipynb is ready.")
         if lab_base and lab_file_path:
             url = f"{lab_base}lab/tree/{lab_file_path}"
-            print(f"[SpectraPyle] Open in browser  : {url}")
+            print(f"[SpectraPyle] Open in browser : {url}")
+            print(f"[SpectraPyle] Then            : Kernel → Restart Kernel and Run All Cells")
         else:
             print("[SpectraPyle] Open notebooks/gui_launcher.ipynb in JupyterLab.")
-            if not spectrapyle_host:
-                print("[SpectraPyle] Tip: set SPECTRAPYLE_HOST=https://<your-host> for a clickable URL.")
-        print("[SpectraPyle] Then            : Kernel → Restart Kernel and Run All Cells")
+            print("[SpectraPyle] Then: Kernel → Restart Kernel and Run All Cells")
+        print("[SpectraPyle] Wrong URL?      : python modify_host.py")
 
     else:
         # Local — Voilà gives a clean browser tab with no notebook chrome
@@ -121,6 +129,7 @@ def launch_gui():
         url = f"http://localhost:{port}/"
         print(f"[SpectraPyle] GUI starting on port {port}")
         print(f"[SpectraPyle] Open in browser: {url}")
+        print(f"[SpectraPyle] On a remote Jupyter server instead? Run: python modify_host.py")
 
         def _open_browser():
             time.sleep(2)
