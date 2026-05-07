@@ -16,17 +16,6 @@ def find_free_port():
         return s.getsockname()[1]
 
 
-def generate_launcher_notebook(source_nb: Path, launcher_nb: Path) -> None:
-    """Create gui_launcher.ipynb from make_config.ipynb with all code cells collapsed."""
-    with open(source_nb) as f:
-        nb = json.load(f)
-    for cell in nb.get("cells", []):
-        if cell.get("cell_type") == "code":
-            cell.setdefault("metadata", {}).setdefault("jupyter", {})["source_hidden"] = True
-    with open(launcher_nb, "w") as f:
-        json.dump(nb, f, indent=1)
-
-
 def get_jupyter_server_info():
     """Return (base_url, root_dir) from the running Jupyter server, or (None, None)."""
     try:
@@ -59,7 +48,6 @@ def launch_gui():
     """
     Launch the SpectraPyle configuration GUI.
 
-    Generates gui_launcher.ipynb (all code cells hidden) from make_config.ipynb, then:
     - Remote Jupyter (e.g. Datalabs): prints a JupyterLab URL to open gui_launcher.ipynb.
       Run modify_host.py once to configure (and update) the host URL.
     - Local machine: starts Voilà on gui_launcher.ipynb, opens browser automatically.
@@ -68,11 +56,7 @@ def launch_gui():
     or a saved host in .launcher_host. SPECTRAPYLE_HOST env var overrides all.
     """
     base = Path(__file__).resolve().parent
-    source_nb = base / "make_config.ipynb"
     launcher_nb = base / "gui_launcher.ipynb"
-
-    print("[SpectraPyle] Preparing gui_launcher.ipynb ...")
-    generate_launcher_notebook(source_nb, launcher_nb)
 
     # Resolve host: env var > saved file > empty
     spectrapyle_host = (
@@ -113,7 +97,6 @@ def launch_gui():
             except ValueError:
                 pass
 
-        print("[SpectraPyle] gui_launcher.ipynb is ready.")
         if lab_base and lab_file_path:
             url = f"{lab_base}lab/tree/{lab_file_path}"
             print(f"[SpectraPyle] Open in browser : {url}")

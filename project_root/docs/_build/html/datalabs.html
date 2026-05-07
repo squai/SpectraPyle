@@ -269,57 +269,59 @@
 </section>
 <section id="launching-the-gui-on-datalabs">
 <h2>Launching the GUI on Datalabs<a class="headerlink" href="#launching-the-gui-on-datalabs" title="Link to this heading">¶</a></h2>
-<p>SpectraPyle includes a web-based configuration GUI (Voilà) that works on Datalabs through JupyterHub’s server proxy mechanism.</p>
+<p>The SpectraPyle GUI runs directly inside JupyterLab on Datalabs — no separate server or port needed. Running <code class="docutils literal notranslate"><span class="pre">run_gui.py</span></code> generates <code class="docutils literal notranslate"><span class="pre">gui_launcher.ipynb</span></code>, a version of the configuration notebook with all code cells collapsed, then prints a JupyterLab link to open it. Users see only the widget interface.</p>
+<p>The same <code class="docutils literal notranslate"><span class="pre">run_gui.py</span></code> works on local machines too: there it starts Voilà and opens the browser automatically.</p>
 <p><strong>Installation</strong></p>
-<p>When you install SpectraPyle with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">&quot;.[all]&quot;</span></code>, the GUI dependencies (including <code class="docutils literal notranslate"><span class="pre">jupyter-server-proxy</span></code>) are installed automatically.</p>
-<p><strong>First-time setup</strong></p>
 <blockquote>
-<div><ol class="arabic">
-<li><p>Install SpectraPyle on Datalabs (if not already done):</p>
+<div><p>Install SpectraPyle on Datalabs (if not already done):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[all]&quot;</span>
 </pre></div>
 </div>
-</li>
-<li><p>Restart your personal JupyterLab server:</p>
-<ul class="simple">
-<li><p>Click the <strong>Hub</strong> menu in JupyterLab → <strong>Control Panel</strong></p></li>
-<li><p>Click <strong>Stop My Server</strong></p></li>
-<li><p>Wait a few seconds, then click <strong>Start My Server</strong></p></li>
-</ul>
-</li>
-</ol>
-<p>This allows the newly installed <code class="docutils literal notranslate"><span class="pre">jupyter-server-proxy</span></code> to register with the Datalabs platform.</p>
+</div></blockquote>
+<p><strong>One-time host configuration</strong></p>
+<blockquote>
+<div><p>Run <code class="docutils literal notranslate"><span class="pre">modify_host.py</span></code> once to tell the launcher where Datalabs is. Open a terminal in JupyterLab and run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>project_root/notebooks/modify_host.py
+</pre></div>
+</div>
+<p>When prompted, paste the full URL visible in your browser when JupyterLab is open — <strong>including any path prefix, but without</strong> <code class="docutils literal notranslate"><span class="pre">/lab</span></code> <strong>or file paths</strong>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SpectraPyle — Remote Host Configuration
+==========================================
+Current host : (not set)
+
+Enter the full URL visible in your browser when JupyterLab is open.
+Include the scheme and any path prefix, but NOT &#39;/lab&#39; or file paths.
+
+  Datalabs example:
+    https://euclid.dataspace.esa.int/data-analysis/apps/my-app
+
+New host URL: https://euclid.dataspace.esa.int/data-analysis/apps/my-app
+
+[SpectraPyle] Saved  : https://euclid.dataspace.esa.int/data-analysis/apps/my-app
+[SpectraPyle] Launch : python run_gui.py
+</pre></div>
+</div>
+<p>The URL is saved to <code class="docutils literal notranslate"><span class="pre">notebooks/.launcher_host</span></code> and read automatically on every subsequent run. If the URL changes (e.g. you open a new Datalabs session), re-run <code class="docutils literal notranslate"><span class="pre">modify_host.py</span></code>.</p>
 </div></blockquote>
 <p><strong>Launching the GUI</strong></p>
 <blockquote>
-<div><p>Datalabs does not expose standard JupyterHub environment variables. To get a directly clickable URL, set the <code class="docutils literal notranslate"><span class="pre">SPECTRAPYLE_HOST</span></code> environment variable once — just the hostname, without any path. The session-specific path (which changes with each notebook) is detected automatically.</p>
-<ol class="arabic">
-<li><p>Open a terminal in JupyterLab</p></li>
-<li><p>Set your Datalabs hostname. This is stable and the same for every session:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">SPECTRAPYLE_HOST</span><span class="o">=</span>https://euclid.dataspace.esa.int
-</pre></div>
-</div>
-<p>You can add this line to your <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code> or <code class="docutils literal notranslate"><span class="pre">~/.profile</span></code> so it persists across sessions.</p>
-</li>
-<li><p>Navigate to the notebooks directory:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>project_root/notebooks
+<div><ol class="arabic">
+<li><p>Open a terminal in JupyterLab and run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>project_root/notebooks/run_gui.py
 </pre></div>
 </div>
 </li>
-<li><p>Run the GUI launcher:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>run_gui.py
+<li><p>The terminal prints a clickable JupyterLab link:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[SpectraPyle] Open in browser : https://euclid.dataspace.esa.int/data-analysis/apps/my-app/lab/tree/project_root/notebooks/gui_launcher.ipynb
+[SpectraPyle] Then            : Kernel → Restart Kernel and Run All Cells
+[SpectraPyle] Wrong URL?      : python modify_host.py
 </pre></div>
 </div>
 </li>
-<li><p>The terminal will print a fully clickable URL, with the correct session path detected automatically:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[SpectraPyle] GUI starting on port 45678
-[SpectraPyle] Open in browser: https://euclid.dataspace.esa.int/data-analysis/apps/my-notebook/proxy/45678/
-</pre></div>
-</div>
-</li>
-<li><p>Click or copy the URL and open it in your browser. The SpectraPyle GUI will load in a clean browser window with no notebook code visible.</p></li>
+<li><p>Click the link — JupyterLab opens <code class="docutils literal notranslate"><span class="pre">gui_launcher.ipynb</span></code> with all code cells hidden.</p></li>
+<li><p>In the JupyterLab menu: <strong>Kernel → Restart Kernel and Run All Cells</strong>.</p></li>
+<li><p>The full SpectraPyle widget interface appears — no code visible.</p></li>
 </ol>
-<p><strong>Without</strong> <code class="docutils literal notranslate"><span class="pre">SPECTRAPYLE_HOST</span></code>: The script still prints a relative proxy path and a hint on how to set the variable. You can manually prepend your Datalabs hostname to construct the full URL.</p>
 </div></blockquote>
 <p><strong>GUI workflow</strong></p>
 <blockquote>

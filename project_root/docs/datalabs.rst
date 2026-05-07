@@ -73,8 +73,6 @@ The same ``run_gui.py`` works on local machines too: there it starts Voilà and 
 
      .. code-block:: text
 
-       [SpectraPyle] Preparing gui_launcher.ipynb ...
-       [SpectraPyle] gui_launcher.ipynb is ready.
        [SpectraPyle] Open in browser : https://euclid.dataspace.esa.int/data-analysis/apps/my-app/lab/tree/project_root/notebooks/gui_launcher.ipynb
        [SpectraPyle] Then            : Kernel → Restart Kernel and Run All Cells
        [SpectraPyle] Wrong URL?      : python modify_host.py
