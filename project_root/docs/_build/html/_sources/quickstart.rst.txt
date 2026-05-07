@@ -6,16 +6,32 @@ Installation
 
 .. code-block:: bash
 
+   git clone https://github.com/squai/SpectraPyle
+   cd SpectraPyle
    pip install -e ".[all]"
 
-Running via Voilà GUI
+Running spectraPyle via Voilà GUI (outside ESA Datalabs)
 ---------------------
 
 .. code-block:: bash
 
-   python project_root/notebooks/run_gui.py
+    python project_root/notebooks/run_gui.py
 
-Opens a browser tab with an interactive config builder.
+This command will launch the GUI in your web browser (if Voilà is available on your system).
+
+If the browser does not open automatically, check the terminal output for a local URL and open it manually.
+
+Alternative (ESA Datalabs or if Voilà does not open a browser)
+---------------------
+
+In some environments, such as ESA Datalabs, Voilà cannot launch a browser window.
+In this case, you can run the GUI directly inside a notebook:
+
+.. code-block:: bash
+
+    python project_root/notebooks/gui_launcher.ipynb
+
+This will render the GUI inline within the notebook interface (see  :doc:`datalabs`).
 
 Running via CLI
 ---------------

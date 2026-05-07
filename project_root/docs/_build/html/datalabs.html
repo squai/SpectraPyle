@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Citation &amp; Acknowledgments" href="citation.html"><link rel="prev" title="Instruments &amp; Input Data Formats" href="instruments.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="GUI Guided Tour" href="gui-tour.html"><link rel="prev" title="Quick Start" href="quickstart.html">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>ESA Datalabs Users - SpectraPyle 5.0.2 documentation</title>
@@ -193,9 +193,9 @@
   <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">ESA Datalabs Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui-tour.html">GUI Guided Tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="instruments.html">Instruments &amp; Input Data Formats</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">ESA Datalabs Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citation &amp; Acknowledgments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Concepts</span></p>
@@ -267,62 +267,20 @@
 </ol>
 <p>This approach is ideal for stacking large samples where you want to avoid the overhead of downloading thousands of FITS files.</p>
 </section>
-<section id="launching-the-gui-on-datalabs">
-<h2>Launching the GUI on Datalabs<a class="headerlink" href="#launching-the-gui-on-datalabs" title="Link to this heading">¶</a></h2>
-<p>The SpectraPyle GUI runs directly inside JupyterLab on Datalabs — no separate server or port needed. Running <code class="docutils literal notranslate"><span class="pre">run_gui.py</span></code> generates <code class="docutils literal notranslate"><span class="pre">gui_launcher.ipynb</span></code>, a version of the configuration notebook with all code cells collapsed, then prints a JupyterLab link to open it. Users see only the widget interface.</p>
-<p>The same <code class="docutils literal notranslate"><span class="pre">run_gui.py</span></code> works on local machines too: there it starts Voilà and opens the browser automatically.</p>
-<p><strong>Installation</strong></p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<p>Install SpectraPyle on Datalabs (if not already done):</p>
 <blockquote>
-<div><p>Install SpectraPyle on Datalabs (if not already done):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[all]&quot;</span>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/squai/SpectraPyle
+<span class="nb">cd</span><span class="w"> </span>SpectraPyle
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[all]&quot;</span>
 </pre></div>
 </div>
 </div></blockquote>
-<p><strong>One-time host configuration</strong></p>
-<blockquote>
-<div><p>Run <code class="docutils literal notranslate"><span class="pre">modify_host.py</span></code> once to tell the launcher where Datalabs is. Open a terminal in JupyterLab and run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>project_root/notebooks/modify_host.py
-</pre></div>
-</div>
-<p>When prompted, paste the full URL visible in your browser when JupyterLab is open — <strong>including any path prefix, but without</strong> <code class="docutils literal notranslate"><span class="pre">/lab</span></code> <strong>or file paths</strong>:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SpectraPyle — Remote Host Configuration
-==========================================
-Current host : (not set)
-
-Enter the full URL visible in your browser when JupyterLab is open.
-Include the scheme and any path prefix, but NOT &#39;/lab&#39; or file paths.
-
-  Datalabs example:
-    https://euclid.dataspace.esa.int/data-analysis/apps/my-app
-
-New host URL: https://euclid.dataspace.esa.int/data-analysis/apps/my-app
-
-[SpectraPyle] Saved  : https://euclid.dataspace.esa.int/data-analysis/apps/my-app
-[SpectraPyle] Launch : python run_gui.py
-</pre></div>
-</div>
-<p>The URL is saved to <code class="docutils literal notranslate"><span class="pre">notebooks/.launcher_host</span></code> and read automatically on every subsequent run. If the URL changes (e.g. you open a new Datalabs session), re-run <code class="docutils literal notranslate"><span class="pre">modify_host.py</span></code>.</p>
-</div></blockquote>
-<p><strong>Launching the GUI</strong></p>
-<blockquote>
-<div><ol class="arabic">
-<li><p>Open a terminal in JupyterLab and run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>project_root/notebooks/run_gui.py
-</pre></div>
-</div>
-</li>
-<li><p>The terminal prints a clickable JupyterLab link:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[SpectraPyle] Open in browser : https://euclid.dataspace.esa.int/data-analysis/apps/my-app/lab/tree/project_root/notebooks/gui_launcher.ipynb
-[SpectraPyle] Then            : Kernel → Restart Kernel and Run All Cells
-[SpectraPyle] Wrong URL?      : python modify_host.py
-</pre></div>
-</div>
-</li>
-<li><p>Click the link — JupyterLab opens <code class="docutils literal notranslate"><span class="pre">gui_launcher.ipynb</span></code> with all code cells hidden.</p></li>
-<li><p>In the JupyterLab menu: <strong>Kernel → Restart Kernel and Run All Cells</strong>.</p></li>
-<li><p>The full SpectraPyle widget interface appears — no code visible.</p></li>
-</ol>
-</div></blockquote>
+</section>
+<section id="running-spectrapyle-on-datalabs">
+<h2>Running spectraPyle on Datalabs<a class="headerlink" href="#running-spectrapyle-on-datalabs" title="Link to this heading">¶</a></h2>
+<p>To quickly run SpectraPyle on DataLabs, use the GUI available in JupyterLab. Simply open notebooks/gui_launcher.ipynb, then click Kernel → Restart Kernel and Run All Cells. This will start the application interface automatically.</p>
 <p><strong>GUI workflow</strong></p>
 <blockquote>
 <div><p>Once the GUI is open, you can:</p>
@@ -458,23 +416,23 @@ New host URL: https://euclid.dataspace.esa.int/data-analysis/apps/my-app
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="citation.html">
+          <a class="next-page" href="gui-tour.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Citation &amp; Acknowledgments</div>
+                <div class="title">GUI Guided Tour</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="instruments.html">
+          <a class="prev-page" href="quickstart.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Instruments &amp; Input Data Formats</div>
+                <div class="title">Quick Start</div>
                 
               </div>
             </a>
@@ -510,7 +468,8 @@ New host URL: https://euclid.dataspace.esa.int/data-analysis/apps/my-app
             <ul>
 <li><a class="reference internal" href="#">ESA Datalabs Users</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#launching-the-gui-on-datalabs">Launching the GUI on Datalabs</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#running-spectrapyle-on-datalabs">Running spectraPyle on Datalabs</a></li>
 <li><a class="reference internal" href="#accessing-internal-euclid-data">Accessing Internal Euclid Data</a></li>
 <li><a class="reference internal" href="#querying-the-sir-catalogue">Querying the SIR Catalogue</a></li>
 <li><a class="reference internal" href="#why-three-metadata-columns">Why Three Metadata Columns?</a></li>

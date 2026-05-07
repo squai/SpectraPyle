@@ -8,7 +8,7 @@ mode (HSM), and weighted mean. Includes bootstrap uncertainty estimation and int
 
 **Supported instruments:** Euclid (NISP) · DESI · Generic (any standard FITS)
 
-**Development team:** S. Quai, L. Pozzetti, M. Moresco, M. Talia, Z. Mao, X. Lopez Lopez, E. Lusso, S. Fotopoulou
+**Development team:** S. Quai, L. Pozzetti, M. Talia, Z. Mao, X. Lopez Lopez, M. Moresco, E. Lusso, S. Fotopoulou
 **Maintainer:** Salvatore Quai (salvatore.quai@unibo.it)
 **License:** MIT
 
@@ -17,9 +17,9 @@ mode (HSM), and weighted mean. Includes bootstrap uncertainty estimation and int
    :caption: User Guide
 
    quickstart
+   datalabs
    gui-tour
    instruments
-   datalabs
    citation
 
 .. toctree::

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="GUI Guided Tour" href="gui-tour.html"><link rel="prev" title="SpectraPyle Documentation" href="index.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="ESA Datalabs Users" href="datalabs.html"><link rel="prev" title="SpectraPyle Documentation" href="index.html">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
         <title>Quick Start - SpectraPyle 5.0.2 documentation</title>
@@ -193,6 +193,7 @@
   <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datalabs.html">ESA Datalabs Users</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui-tour.html">GUI Guided Tour</a></li>
 <li class="toctree-l1"><a class="reference internal" href="instruments.html">Instruments &amp; Input Data Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citation.html">Citation &amp; Acknowledgments</a></li>
@@ -257,16 +258,28 @@
 <h1>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h1>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[all]&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/squai/SpectraPyle
+<span class="nb">cd</span><span class="w"> </span>SpectraPyle
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[all]&quot;</span>
 </pre></div>
 </div>
 </section>
-<section id="running-via-voila-gui">
-<h2>Running via Voilà GUI<a class="headerlink" href="#running-via-voila-gui" title="Link to this heading">¶</a></h2>
+<section id="running-spectrapyle-via-voila-gui-outside-esa-datalabs">
+<h2>Running spectraPyle via Voilà GUI (outside ESA Datalabs)<a class="headerlink" href="#running-spectrapyle-via-voila-gui-outside-esa-datalabs" title="Link to this heading">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>project_root/notebooks/run_gui.py
 </pre></div>
 </div>
-<p>Opens a browser tab with an interactive config builder.</p>
+<p>This command will launch the GUI in your web browser (if Voilà is available on your system).</p>
+<p>If the browser does not open automatically, check the terminal output for a local URL and open it manually.</p>
+</section>
+<section id="alternative-esa-datalabs-or-if-voila-does-not-open-a-browser">
+<h2>Alternative (ESA Datalabs or if Voilà does not open a browser)<a class="headerlink" href="#alternative-esa-datalabs-or-if-voila-does-not-open-a-browser" title="Link to this heading">¶</a></h2>
+<p>In some environments, such as ESA Datalabs, Voilà cannot launch a browser window.
+In this case, you can run the GUI directly inside a notebook:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>project_root/notebooks/gui_launcher.ipynb
+</pre></div>
+</div>
+<p>This will render the GUI inline within the notebook interface (see  <a class="reference internal" href="datalabs.html"><span class="doc">ESA Datalabs Users</span></a>).</p>
 </section>
 <section id="running-via-cli">
 <h2>Running via CLI<a class="headerlink" href="#running-via-cli" title="Link to this heading">¶</a></h2>
@@ -321,12 +334,12 @@ Stacking(flat_dict).run()     stacking/stacking.py
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="gui-tour.html">
+          <a class="next-page" href="datalabs.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">GUI Guided Tour</div>
+                <div class="title">ESA Datalabs Users</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -373,7 +386,8 @@ Stacking(flat_dict).run()     stacking/stacking.py
             <ul>
 <li><a class="reference internal" href="#">Quick Start</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#running-via-voila-gui">Running via Voilà GUI</a></li>
+<li><a class="reference internal" href="#running-spectrapyle-via-voila-gui-outside-esa-datalabs">Running spectraPyle via Voilà GUI (outside ESA Datalabs)</a></li>
+<li><a class="reference internal" href="#alternative-esa-datalabs-or-if-voila-does-not-open-a-browser">Alternative (ESA Datalabs or if Voilà does not open a browser)</a></li>
 <li><a class="reference internal" href="#running-via-cli">Running via CLI</a></li>
 <li><a class="reference internal" href="#post-stacking-analysis">Post-stacking Analysis</a></li>
 <li><a class="reference internal" href="#configuration-pipeline">Configuration Pipeline</a></li>

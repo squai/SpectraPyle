@@ -39,8 +39,8 @@ black project_root/src/
   `python -c "from project_root.src.spectraPyle.runtime.runtime_adapter import load_config; load_config('project_root/configs/YAML/default.yaml')"`
   
 ## Notebook Maintenance
-- **Clean Notebook**: Before working on or pushing `notebooks/run_gui.py` (or related .ipynb), clear all outputs to save context/token space:
-  `jupyter nbconvert --clear-output --inplace notebooks/make_config.ipynb`
+- **Clean Notebook**: Before working on or pushing `notebooks/gui_launcher.ipynb` or `notebooks/gui.py`, ensure all notebook outputs are cleared to save context/token space:
+  `jupyter nbconvert --clear-output --inplace notebooks/gui_launcher.ipynb`
 - **Restart Insight**: Since the Voilà GUI depends on the notebook state, always remind the user to restart the Jupyter kernel after making changes to `runtime_adapter.py` or `schema.py`.
 
 ## Architecture
@@ -114,13 +114,13 @@ FITS file with two HDUs:
 ## GUI & Notebooks
 - **Entry Point**: `notebooks/run_gui.py` is the main launcher for the Voilà GUI.
 - **How to Run**: Use `python notebooks/run_gui.py`. This starts a local web server (Voilà).
-- **Behavior**: It is a wrapper around `notebooks/make_config.ipynb`. Do not expect CLI output; it opens a browser tab.
+- **Behavior**: On local machines it starts Voilà on `notebooks/gui_launcher.ipynb` and opens a browser tab. On Datalabs it prints a clickable JupyterLab URL to `gui_launcher.ipynb`. All widget logic lives in `notebooks/gui.py`; `gui_launcher.ipynb` is a minimal two-cell wrapper that calls `gui.py`'s `start()`.
 - **Workflow**: If you modify `schema.py` or `runtime_adapter.py`, the Voilà server/kernel must be manually restarted to reflect changes in the GUI widgets.
 
 
 ## Configuration
 
-Configs are YAML or JSON, loaded via `main(config)` in `stacking.py`. Use `make_config.ipynb` / Voilà GUI to build configs interactively. The schema is fully documented in `schema/schema.py`. To load existing configurations, only .gui configurations accepted (can be exported from the export tab of the gui). 
+Configs are YAML or JSON, loaded via `main(config)` in `stacking.py`. Use `run_gui.py` (Voilà GUI on local, JupyterLab on Datalabs) or `gui_launcher.ipynb` directly to build configs interactively. The schema is fully documented in `schema/schema.py`. To load existing configurations, only .gui configurations accepted (can be exported from the export tab of the gui). 
 
 Key config blocks: `instrument`, `io` (with `grism_io`), `cosmology`, `redshift`, `norm`, `resampling`, `catalog_columns`, `bootstrap`, `sigmaclip`, `parallel`, `plot`.
 

@@ -17,72 +17,22 @@ On ESA Datalabs, Euclid spectroscopic data is stored across the local Datalabs f
 
 This approach is ideal for stacking large samples where you want to avoid the overhead of downloading thousands of FITS files.
 
-Launching the GUI on Datalabs
------------------------------
+Installation
+------------
 
-The SpectraPyle GUI runs directly inside JupyterLab on Datalabs — no separate server or port needed. Running ``run_gui.py`` generates ``gui_launcher.ipynb``, a version of the configuration notebook with all code cells collapsed, then prints a JupyterLab link to open it. Users see only the widget interface.
-
-The same ``run_gui.py`` works on local machines too: there it starts Voilà and opens the browser automatically.
-
-**Installation**
-
-  Install SpectraPyle on Datalabs (if not already done):
+Install SpectraPyle on Datalabs (if not already done):
 
   .. code-block:: bash
-
+    
+    git clone https://github.com/squai/SpectraPyle
+    cd SpectraPyle
     pip install -e ".[all]"
 
-**One-time host configuration**
+Running spectraPyle on Datalabs
+-------------------------------
 
-  Run ``modify_host.py`` once to tell the launcher where Datalabs is. Open a terminal in JupyterLab and run:
-
-  .. code-block:: bash
-
-    python project_root/notebooks/modify_host.py
-
-  When prompted, paste the full URL visible in your browser when JupyterLab is open — **including any path prefix, but without** ``/lab`` **or file paths**:
-
-  .. code-block:: text
-
-    SpectraPyle — Remote Host Configuration
-    ==========================================
-    Current host : (not set)
-
-    Enter the full URL visible in your browser when JupyterLab is open.
-    Include the scheme and any path prefix, but NOT '/lab' or file paths.
-
-      Datalabs example:
-        https://euclid.dataspace.esa.int/data-analysis/apps/my-app
-
-    New host URL: https://euclid.dataspace.esa.int/data-analysis/apps/my-app
-
-    [SpectraPyle] Saved  : https://euclid.dataspace.esa.int/data-analysis/apps/my-app
-    [SpectraPyle] Launch : python run_gui.py
-
-  The URL is saved to ``notebooks/.launcher_host`` and read automatically on every subsequent run. If the URL changes (e.g. you open a new Datalabs session), re-run ``modify_host.py``.
-
-**Launching the GUI**
-
-  1. Open a terminal in JupyterLab and run:
-
-     .. code-block:: bash
-
-       python project_root/notebooks/run_gui.py
-
-  2. The terminal prints a clickable JupyterLab link:
-
-     .. code-block:: text
-
-       [SpectraPyle] Open in browser : https://euclid.dataspace.esa.int/data-analysis/apps/my-app/lab/tree/project_root/notebooks/gui_launcher.ipynb
-       [SpectraPyle] Then            : Kernel → Restart Kernel and Run All Cells
-       [SpectraPyle] Wrong URL?      : python modify_host.py
-
-  3. Click the link — JupyterLab opens ``gui_launcher.ipynb`` with all code cells hidden.
-
-  4. In the JupyterLab menu: **Kernel → Restart Kernel and Run All Cells**.
-
-  5. The full SpectraPyle widget interface appears — no code visible.
-
+To quickly run SpectraPyle on DataLabs, use the GUI available in JupyterLab. Simply open notebooks/gui_launcher.ipynb, then click Kernel → Restart Kernel and Run All Cells. This will start the application interface automatically.
+  
 **GUI workflow**
 
   Once the GUI is open, you can:

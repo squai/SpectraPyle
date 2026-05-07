@@ -23,13 +23,15 @@ scientific analysis.
 pip install -e ".[all]"
 ```
 
-### Run via Voilà GUI (config builder)
+### Run via GUI (config builder)
+
+**Local machines** — launch via Voilà (opens a browser tab automatically):
 
 ```bash
 python project_root/notebooks/run_gui.py
 ```
 
-Opens a browser tab with an interactive config builder. No CLI output is expected.
+**ESA Datalabs / JupyterLab** — open `notebooks/gui_launcher.ipynb` directly and select **Kernel → Restart Kernel and Run All Cells**. The full widget interface appears with no code visible.
 
 ### Run via CLI
 

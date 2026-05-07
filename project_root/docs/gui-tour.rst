@@ -4,19 +4,8 @@
 GUI Guided Tour
 ===============================
 
-SpectraPyle provides a browser-based graphical interface built with `Voilà <https://voila.readthedocs.io/>`_ and `ipywidgets <https://ipywidgets.readthedocs.io/>`_, making it easy to configure and run spectral stacking analyses without writing YAML. The GUI is fully integrated with the configuration schema (see :doc:`api/schema`) and enforces the same validation rules as the command-line interface.
+SpectraPyle offers a browser-based graphical interface built with ipywidgets. It runs inline in Jupyter notebooks (e.g., :doc:`datalabs`) and can also be served as a standalone web app using `Voilà <https://voila.readthedocs.io/>`_ (see :doc:`quickstart`). The interface streamlines spectral stacking workflows, allowing you to configure and run analyses without writing YAML.
 
-**Launching the GUI**
-
-To start the SpectraPyle GUI, run:
-
-.. code-block:: bash
-
-   python project_root/notebooks/run_gui.py
-
-This launches a local Voilà server and opens your default web browser to the configuration builder. The notebook is backed by :file:`notebooks/make_config.ipynb`, which dynamically renders widgets for all configuration parameters.
-
----
 
 Launching the GUI
 =================
