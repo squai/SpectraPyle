@@ -20,63 +20,52 @@ This approach is ideal for stacking large samples where you want to avoid the ov
 Launching the GUI on Datalabs
 -----------------------------
 
-SpectraPyle includes a web-based configuration GUI (Voilà) that works on Datalabs through JupyterHub's server proxy mechanism.
+The SpectraPyle GUI runs directly inside JupyterLab on Datalabs — no separate server or port needed. Running ``run_gui.py`` generates ``gui_launcher.ipynb``, a version of the configuration notebook with all code cells collapsed, then prints a JupyterLab link to open it. Users see only the widget interface.
+
+The same ``run_gui.py`` script works on local machines too: there it starts Voilà and opens the browser automatically.
 
 **Installation**
 
-When you install SpectraPyle with ``pip install -e ".[all]"``, the GUI dependencies (including ``jupyter-server-proxy``) are installed automatically.
+  Install SpectraPyle on Datalabs (if not already done):
 
-**First-time setup**
+  .. code-block:: bash
 
-  1. Install SpectraPyle on Datalabs (if not already done):
+    pip install -e ".[all]"
 
-     .. code-block:: bash
+**One-time setup**
 
-       pip install -e ".[all]"
+  Set your Datalabs hostname so the launcher can print a fully clickable URL. This is stable and the same for every session:
 
-  2. Restart your personal JupyterLab server:
+  .. code-block:: bash
 
-     - Click the **Hub** menu in JupyterLab → **Control Panel**
-     - Click **Stop My Server**
-     - Wait a few seconds, then click **Start My Server**
+    export SPECTRAPYLE_HOST=https://euclid.dataspace.esa.int
 
-  This allows the newly installed ``jupyter-server-proxy`` to register with the Datalabs platform.
+  Add this line to ``~/.bashrc`` or ``~/.profile`` to make it permanent.
 
 **Launching the GUI**
 
-  Datalabs does not expose standard JupyterHub environment variables. To get a directly clickable URL, set the ``SPECTRAPYLE_HOST`` environment variable once — just the hostname, without any path. The session-specific path (which changes with each notebook) is detected automatically.
-
-  1. Open a terminal in JupyterLab
-  2. Set your Datalabs hostname. This is stable and the same for every session:
+  1. Open a terminal in JupyterLab and run:
 
      .. code-block:: bash
 
-       export SPECTRAPYLE_HOST=https://euclid.dataspace.esa.int
+       python project_root/notebooks/run_gui.py
 
-     You can add this line to your ``~/.bashrc`` or ``~/.profile`` so it persists across sessions.
-
-  3. Navigate to the notebooks directory:
-
-     .. code-block:: bash
-
-       cd project_root/notebooks
-
-  4. Run the GUI launcher:
-
-     .. code-block:: bash
-
-       python run_gui.py
-
-  5. The terminal will print a fully clickable URL, with the correct session path detected automatically:
+  2. The terminal prints a JupyterLab link:
 
      .. code-block:: text
 
-       [SpectraPyle] GUI starting on port 45678
-       [SpectraPyle] Open in browser: https://euclid.dataspace.esa.int/data-analysis/apps/my-notebook/proxy/45678/
+       [SpectraPyle] Preparing gui_launcher.ipynb ...
+       [SpectraPyle] gui_launcher.ipynb is ready.
+       [SpectraPyle] Open in browser  : https://euclid.dataspace.esa.int/data-analysis/apps/<name>/lab/tree/project_root/notebooks/gui_launcher.ipynb
+       [SpectraPyle] Then             : Kernel → Restart Kernel and Run All Cells
 
-  6. Click or copy the URL and open it in your browser. The SpectraPyle GUI will load in a clean browser window with no notebook code visible.
+  3. Click the link. JupyterLab opens ``gui_launcher.ipynb`` with all code cells hidden.
 
-  **Without** ``SPECTRAPYLE_HOST``: The script still prints a relative proxy path and a hint on how to set the variable. You can manually prepend your Datalabs hostname to construct the full URL.
+  4. In the JupyterLab menu: **Kernel → Restart Kernel and Run All Cells**.
+
+  5. The full SpectraPyle widget interface appears — no code visible.
+
+  **Without** ``SPECTRAPYLE_HOST``: the script still works but prints a relative path. You can manually prepend your Datalabs hostname to construct the link.
 
 **GUI workflow**
 

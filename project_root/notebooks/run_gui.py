@@ -16,98 +16,129 @@ def find_free_port():
         return s.getsockname()[1]
 
 
-def get_server_base_path():
-    """Return base_url path from the running Jupyter server, e.g. '/data-analysis/apps/unknown/'."""
+def generate_launcher_notebook(source_nb: Path, launcher_nb: Path) -> None:
+    """Create gui_launcher.ipynb from make_config.ipynb with all code cells collapsed."""
+    with open(source_nb) as f:
+        nb = json.load(f)
+    for cell in nb.get("cells", []):
+        if cell.get("cell_type") == "code":
+            cell.setdefault("metadata", {}).setdefault("jupyter", {})["source_hidden"] = True
+    with open(launcher_nb, "w") as f:
+        json.dump(nb, f, indent=1)
+
+
+def get_jupyter_server_info():
+    """Return (base_url, root_dir) from the running Jupyter server, or (None, None)."""
     try:
         result = subprocess.run(
             [sys.executable, "-m", "jupyter", "server", "list", "--json"],
-            capture_output=True, text=True, timeout=5
+            capture_output=True, text=True, timeout=5,
         )
         if result.returncode == 0 and result.stdout.strip():
             servers = json.loads(result.stdout)
             if servers:
-                base = servers[0].get("base_url", "/")
-                return base if base.endswith("/") else base + "/"
+                s = servers[0]
+                base = s.get("base_url", "/")
+                if not base.endswith("/"):
+                    base += "/"
+                return base, s.get("root_dir", "")
     except Exception:
         pass
-    return None
+    return None, None
 
 
 def launch_gui():
     """
-    Launch a Voilà app for the make_config.ipynb notebook.
+    Launch the SpectraPyle configuration GUI.
 
-    URL detection priority:
-    1. JUPYTERHUB_SERVER_URL         — standard JupyterHub (full URL)
-    2. JUPYTERHUB_SERVICE_PREFIX     — older JupyterHub
-    3. SPECTRAPYLE_HOST + jupyter server list — non-standard remote Jupyter (e.g. Datalabs)
-    4. jupyter server list alone     — relative path + hint to set SPECTRAPYLE_HOST
-    5. localhost                     — local machine (also opens browser automatically)
+    Always generates gui_launcher.ipynb (code cells hidden) from make_config.ipynb,
+    then picks the right launch strategy for the environment:
+
+    - Local machine : starts Voilà on gui_launcher.ipynb, opens browser automatically.
+    - Remote Jupyter : prints a JupyterLab URL to open gui_launcher.ipynb directly.
+      Set SPECTRAPYLE_HOST=https://<your-host> for a fully clickable URL.
+
+    Remote Jupyter is detected when JUPYTERHUB env vars are present or the Jupyter
+    server's base_url is not '/'.
     """
     base = Path(__file__).resolve().parent
-    notebook = base / "make_config.ipynb"
-    port = find_free_port()
+    source_nb = base / "make_config.ipynb"
+    launcher_nb = base / "gui_launcher.ipynb"
+
+    print("[SpectraPyle] Preparing gui_launcher.ipynb ...")
+    generate_launcher_notebook(source_nb, launcher_nb)
 
     spectrapyle_host = os.environ.get("SPECTRAPYLE_HOST", "").rstrip("/")
     server_url = os.environ.get("JUPYTERHUB_SERVER_URL", "").rstrip("/")
     service_prefix = os.environ.get("JUPYTERHUB_SERVICE_PREFIX", "")
-    is_remote = True
-    url = None
-    hints = []
 
-    if server_url:
-        url = f"{server_url}/proxy/{port}/"
+    base_url, root_dir = get_jupyter_server_info()
 
-    elif service_prefix:
-        from urllib.parse import urlparse
-        oauth_url = os.environ.get("JUPYTERHUB_OAUTH_CALLBACK_URL", "")
-        if oauth_url:
-            parsed = urlparse(oauth_url)
-            url = f"{parsed.scheme}://{parsed.netloc}{service_prefix}proxy/{port}/"
+    # Remote = standard JupyterHub vars present, OR non-root Jupyter base_url (e.g. Datalabs)
+    is_remote = bool(
+        server_url
+        or service_prefix
+        or (base_url and base_url != "/")
+    )
+
+    if is_remote:
+        # Build the JupyterLab 'lab/tree/...' URL that opens gui_launcher.ipynb directly
+        if server_url:
+            lab_base = server_url.rstrip("/") + "/"
+        elif service_prefix:
+            pfx = service_prefix if service_prefix.endswith("/") else service_prefix + "/"
+            lab_base = f"{spectrapyle_host}{pfx}" if spectrapyle_host else pfx
         else:
-            url = f"{service_prefix}proxy/{port}/"
+            # Datalabs-style: SPECTRAPYLE_HOST + base_url from jupyter server list
+            if spectrapyle_host and base_url:
+                lab_base = f"{spectrapyle_host}{base_url}"
+            elif base_url:
+                lab_base = base_url  # relative path only — no host known
+            else:
+                lab_base = ""
+
+        # Compute path of launcher relative to Jupyter server root
+        lab_file_path = None
+        if root_dir:
+            try:
+                lab_file_path = str(launcher_nb.relative_to(Path(root_dir)))
+            except ValueError:
+                pass
+
+        print("[SpectraPyle] gui_launcher.ipynb is ready.")
+        if lab_base and lab_file_path:
+            url = f"{lab_base}lab/tree/{lab_file_path}"
+            print(f"[SpectraPyle] Open in browser  : {url}")
+        else:
+            print("[SpectraPyle] Open notebooks/gui_launcher.ipynb in JupyterLab.")
+            if not spectrapyle_host:
+                print("[SpectraPyle] Tip: set SPECTRAPYLE_HOST=https://<your-host> for a clickable URL.")
+        print("[SpectraPyle] Then            : Kernel → Restart Kernel and Run All Cells")
 
     else:
-        base_path = get_server_base_path()
-        if spectrapyle_host:
-            # Stable host + dynamically detected session path (e.g. Datalabs)
-            path = base_path if (base_path and base_path != "/") else "/"
-            url = f"{spectrapyle_host}{path}proxy/{port}/"
-        elif base_path and base_path != "/":
-            url = f"{base_path}proxy/{port}/"
-            hints = [
-                f"Proxy path (relative): {url}",
-                "For a clickable URL set once in your terminal:",
-                "  export SPECTRAPYLE_HOST=https://<your-host>",
-                "(the session path is detected automatically)"
-            ]
-        else:
-            url = f"http://localhost:{port}/"
-            is_remote = False
+        # Local — Voilà gives a clean browser tab with no notebook chrome
+        port = find_free_port()
+        url = f"http://localhost:{port}/"
+        print(f"[SpectraPyle] GUI starting on port {port}")
+        print(f"[SpectraPyle] Open in browser: {url}")
 
-    for hint in hints:
-        print(f"[SpectraPyle] {hint}")
-
-    print(f"[SpectraPyle] GUI starting on port {port}")
-    print(f"[SpectraPyle] Open in browser: {url}")
-
-    cmd = [
-        sys.executable, "-m", "voila",
-        str(notebook),
-        f"--port={port}",
-        "--no-browser",
-        "--theme=light",
-        "--show_tracebacks=True",
-    ]
-
-    if not is_remote:
         def _open_browser():
             time.sleep(2)
             webbrowser.open(url)
 
         threading.Thread(target=_open_browser, daemon=True).start()
 
-    subprocess.run(cmd, check=True)
+        subprocess.run(
+            [
+                sys.executable, "-m", "voila",
+                str(launcher_nb),
+                f"--port={port}",
+                "--no-browser",
+                "--theme=light",
+                "--show_tracebacks=True",
+            ],
+            check=True,
+        )
 
 
 if __name__ == "__main__":

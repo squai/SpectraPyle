@@ -5,6 +5,7 @@ __pycache__/
 *.py[cod]
 *.so
 test_generic_hdu_flexibility.py
+project_root/notebooks/gui_launcher.ipynb
 
 # =========================
 # Jupyter
