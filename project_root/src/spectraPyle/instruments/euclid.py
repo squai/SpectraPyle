@@ -67,6 +67,7 @@ def _resolve_filepath(spectra_dir: Path, specid, grism: str, data_release: str) 
         candidates = [
             spectra_dir / f"{specid}.fits",
             spectra_dir / f"{specid}_{grism}.fits",
+            spectra_dir / f"{specid}_{prefix}.fits",
             spectra_dir / f"SPECTRA_{prefix}-sedm {specid}.fits",
         ]
 
