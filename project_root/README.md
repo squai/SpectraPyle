@@ -21,7 +21,7 @@ scientific analysis.
 
 ```bash
 git clone https://github.com/squai/SpectraPyle
-cd SpectraPyle
+cd SpectraPyle/project_root
 pip install -e ".[all]"
 ```
 
