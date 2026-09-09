@@ -4,8 +4,17 @@
 __pycache__/
 *.py[cod]
 *.so
-test_generic_hdu_flexibility.py
-spectrapyle_datalabs.ipynb
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
 
 # =========================
 # Jupyter
@@ -18,44 +27,56 @@ spectrapyle_datalabs.ipynb
 .DS_Store
 
 # =========================
-# Packaging
+# Packaging / build
 # =========================
 *.egg-info/
-tests/
 dist/
 build/
-project_root/future/
-.superpowers/
+
+# =========================
+# Documentation build output
+# =========================
+project_root/docs/_build/
+
+# =========================
+# Data / generated outputs
+# =========================
 *.fits
+*.h5
+*.log
+*.out
+
+# Keep FITS files explicitly used by the tests
 !project_root/tests/**/*.fits
+
+# Ignore generated test outputs, but NOT the tests themselves
 project_root/tests/**/output*/
-project_root/notebooks/old/
-project_root/notebooks/my_notebooks/
-project_root/docs/superpowers/
-project_root.zip
-requirements.txt
 
-
-*.json
+# =========================
+# User / temporary configuration
+# =========================
 *.gui
+
+# Ignore generic JSON/YAML user-generated configs
+*.json
 *.yaml
+
+# Keep distributed default configurations
 !project_root/configs/**/default.*
 !project_root/src/spectraPyle/instruments/instruments_rules.json
 !.readthedocs.yaml
 
 # =========================
-# Logs & outputs
+# Project-specific scratch / local material
 # =========================
-*.log
-*.out
+project_root/future/
+project_root/notebooks/old/
+project_root/notebooks/my_notebooks/
+project_root/docs/superpowers/
 
-# =========================
-# Data (important!)
-# =========================
-*.h5
-
-# keep small test CSV if needed
-# !tests/*.csv
+test_generic_hdu_flexibility.py
+spectrapyle_datalabs.ipynb
+project_root.zip
 
 # =========================
 # IDE
@@ -64,7 +85,7 @@ requirements.txt
 .idea/
 
 # =========================
-# Temporary / scratch
+# Temporary files
 # =========================
 *~
 
@@ -74,14 +95,8 @@ requirements.txt
 .worktrees/
 
 # =========================
-# GPTs
+# AI / local development tools
 # =========================
 .claudignore
 CLAUDE.md
-.superpowers
-
-# =========================
-# Documentation
-# =========================
-docs/_build/
-docs/superpowers/
+.superpowers/

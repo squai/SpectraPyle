@@ -51,13 +51,13 @@ def normSpecInterv(specid, lbd, flux, error, lambdamin_norm, lambdamax_norm, nor
     vecnorm = flux[(lbd >= lambdamin_norm) & (lbd <= lambdamax_norm)]
 
     if (lambdamin_norm < np.nanmin(lbd)) or (lambdamax_norm > np.nanmax(lbd)):
-        print (f"WARNING normalization interval [{lambdamin_norm}, {lambdamax_norm}] [$\AA$] partially outside the wavelength range of the spectrum [{np.round(lbd[0],2)},{np.round(lbd[-1],2)}] [$\AA$].")
+        print (f"WARNING normalization interval [{lambdamin_norm}, {lambdamax_norm}] [Å] partially outside the wavelength range of the spectrum [{np.round(lbd[0],2)},{np.round(lbd[-1],2)}] [Å].")
 
     if len(vecnorm) == 0:
-        raise ValueError(fr"Normalization failure for {str(specid)}: normalization interval [{lambdamin_norm}, {lambdamax_norm}] [$\AA$] outside the wavelength range of the spectrum [{np.round(lbd[0],2)},{np.round(lbd[-1],2)}] [$\AA$].")
+        raise ValueError(fr"Normalization failure for {str(specid)}: normalization interval [{lambdamin_norm}, {lambdamax_norm}] [Å] outside the wavelength range of the spectrum [{np.round(lbd[0],2)},{np.round(lbd[-1],2)}] [Å].")
 
     if np.all(np.isnan(vecnorm)):
-        raise ValueError(fr"Normalization failure for {str(specid)}: no valid flux values in the normalization interval [ {lambdamin_norm}, {lambdamax_norm}] [$\AA$].")
+        raise ValueError(fr"Normalization failure for {str(specid)}: no valid flux values in the normalization interval [ {lambdamin_norm}, {lambdamax_norm}] [Å].")
     if norm_stat == 'median':
         norm = np.nanmedian(vecnorm)
     elif norm_stat == 'mean':
@@ -72,7 +72,7 @@ def normSpecInterv(specid, lbd, flux, error, lambdamin_norm, lambdamax_norm, nor
     if (not np.isfinite(norm)) or (norm <= 0):
         raise ValueError(
             fr"Normalization failure: invalid normalization value ({norm}) "
-            fr"in interval [{lambdamin_norm}, {lambdamax_norm}] [$\AA$]."
+            fr"in interval [{lambdamin_norm}, {lambdamax_norm}] [Å]."
         )
 
     fluxNorm = flux / norm
