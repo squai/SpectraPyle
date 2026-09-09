@@ -20,18 +20,34 @@ This approach is ideal for stacking large samples where you want to avoid the ov
 Installation
 ------------
 
-Install SpectraPyle on Datalabs (if not already done):
+Install SpectraPyle on DataLabs (if not already done) in the same environment used by your notebook:
 
-  .. code-block:: bash
-    
-    git clone https://github.com/squai/SpectraPyle
-    cd SpectraPyle
-    pip install -e ".[all]"
+.. code-block:: bash
 
-Running spectraPyle on Datalabs
+   git clone https://github.com/squai/SpectraPyle
+   cd SpectraPyle/project_root
+   pip install -e ".[notebook]"
+
+Once installed, SpectraPyle can be imported as a standard Python package from any notebook
+or Python script; you do not need to run notebooks from inside the repository clone.
+
+Running SpectraPyle on DataLabs
 -------------------------------
 
-To quickly run SpectraPyle on DataLabs, use the GUI available in JupyterLab. Simply open notebooks/gui_launcher.ipynb, then click Kernel → Restart Kernel and Run All Cells. This will start the application interface automatically.
+Run SpectraPyle with the ``EUCLID-TOOLS`` Jupyter kernel. This kernel provides the
+Euclid-specific Python tools used to access DataLabs services; select it from the
+JupyterLab kernel selector if it is not already active.
+
+The GUI can then be started directly in any notebook cell:
+
+.. code-block:: python
+
+   from spectraPyle.gui import start
+
+   start()
+
+No Voilà server or separate browser window is required on DataLabs. Alternatively, open
+``notebooks/gui_launcher.ipynb`` and run its cells; it contains the same minimal launcher.
   
 **GUI workflow**
 

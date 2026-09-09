@@ -5,6 +5,7 @@ __pycache__/
 *.py[cod]
 *.so
 test_generic_hdu_flexibility.py
+spectrapyle_datalabs.ipynb
 
 # =========================
 # Jupyter
@@ -31,6 +32,9 @@ project_root/tests/**/output*/
 project_root/notebooks/old/
 project_root/notebooks/my_notebooks/
 project_root/docs/superpowers/
+project_root.zip
+requirements.txt
+
 
 *.json
 *.gui
@@ -68,6 +72,13 @@ project_root/docs/superpowers/
 # Git worktrees
 # =========================
 .worktrees/
+
+# =========================
+# GPTs
+# =========================
+.claudignore
+CLAUDE.md
+.superpowers
 
 # =========================
 # Documentation

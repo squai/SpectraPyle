@@ -4,57 +4,75 @@ Quick Start
 Installation
 ------------
 
+For GUI/Jupyter usage (recommended for most users):
+
 .. code-block:: bash
 
    git clone https://github.com/squai/SpectraPyle
-   cd SpectraPyle
-   pip install -e ".[all]"
+   cd SpectraPyle/project_root
+   pip install -e ".[notebook]"
 
-Running spectraPyle via Voilà GUI (outside ESA Datalabs)
----------------------
+The ``notebook`` extra installs the dependencies required by the ipywidgets GUI and
+by the local Voilà launcher. For core/CLI-only usage, ``pip install -e .`` is
+sufficient.
 
-.. code-block:: bash
+Once installed, SpectraPyle is available as a standard Python package and can be
+imported from your own notebooks or Python scripts. The notebooks shipped with the
+repository are convenience/tutorial interfaces rather than a requirement for using
+the package.
 
-    python project_root/notebooks/run_gui.py
+Local GUI via Voilà
+-------------------
 
-This command will launch the GUI in your web browser (if Voilà is available on your system).
-
-If the browser does not open automatically, check the terminal output for a local URL and open it manually.
-
-Alternative (ESA Datalabs or if Voilà does not open a browser)
----------------------
-
-In some environments, such as ESA Datalabs, Voilà cannot launch a browser window.
-In this case, you can run the GUI directly inside a notebook:
+On a local machine, the convenience launcher starts a Voilà server and opens the GUI
+in your default browser:
 
 .. code-block:: bash
 
-    python project_root/notebooks/gui_launcher.ipynb
+   python notebooks/run_gui.py
 
-This will render the GUI inline within the notebook interface (see  :doc:`datalabs`).
+If the browser does not open automatically, use the local URL printed in the terminal.
+Press ``Ctrl+C`` in the terminal to stop the server.
+
+JupyterLab / ESA DataLabs
+-------------------------
+
+In Jupyter environments, including ESA DataLabs, the same GUI can be rendered directly
+inside a notebook cell, without Voilà or a separate browser window:
+
+.. code-block:: python
+
+   from spectraPyle.gui import start
+
+   start()
+
+Alternatively, open ``notebooks/gui_launcher.ipynb``, which contains the same minimal
+launcher. ESA DataLabs users should run the notebook with the ``EUCLID-TOOLS`` kernel;
+see :doc:`datalabs` for the DataLabs-specific workflow.
 
 Running via CLI
 ---------------
 
-**Option 1: Using the CLI helper script (recommended)**
+After installation, the standard command-line entry point is:
 
 .. code-block:: bash
 
-   python project_root/notebooks/run_cli.py --config path/to/config.yaml [--log-level INFO]
+   spectrapyle --config path/to/config.yaml
 
-Features: automatic logging setup with timestamp, supports YAML/JSON, log levels: DEBUG/INFO/WARNING
-
-**Option 2: Direct CLI invocation**
+A helper script is also available:
 
 .. code-block:: bash
 
-   python project_root/src/spectraPyle/stacking/stacking.py --config path/to/config.yaml
+   python notebooks/run_cli.py --config path/to/config.yaml [--log-level INFO]
 
-Override individual keys at runtime:
+The helper provides automatic timestamped logging and supports YAML/JSON configuration
+files. Available log levels include ``DEBUG``, ``INFO``, and ``WARNING``.
+
+Override individual configuration keys at runtime, for example:
 
 .. code-block:: bash
 
-   python project_root/src/spectraPyle/stacking/stacking.py --config config.yaml --instrument.grisms '["red","blue"]'
+   spectrapyle --config config.yaml --instrument.grisms '["red","blue"]'
 
 Post-stacking Analysis
 ----------------------
@@ -63,17 +81,19 @@ Post-stacking Analysis
 
 .. code-block:: bash
 
-   jupyter notebook project_root/notebooks/plot_helper.ipynb
+   jupyter notebook notebooks/plot_helper.ipynb
 
-Interactive notebook showing all estimators (mean, median, geometric mean, weighted mean) and pixel count information.
+Interactive notebook showing all estimators (mean, median, geometric mean, weighted mean)
+and pixel count information.
 
 **Spectral Line Manager** — Configure spectral lines in plots:
 
 .. code-block:: bash
 
-   jupyter notebook project_root/notebooks/line_manager.ipynb
+   jupyter notebook notebooks/line_manager.ipynb
 
-Enable/disable emission lines and absorption features via checkboxes. Saved settings are picked up by the next ``plotting()`` call.
+Enable/disable emission lines and absorption features via checkboxes. Saved settings are
+picked up by the next ``plotting()`` call.
 
 Configuration Pipeline
 ----------------------

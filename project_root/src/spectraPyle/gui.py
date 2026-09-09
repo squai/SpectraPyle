@@ -2,7 +2,7 @@
 SpectraPyle GUI — pure ipywidgets, no local server needed.
 
 Usage (in a notebook cell):
-    from gui import start
+    from spectraPyle.gui import start
     start()
 """
 

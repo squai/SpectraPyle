@@ -43,9 +43,7 @@ dependencies = [
     "pydantic>=2.0",
     "pyyaml>=6.0",
     "tqdm>=4.60",
-    "plotly>=5.0",
-    "voila>=0.5.11",
-    "ipyfilechooser",
+    "dash>=2.0",
 ]
 
 # =========================================================
@@ -57,7 +55,8 @@ dependencies = [
 notebook = [
     "ipywidgets>=8.0",
     "ipython>=8.0",
-    "jupyter-server-proxy>=4.0",
+    "ipyfilechooser>=0.6",
+    "voila>=0.5.11",
 ]
 
 # Dev tools
@@ -79,7 +78,8 @@ docs = [
 all = [
     "ipywidgets>=8.0",
     "ipython>=8.0",
-    "jupyter-server-proxy>=4.0",
+    "ipyfilechooser>=0.6",
+    "voila>=0.5.11",
     "pytest",
     "black",
     "ruff",

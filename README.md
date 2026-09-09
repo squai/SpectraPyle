@@ -19,32 +19,50 @@ scientific analysis.
 
 ### Install
 
+For GUI/Jupyter usage (recommended for most users):
+
 ```bash
 git clone https://github.com/squai/SpectraPyle
 cd SpectraPyle/project_root
-pip install -e ".[all]"
+pip install -e ".[notebook]"
 ```
+
+For core/CLI-only usage, `pip install -e .` is sufficient. Once installed, SpectraPyle is available as a standard Python package and can be imported from your own notebooks or Python scripts; the supplied notebooks are convenience/tutorial interfaces, not a requirement for using the package.
 
 ### Run via GUI (config builder)
 
-**Local machines** — launch via Voilà (opens a browser tab automatically):
+SpectraPyle provides the same GUI through two launch modes, depending on the environment.
+
+**Local machines — Voilà:**
 
 ```bash
-python project_root/notebooks/run_gui.py
+python notebooks/run_gui.py
 ```
 
-**ESA Datalabs / JupyterLab** — open `notebooks/gui_launcher.ipynb` directly and select **Kernel → Restart Kernel and Run All Cells**. The full widget interface appears with no code visible.
+This starts a local Voilà server and opens the GUI in your default browser. If the browser does not open automatically, use the local URL printed in the terminal.
+
+**JupyterLab / ESA DataLabs — inline GUI:**
+
+```python
+from spectraPyle.gui import start
+
+start()
+```
+
+The GUI is rendered directly in the notebook cell, with no Voilà server or separate browser window required. Alternatively, open `notebooks/gui_launcher.ipynb`, which contains the same minimal launcher. On ESA DataLabs, use the **EUCLID-TOOLS** Jupyter kernel; see the [DataLabs guide](docs/datalabs.rst) for details.
 
 ### Run via CLI
 
+After installation, use the command-line entry point:
+
 ```bash
-python project_root/src/spectraPyle/stacking/stacking.py --config path/to/config.yaml
+spectrapyle --config path/to/config.yaml
 ```
 
 Override individual config keys at runtime:
 
 ```bash
-python stacking.py --config config.yaml --instrument.grisms '["red","blue"]'
+spectrapyle --config config.yaml --instrument.grisms '["red","blue"]'
 ```
 
 ### Minimal YAML config example
@@ -286,22 +304,22 @@ pip install -e ".[all]"
 ### Lint and format
 
 ```bash
-ruff check project_root/src/
-black project_root/src/
+ruff check src/
+black src/
 ```
 
 ### Sanity check (CLI)
 
 ```bash
-python project_root/src/spectraPyle/stacking/stacking.py --config path/to/default.yaml
+spectrapyle --config path/to/default.yaml
 ```
 
 ### Generate documentation locally
 
 ```bash
-cd project_root/docs
+cd docs
 make html
-# Output: project_root/docs/_build/html/index.html
+# Output: docs/_build/html/index.html
 ```
 
 ---
@@ -337,7 +355,7 @@ Publications using SpectraPyle **must** also include the following acknowledgmen
 
 If you use SpectraPyle with **Euclid** data, you must also follow the [Euclid Consortium publication policy](https://www.euclid-ec.org/) and include the standard Euclid acknowledgment text.
 
-For the full APA reference and detailed acknowledgment requirements, see [Citation & Acknowledgments](project_root/docs/citation.rst) in the documentation.
+For the full APA reference and detailed acknowledgment requirements, see [Citation & Acknowledgments](docs/citation.rst) in the documentation.
 
 ---
 
