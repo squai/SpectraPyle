@@ -8,9 +8,8 @@ Usage (in a notebook cell):
 
 import json
 import os
-import contextlib
 import importlib
-import sys
+import logging
 import threading
 import time
 import traceback
@@ -61,24 +60,6 @@ def advanced_box(content, title="⚙️ Advanced"):
     acc.set_title(0, title)
     acc.selected_index = None
     return acc
-
-
-class Tee:
-    """Write to a log file and optionally mirror to stdout."""
-    def __init__(self, file, debug=False):
-        self.file = file
-        self.debug = debug
-        self.original_stdout = sys.__stdout__
-
-    def write(self, msg):
-        self.file.write(msg)
-        if self.debug:
-            self.original_stdout.write(msg)
-
-    def flush(self):
-        self.file.flush()
-        if self.debug:
-            self.original_stdout.flush()
 
 
 # ---------------------------------------------------------------------------
@@ -1444,11 +1425,85 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
     # -----------------------------------------------------------------------
 
     run_spec_output = w.Output()
+    plot_output = w.Output()
+
+    progress_stage = w.HTML(value="<b>Stage:</b> Ready")
     progress_bar = w.IntProgress(
-        value=0, min=0, max=100, description="Running:",
-        bar_style="", style={"bar_color": "#2196F3"}, orientation="horizontal",
+        value=0, min=0, max=1, description="Progress:",
+        bar_style="", orientation="horizontal",
+        layout=w.Layout(width="95%"),
     )
-    progress_label = w.HTML(value="Starting...")
+    progress_counts = w.HTML(
+        value="Processed: 0 &nbsp; | &nbsp; Usable: 0 &nbsp; | &nbsp; Rejected: 0 &nbsp; | &nbsp; Unavailable: 0"
+    )
+    progress_message = w.HTML(value="")
+    elapsed_label = w.HTML(value="Elapsed: 0 s")
+
+    warning_counts = w.HTML(
+        value="<b>Warnings:</b> 0 &nbsp; | &nbsp; <b>Errors:</b> 0",
+        layout=w.Layout(
+            flex="0 0 auto",
+            margin="6px 0 0 0",
+        ),
+    )
+
+    # Actual Output widget used by the logging handler.
+    warning_output = w.Output(
+        layout=w.Layout(
+            width="100%",
+        )
+    )
+
+    # Keep scrolling outside the Output widget itself.
+    # This prevents long output from overlapping the status line below.
+    warning_scroller = w.Box(
+        [warning_output],
+        layout=w.Layout(
+            width="100%",
+            height="280px",
+            overflow="auto",
+            border="1px solid #ddd",
+            padding="4px",
+        ),
+    )
+
+    progress_panel = w.VBox(
+        [
+            w.HTML("<b>Run progress</b>"),
+            progress_stage,
+            progress_bar,
+            progress_counts,
+            progress_message,
+            elapsed_label,
+        ],
+        layout=w.Layout(
+            border="1px solid #ddd", padding="8px", width="50%", min_height="330px"
+        ),
+    )
+    
+    warning_panel = w.VBox(
+        [
+            w.HTML(
+                "<b>Warnings / errors</b>",
+                layout=w.Layout(flex="0 0 auto"),
+            ),
+            warning_scroller,
+            warning_counts,
+        ],
+        layout=w.Layout(
+            border="1px solid #ddd",
+            padding="8px",
+            width="50%",
+            min_height="350px",
+            overflow="hidden",
+        ),
+    )    
+
+    run_panels = w.HBox(
+        [progress_panel, warning_panel],
+        layout=w.Layout(width="100%", gap="10px", align_items="stretch"),
+    )
+
     final_report = w.HTML(value="")
     log_path_w = w.Text(value="", layout=w.Layout(display="none"))
     DEBUG_MODE = False
@@ -1467,44 +1522,150 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
 
     def run_spectraPyle(_):
         run_spec_output.clear_output()
+        plot_output.clear_output()
+        warning_output.clear_output()
         final_report.value = ""
         progress_bar.value = 0
+        progress_bar.max = 1
         progress_bar.bar_style = ""
-        progress_label.value = "Initializing..."
+        progress_stage.value = "<b>Stage:</b> Validating configuration"
+        progress_message.value = ""
+        progress_counts.value = (
+            "Processed: 0 &nbsp; | &nbsp; Usable: 0 &nbsp; | &nbsp; "
+            "Rejected: 0 &nbsp; | &nbsp; Unavailable: 0"
+        )
+        warning_counts.value = "Warnings: 0 &nbsp; | &nbsp; Errors: 0"
 
-        progress_label.value = "Validating config..."
         cfg, err = run_validation()
         if err:
+            final_report.value = f"""
+            <div style="border:1px solid #F44336;padding:10px;border-radius:6px;background-color:#FFEBEE;">
+                <b>❌ Validation failed — cannot run</b><br>
+                {str(err)}
+            </div>
+            """
             with run_spec_output:
-                print(f"❌ Validation failed — cannot run.\n{err}")
+                display(final_report)
             return
-        progress_label.value = "Initializing..."
 
         with run_spec_output:
-            display(progress_bar)
-            display(progress_label)
+            display(run_panels)
             display(final_report)
+            display(plot_output)
 
         start_time = time.time()
         stop_flag = {"done": False}
+        run_stats = {
+            "processed": 0,
+            "total": 0,
+            "ok": 0,
+            "rejected": 0,
+            "missing": 0,
+            "warnings": 0,
+            "errors": 0,
+            "status_counts": {},
+        }
+        path_to_log_file = None
 
-        def animate_progress():
+        def update_elapsed():
             while not stop_flag["done"]:
-                progress_bar.value = (progress_bar.value + 5) % 100
-                elapsed = int(time.time() - start_time)
-                progress_label.value = f"Running... {elapsed}s elapsed"
-                time.sleep(0.5)
+                elapsed_label.value = f"Elapsed: {int(time.time() - start_time)} s"
+                time.sleep(1.0)
 
-        thread = threading.Thread(target=animate_progress)
-        thread.start()
+        timer_thread = threading.Thread(target=update_elapsed, daemon=True)
+        timer_thread.start()
+
+        def update_counts():
+            progress_counts.value = (
+                f"Processed: {run_stats['processed']} / {run_stats['total'] or '—'}"
+                " &nbsp; | &nbsp; "
+                f"Usable: {run_stats['ok']}"
+                " &nbsp; | &nbsp; "
+                f"Rejected: {run_stats['rejected']}"
+                " &nbsp; | &nbsp; "
+                f"Unavailable: {run_stats['missing']}"
+            )
+
+        def progress_callback(**event):
+            stage = event.get("stage", "running")
+            stage_labels = {
+                "setup": "Preparing inputs",
+                "spectra": "Processing spectra",
+                "sigma_clip": "Sigma clipping",
+                "statistics": "Stacking statistics",
+                "bootstrap": "Bootstrap",
+                "writing": "Writing output",
+                "done": "Completed",
+            }
+            progress_stage.value = f"<b>Stage:</b> {stage_labels.get(stage, stage)}"
+
+            if stage == "spectra":
+                current = int(event.get("current", 0))
+                total = int(event.get("total", max(current, 1)))
+                run_stats["processed"] = current
+                run_stats["total"] = total
+                run_stats["ok"] += int(event.get("delta_ok", 0))
+                run_stats["rejected"] += int(event.get("delta_rejected", 0))
+                run_stats["missing"] += int(event.get("delta_missing", 0))
+                progress_bar.max = max(total, 1)
+                progress_bar.value = min(current, progress_bar.max)
+                progress_bar.description = "Spectra:"
+                chunk = event.get("chunk")
+                chunks = event.get("chunks")
+                progress_message.value = (
+                    f"Chunk {chunk}/{chunks}" if chunk and chunks else ""
+                )
+                update_counts()
+
+            elif stage == "bootstrap":
+                current = int(event.get("current", 0))
+                total = int(event.get("total", max(current, 1)))
+                progress_bar.max = max(total, 1)
+                progress_bar.value = min(current, progress_bar.max)
+                progress_bar.description = "Bootstrap:"
+                progress_message.value = f"Realization {current}/{total}"
+
+            elif stage == "done":
+                run_stats["processed"] = int(event.get("current", run_stats["processed"]))
+                run_stats["total"] = int(event.get("total", run_stats["total"]))
+                run_stats["ok"] = int(event.get("ok", run_stats["ok"]))
+                run_stats["rejected"] = int(event.get("rejected", run_stats["rejected"]))
+                run_stats["missing"] = int(event.get("missing", run_stats["missing"]))
+                run_stats["status_counts"] = event.get("status_counts", {})
+                progress_bar.max = max(run_stats["total"], 1)
+                progress_bar.value = progress_bar.max
+                progress_bar.description = "Spectra:"
+                progress_message.value = "Processing and stacking complete"
+                update_counts()
+
+            else:
+                message = event.get("message", "")
+                progress_message.value = message
+
+        def gui_log_record(record):
+            if record.levelno >= logging.ERROR:
+                run_stats["errors"] += 1
+            elif record.levelno >= logging.WARNING:
+                run_stats["warnings"] += 1
+            warning_counts.value = (
+                f"<b>Warnings:</b> {run_stats['warnings']} &nbsp; | &nbsp; "
+                f"<b>Errors:</b> {run_stats['errors']}"
+            )
 
         try:
             from spectraPyle.runtime.runtime_adapter import flatten_schema_model as _fsm
             from spectraPyle.io.filename_builder import build_filename as _bfn
+            from spectraPyle.utils.log import setup_logging, get_logger
 
             _flat_pre = _fsm(_State.validated_cfg)
-            _pre_name = _bfn(_flat_pre) if _flat_pre["filename_out"] == "AUTO" else _flat_pre["filename_out"]
-            pre_output_filename = str(Path(_flat_pre["output_dir"]) / f"{_pre_name}.fits")
+            _pre_name = (
+                _bfn(_flat_pre)
+                if _flat_pre["filename_out"] == "AUTO"
+                else _flat_pre["filename_out"]
+            )
+            pre_output_filename = str(
+                Path(_flat_pre["output_dir"]) / f"{_pre_name}.fits"
+            )
 
             log_stem = Path(pre_output_filename).stem
             path_to_log_file = get_unique_log_path(
@@ -1512,78 +1673,116 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
             )
             log_path_w.value = str(path_to_log_file)
 
-            with run_spec_output:
-                print(f"📝 Logging to: {path_to_log_file}")
+            importlib.reload(stack)
+            setup_logging(
+                level="INFO",
+                log_file=path_to_log_file,
+                gui_output=warning_output,
+                gui_level="WARNING",
+                gui_record_callback=gui_log_record,
+            )
+            run_logger = get_logger(__name__)
+            run_logger.info("=== spectraPyle run started ===")
+            run_logger.info(f"Timestamp: {time.ctime()}")
+            run_logger.debug(f"Config: {_State.validated_cfg}")
 
-            with open(path_to_log_file, "w") as logfile:
-                tee = Tee(logfile, debug=DEBUG_MODE)
-                with contextlib.redirect_stdout(tee), contextlib.redirect_stderr(tee):
-                    print("=== spectraPyle run started ===")
-                    print(f"Timestamp: {time.ctime()}")
-                    print(f"Config: {_State.validated_cfg}")
+            output_filename = stack.main(
+                _State.validated_cfg,
+                progress_callback=progress_callback,
+            )
+            run_logger.info("=== spectraPyle run completed ===")
 
-                    importlib.reload(stack)
-                    from spectraPyle.utils.log import setup_logging
-                    import ipywidgets as widgets
-
-                    log_widget = widgets.Output()
-                    with run_spec_output:
-                        display(log_widget)
-
-                    setup_logging(level="INFO", log_file=path_to_log_file, gui_output=log_widget)
-                    stack.main(_State.validated_cfg)
-                    print("=== spectraPyle run completed ===")
-
-            if _State.validated_cfg.plot.plot_results and pre_output_filename:
+            if _State.validated_cfg.plot.plot_results and output_filename:
                 try:
-                    with run_spec_output:
+                    progress_stage.value = "<b>Stage:</b> Plotting"
+                    progress_message.value = "Generating interactive result plot"
+                    with plot_output:
                         import spectraPyle.plot.plot as _spl_mod
                         importlib.reload(_spl_mod)
-                        _spl_mod.plotting(pre_output_filename)
+                        _spl_mod.plotting(output_filename)
                 except Exception as _plot_err:
-                    with run_spec_output:
-                        print(f"⚠️  Plot failed: {_plot_err}")
+                    run_logger.warning(
+                        f"Stacking completed, but result plotting failed: {_plot_err}"
+                    )
 
             stop_flag["done"] = True
-            thread.join()
-            progress_bar.value = 100
-            progress_bar.bar_style = "success"
+            timer_thread.join(timeout=1.5)
             elapsed = round(time.time() - start_time, 2)
-            final_report.value = f"""
-        <div style="border:1px solid #4CAF50;padding:10px;border-radius:6px;background-color:#E8F5E9;">
-            <b>✅ spectraPyle finished successfully</b><br>
-            Total runtime: {elapsed} seconds<br>
-            Log file: <code>{path_to_log_file}</code>
-        </div>
-        """
+            elapsed_label.value = f"Elapsed: {elapsed} s"
+
+            has_warnings = (
+                run_stats["warnings"] > 0
+                or run_stats["rejected"] > 0
+                or run_stats["missing"] > 0
+            )
+            if has_warnings:
+                progress_bar.bar_style = "warning"
+                status_details = ", ".join(
+                    f"{key}: {value}"
+                    for key, value in sorted(run_stats["status_counts"].items())
+                    if key != "OK"
+                )
+                detail_line = f"<br>Details: {status_details}" if status_details else ""
+                final_report.value = f"""
+                <div style="border:1px solid #F0AD4E;padding:10px;border-radius:6px;background-color:#FFF8E1;">
+                    <b>⚠ spectraPyle completed with warnings</b><br>
+                    Usable spectrum inputs: {run_stats['ok']} / {run_stats['total']}<br>
+                    Rejected/unusable: {run_stats['rejected']} &nbsp; | &nbsp; Unavailable: {run_stats['missing']}
+                    {detail_line}<br>
+                    Total runtime: {elapsed} seconds<br>
+                    Log file: <code>{path_to_log_file}</code>
+                </div>
+                """
+            else:
+                progress_bar.bar_style = "success"
+                final_report.value = f"""
+                <div style="border:1px solid #4CAF50;padding:10px;border-radius:6px;background-color:#E8F5E9;">
+                    <b>✅ spectraPyle finished successfully</b><br>
+                    Usable spectrum inputs: {run_stats['ok']} / {run_stats['total']}<br>
+                    Total runtime: {elapsed} seconds<br>
+                    Log file: <code>{path_to_log_file}</code>
+                </div>
+                """
 
         except Exception as e:
             stop_flag["done"] = True
-            thread.join()
+            timer_thread.join(timeout=1.5)
             progress_bar.bar_style = "danger"
+            progress_stage.value = "<b>Stage:</b> Failed"
             elapsed = round(time.time() - start_time, 2)
+            elapsed_label.value = f"Elapsed: {elapsed} s"
             tb = traceback.format_exc()
+
             try:
-                with open(path_to_log_file, "a") as logfile:
-                    logfile.write("\n\n=== ERROR TRACEBACK ===\n")
-                    logfile.write(tb)
+                from spectraPyle.utils.log import get_logger
+                get_logger(__name__).exception("spectraPyle run failed")
             except Exception:
-                pass
+                if path_to_log_file:
+                    try:
+                        with open(path_to_log_file, "a", encoding="utf-8") as logfile:
+                            logfile.write("\n\n=== ERROR TRACEBACK ===\n")
+                            logfile.write(tb)
+                    except Exception:
+                        pass
+
             short_error = str(e)
+            log_display = path_to_log_file if path_to_log_file else "not created"
             final_report.value = f"""
-        <div style="border:1px solid #F44336;padding:10px;border-radius:6px;background-color:#FFEBEE;">
-            <b>❌ spectraPyle failed</b><br>
-            Runtime before failure: {elapsed} seconds<br>
-            Error: {short_error}<br>
-            Log file: <code>{path_to_log_file}</code>
-        </div>
-        """
+            <div style="border:1px solid #F44336;padding:10px;border-radius:6px;background-color:#FFEBEE;">
+                <b>❌ spectraPyle failed</b><br>
+                Runtime before failure: {elapsed} seconds<br>
+                Error: {short_error}<br>
+                Log file: <code>{log_display}</code>
+            </div>
+            """
             if DEBUG_MODE:
                 with run_spec_output:
                     print("\n🔍 FULL TRACEBACK:\n")
                     print(tb)
 
-    run_spectraPyle_btn = w.Button(description="RUN spectraPyle", button_style="danger")
+    run_spectraPyle_btn = w.Button(
+        description="RUN spectraPyle", button_style="danger"
+    )
     run_spectraPyle_btn.on_click(run_spectraPyle)
 
     # -----------------------------------------------------------------------

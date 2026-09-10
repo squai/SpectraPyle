@@ -9,6 +9,7 @@ including median-flux normalization over a wavelength range, and the
 import numpy as np
 
 from spectraPyle.utils.log import get_logger
+from spectraPyle.utils.exceptions import NormalizationError
 
 logger = get_logger(__name__)
 
@@ -51,13 +52,25 @@ def normSpecInterv(specid, lbd, flux, error, lambdamin_norm, lambdamax_norm, nor
     vecnorm = flux[(lbd >= lambdamin_norm) & (lbd <= lambdamax_norm)]
 
     if (lambdamin_norm < np.nanmin(lbd)) or (lambdamax_norm > np.nanmax(lbd)):
-        print (f"WARNING normalization interval [{lambdamin_norm}, {lambdamax_norm}] [Å] partially outside the wavelength range of the spectrum [{np.round(lbd[0],2)},{np.round(lbd[-1],2)}] [Å].")
+        logger.warning(
+            f"Spectrum {specid}: normalization interval "
+            f"[{lambdamin_norm}, {lambdamax_norm}] Å partially outside the "
+            f"spectrum wavelength range [{np.round(lbd[0], 2)}, "
+            f"{np.round(lbd[-1], 2)}] Å."
+        )
 
     if len(vecnorm) == 0:
-        raise ValueError(fr"Normalization failure for {str(specid)}: normalization interval [{lambdamin_norm}, {lambdamax_norm}] [Å] outside the wavelength range of the spectrum [{np.round(lbd[0],2)},{np.round(lbd[-1],2)}] [Å].")
+        raise NormalizationError(
+            f"normalization interval [{lambdamin_norm}, {lambdamax_norm}] Å "
+            f"outside the spectrum wavelength range "
+            f"[{np.round(lbd[0], 2)}, {np.round(lbd[-1], 2)}] Å"
+        )
 
     if np.all(np.isnan(vecnorm)):
-        raise ValueError(fr"Normalization failure for {str(specid)}: no valid flux values in the normalization interval [ {lambdamin_norm}, {lambdamax_norm}] [Å].")
+        raise NormalizationError(
+            f"no valid flux values in normalization interval "
+            f"[{lambdamin_norm}, {lambdamax_norm}] Å"
+        )
     if norm_stat == 'median':
         norm = np.nanmedian(vecnorm)
     elif norm_stat == 'mean':
@@ -67,12 +80,14 @@ def normSpecInterv(specid, lbd, flux, error, lambdamin_norm, lambdamax_norm, nor
     elif norm_stat == 'minimum':
         norm = np.nanmin(vecnorm)
     else:
-        raise ValueError(f"Normalization failure: statistics '{norm_stat}' to be applied to the normalization interval not understood or implemented yet.")
+        raise ValueError(
+            f"Normalization statistic '{norm_stat}' is not supported."
+        )
 
     if (not np.isfinite(norm)) or (norm <= 0):
-        raise ValueError(
-            fr"Normalization failure: invalid normalization value ({norm}) "
-            fr"in interval [{lambdamin_norm}, {lambdamax_norm}] [Å]."
+        raise NormalizationError(
+            f"invalid normalization value ({norm}) in interval "
+            f"[{lambdamin_norm}, {lambdamax_norm}] Å"
         )
 
     fluxNorm = flux / norm
@@ -105,9 +120,9 @@ def normSpecMed(lbd, flux, error):
     norm = np.nanmedian(flux)
 
     if (not np.isfinite(norm)) or (norm <= 0):
-        raise ValueError(
-            fr"Normalization failure: invalid normalization value ({norm}) "
-            )
+        raise NormalizationError(
+            f"invalid median normalization value ({norm})"
+        )
 
     fluxNorm = flux / norm
     errorNorm = error / norm
@@ -142,9 +157,9 @@ def normSpecIntegrMean(lbd, flux, error):
     #norm = np.nansum(flux) / len(lbd) ## option n.2 equivalent to option n1
 
     if (not np.isfinite(norm)) or (norm <= 0):
-        raise ValueError(
-            fr"Normalization failure: invalid normalization value ({norm}) "
-            )
+        raise NormalizationError(
+            f"invalid integral normalization value ({norm})"
+        )
 
     fluxNorm = flux / norm
     errorNorm = error / norm
@@ -184,9 +199,9 @@ def normSpecCustom(lbd, flux, error, norm):
         If ``norm`` is not finite or is ≤ 0.
     """
     if (not np.isfinite(norm)) or (norm <= 0):
-        raise ValueError(
-            fr"Normalization failure: invalid normalization value ({norm}) "
-            )
+        raise NormalizationError(
+            f"invalid custom normalization value ({norm})"
+        )
 
     fluxNorm = flux / norm
     errorNorm = error / norm
@@ -201,6 +216,9 @@ def francis1991_normalize(
     max_iter_clip=3,
     feature_mask=None,
     eps=1e-10,
+    spectrum_ids=None,
+    eligible_mask=None,
+    return_status=False,
 ):
     """
     Robust Francis-style normalization with sigma-clipped overlap scaling.
@@ -229,9 +247,12 @@ def francis1991_normalize(
     norm_flux : ndarray
     norm_err : ndarray
     alphas : ndarray (Nspec,) — per-spectrum normalization factors
+    template_status : ndarray (Nspec,), optional
+        Returned only when ``return_status=True``. Values identify spectra
+        rejected by the template-normalization stage.
     """
 
-    print("\nStarting stacking Francis 1991-like", flush=True)
+    logger.info("Starting Francis 1991-like normalization")
 
     stat_func = np.nanmedian if norm_stat == "median" else np.nanmean
 
@@ -240,6 +261,23 @@ def francis1991_normalize(
     norm_flux = np.full_like(stackArr, np.nan)
     norm_err = np.full_like(stackArrErr, np.nan)
     alphas = np.full(Nspec, np.nan)
+    template_status = np.full(Nspec, "OK", dtype=object)
+
+    if spectrum_ids is None:
+        spectrum_ids = np.arange(Nspec)
+    if eligible_mask is None:
+        eligible_mask = np.ones(Nspec, dtype=bool)
+    else:
+        eligible_mask = np.asarray(eligible_mask, dtype=bool)
+        if eligible_mask.shape != (Nspec,):
+            raise ValueError("eligible_mask must have shape (Nspec,)")
+    template_status[~eligible_mask] = "SKIP"
+
+    def spectrum_label(i):
+        value = spectrum_ids[i]
+        if isinstance(value, bytes):
+            value = value.decode("utf-8", errors="replace")
+        return str(value)
 
     # --------------------------------------------------
     # Feature mask
@@ -259,15 +297,37 @@ def francis1991_normalize(
     # anchor = first (lowest-z) spectrum with enough pixels
     # --------------------------------------------------
     anchor = None
+    alpha0 = np.nan
     for i in range(Nspec):
-        if counts[i] >= min_overlap:
-            anchor = i
-            break
+        if not eligible_mask[i]:
+            continue
+        if counts[i] < min_overlap:
+            template_status[i] = "TEMPLATE_NO_OVERLAP"
+            continue
+
+        candidate = stat_func(stackArr[:, i][usable[:, i]])
+        if not np.isfinite(candidate) or candidate <= 0:
+            template_status[i] = "TEMPLATE_INVALID_NORMALIZATION"
+            logger.warning(
+                f"Spectrum {spectrum_label(i)} rejected during Francis 1991-like "
+                f"normalization: invalid anchor normalization ({candidate})."
+            )
+            continue
+
+        anchor = i
+        alpha0 = candidate
+        template_status[i] = "OK"
+        break
 
     if anchor is None:
-        raise ValueError("No valid anchor spectrum found")
+        raise ValueError(
+            "Francis 1991-like normalization could not find a valid anchor spectrum"
+        )
 
-    print(f"Francis 1991-like stacked: Anchor spectrum index: {anchor}", flush=True)
+    logger.info(
+        f"Francis 1991-like normalization: anchor spectrum "
+        f"{spectrum_label(anchor)} (index {anchor})"
+    )
 
     # --------------------------------------------------
     # Initialize reference
@@ -276,8 +336,6 @@ def francis1991_normalize(
     e0 = stackArrErr[:, anchor]
 
     valid0 = usable[:, anchor]
-
-    alpha0 = stat_func(f0[valid0])
 
     norm_flux[:, anchor] = f0 / alpha0
     norm_err[:, anchor] = e0 / alpha0
@@ -343,6 +401,9 @@ def francis1991_normalize(
     # --------------------------------------------------
     for i in range(anchor + 1, Nspec):
 
+        if not eligible_mask[i]:
+            continue
+
         fi = stackArr[:, i]
         ei = stackArrErr[:, i]
 
@@ -352,6 +413,12 @@ def francis1991_normalize(
         overlap = valid_i & valid_r & (~feature_mask)
 
         if overlap.sum() < min_overlap:
+            template_status[i] = "TEMPLATE_NO_OVERLAP"
+            logger.warning(
+                f"Spectrum {spectrum_label(i)} rejected during Francis 1991-like "
+                f"normalization: only {overlap.sum()} overlapping valid pixels "
+                f"(minimum required: {min_overlap})."
+            )
             continue
 
         ref_vals = ref_flux[overlap]
@@ -359,9 +426,15 @@ def francis1991_normalize(
 
         alpha = robust_alpha(ref_vals, cur_vals)
 
-        if not np.isfinite(alpha) or (alpha < 0) or (alpha > 1000):
-            print (fr"Normalization failure for spectrum N.{str(i)}: invalid normalization value ({alpha}).", flush=True)
+        if not np.isfinite(alpha) or (alpha <= 0) or (alpha > 1000):
+            template_status[i] = "TEMPLATE_INVALID_NORMALIZATION"
+            logger.warning(
+                f"Spectrum {spectrum_label(i)} rejected during Francis 1991-like "
+                f"normalization: invalid scale factor ({alpha})."
+            )
             alphas[i] = np.nan
+            norm_flux[:, i] = np.nan
+            norm_err[:, i] = np.nan
             continue
 
         # normalize
@@ -384,4 +457,6 @@ def francis1991_normalize(
         ref_flux[new_only] = norm_flux[new_only, i]
         ref_count[new_only] = 1
 
+    if return_status:
+        return norm_flux, norm_err, alphas, np.asarray(template_status, dtype=str)
     return norm_flux, norm_err, alphas

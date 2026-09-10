@@ -121,7 +121,7 @@ def read_catalog(dirIn, fname, extension, mandatory_keys):
     except Exception as e:
         raise ValueError(f"Error reading file '{file_path}': {e}")
 
-    print(f"File successfully read: {file_path}")
+    logger.info(f"Catalogue successfully read: {file_path}")
     return data
 
 def z_stack(redshift, z_type, conservation):
@@ -152,7 +152,10 @@ def z_stack(redshift, z_type, conservation):
             Redshift of the stacking frame
     """
     z_min, z_max, z_med = np.nanmin(redshift), np.nanmax(redshift), np.nanmedian(redshift)
-    print (f"Minimum z: {np.round(z_min,4)}, Median z: {np.round(z_med,4)}, Maximum z: {np.round(z_max,4)}")
+    logger.info(
+        f"Redshift range: min={np.round(z_min, 4)}, "
+        f"median={np.round(z_med, 4)}, max={np.round(z_max, 4)}"
+    )
 
     if z_type == 'median_z':
         z_stacking = z_med ## median redshift
@@ -163,10 +166,12 @@ def z_stack(redshift, z_type, conservation):
     elif z_type == 'rest_frame':
         z_stacking = 0.0 ## restframe
         if conservation == 'luminosity':
-            print (f"\n NOTE: When 'conservation'=='luminosity', and the stack is done at restframe, the output will be the restframe stacked LUMINOSITY spectra, in units [erg/s/AA]\n")
+            logger.info(
+                "Rest-frame luminosity stacking selected: output units are erg/s/Å."
+            )
     elif type(z_type) == int or type(z_type) == float:
         z_stacking = float(z_type) ## redshift defined by the user
-        print (f"Common redshift of the stacked spectrum defined by user: z={z_stacking}")
+        logger.info(f"User-defined stacking redshift: z={z_stacking}")
     else:
         raise NameError('z_type ', z_type, ' not supported!')
 
@@ -459,13 +464,15 @@ def save_to_file(config, data_dict):
 
     stacking_results_hdu = fits.BinTableHDU.from_columns(cols, name="STACKING_RESULTS")
     # Save to FITS file
-    print (f"config['output_dir']: {config['output_dir']}, config['filename_out']:{config['filename_out']}")
+    logger.debug(
+        f"Writing output_dir={config['output_dir']}, filename_out={config['filename_out']}"
+    )
     output_filename = f"{config['output_dir']}/{config['filename_out']}.fits"
     config_hdu = _build_config_hdu(config)
     hdul = fits.HDUList([primary_hdu, stacking_results_hdu, config_hdu])
     hdul.writeto(output_filename, overwrite=True)
 
-    print(f"FITS file '{output_filename}' has been saved.")
+    logger.info(f"FITS file saved: {output_filename}")
     
     return output_filename
 

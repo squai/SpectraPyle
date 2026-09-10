@@ -18,13 +18,27 @@ All statistics support bootstrap error estimation or analytical formulas.
 
 import numpy as np
 from multiprocessing import Pool
-from functools import partial
+from functools import partial, wraps
 import warnings
 from tqdm import tqdm
 
 from spectraPyle.utils.log import get_logger
 
 logger = get_logger(__name__)
+
+
+def _suppress_expected_nan_warnings(func):
+    """Suppress NumPy warnings expected for wavelength bins with no valid data."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", message="Mean of empty slice", category=RuntimeWarning)
+            warnings.filterwarnings("ignore", message="All-NaN slice encountered", category=RuntimeWarning)
+            warnings.filterwarnings("ignore", message="Degrees of freedom <= 0 for slice", category=RuntimeWarning)
+            return func(*args, **kwargs)
+    return wrapper
+
+@_suppress_expected_nan_warnings
 def stack_statistics(stackArr, stackArrErr):
     """
     Compute a suite of stacking statistics for spectra.
@@ -263,8 +277,9 @@ def geomMeanStrict(arr, axis=1):
     # For each bin, check if any finite value is non-positive
     has_nonpositive = np.any((arr <= 0) & finite_mask, axis=axis)
 
-    # Compute log array, replacing invalid with NaN
-    log_arr = np.log(np.where(finite_mask, arr, np.nan))
+    # Compute log array only for positive finite values; non-positive values
+    # still invalidate the strict estimator through ``has_nonpositive``.
+    log_arr = np.log(np.where(finite_mask & (arr > 0), arr, np.nan))
 
     # Compute mean and std in log space
     mean_log = np.nanmean(log_arr, axis=axis)
@@ -391,52 +406,7 @@ def weighted_average(stackArr, stackArrErr):
 
     return mean_w, disp_w, err_mean_w
 
-'''
-def bootstrap_iteration(args):
-    """Single iteration of the bootstrap."""
-    arr, M, repl, weight = args
-    sample = np.random.choice(a=M, size=M, replace=repl, p=weight)
-    arrSample = arr[:, sample]
-    sumArr = np.nansum(arrSample, axis=1)
-    meanArr = np.nanmean(arrSample, axis=1)
-    medArr = np.nanmedian(arrSample, axis=1)
-    geometricMeanArr, _ = geomMean(arrSample)
-    return sumArr, meanArr, medArr, geometricMeanArr
 
-def bootstrStack(arr, R=250, repl=True, weight=None, n_processes=None):
-    """
-    Bootstrapping function with multiprocessing.
-    """
-    print(f'Running bootstrap ({R} times) with multiprocessing...')
-    N, M = np.size(arr, 0), np.size(arr, 1)
-    
-    # Prepare arguments for each bootstrap iteration
-    args = [(arr, M, repl, weight) for _ in range(R)]
-    
-    # Use multiprocessing Pool
-    with Pool(processes=n_processes) as pool:
-        results = list(tqdm(pool.imap(bootstrap_iteration, args), 
-                            total=R, desc="Bootstrap sampled"))
-    
-    # Combine results
-    sumArr = np.array([result[0] for result in results]).T
-    meanArr = np.array([result[1] for result in results]).T
-    medArr = np.array([result[2] for result in results]).T
-    geometricMeanArr = np.array([result[3] for result in results]).T
-
-    # Calculate statistics
-    bootstrMeanSpec = np.nanmean(meanArr, axis=1)
-    bootstrMeanSpecSig = np.nanstd(meanArr, axis=1)
-
-    bootstrMedSpec = np.nanmedian(medArr, axis=1)
-    MAD = np.nanmedian(np.abs((medArr.T - bootstrMedSpec).T), axis=1)
-    bootstrMedSpecSig = 1.482 * MAD
-
-    bootstrGeomMeanSpec, bootstrGeomMeanSpecSig = geomMean(geometricMeanArr)
-
-    print('Bootstrap completed!')
-    return bootstrMeanSpec, bootstrMeanSpecSig, bootstrMedSpec, bootstrMedSpecSig, bootstrGeomMeanSpec, bootstrGeomMeanSpecSig
-'''
 
 
 
@@ -444,6 +414,7 @@ def bootstrStack(arr, R=250, repl=True, weight=None, n_processes=None):
 # SINGLE BOOTSTRAP ITERATION
 # =========================================================
 
+@_suppress_expected_nan_warnings
 def bootstrap_iteration(idx_sample, arr):
     """Perform a single bootstrap resampling iteration.
 
@@ -489,6 +460,7 @@ def bootstrap_iteration(idx_sample, arr):
 # MAIN BOOTSTRAP FUNCTION
 # =========================================================
 
+@_suppress_expected_nan_warnings
 def bootstrStack(
     arr,
     R=250,
@@ -496,6 +468,7 @@ def bootstrStack(
     weights=None,
     n_processes=None,
     random_state=None,
+    progress_callback=None,
 ):
     """Bootstrap resampling of stacked spectra.
 
@@ -513,6 +486,8 @@ def bootstrStack(
         Number of processes for parallelization (None = serial).
     random_state : int or None, optional
         Seed for reproducibility.
+    progress_callback : callable or None, optional
+        Structured progress callback used by the GUI. If omitted, tqdm is used.
 
     Returns
     -------
@@ -542,7 +517,7 @@ def bootstrStack(
             Uncertainty on strict geometric mean spectrum
     """
 
-    print(f"Running bootstrap (R={R})")
+    logger.info(f"Running bootstrap (R={R})")
 
     arr = np.asarray(arr)
     Npix, Nspec = arr.shape
@@ -560,22 +535,25 @@ def bootstrStack(
     # -----------------------------------------------------
     # Run iterations
     # -----------------------------------------------------
-    if n_processes and n_processes > 1:
-        print(f"Using multiprocessing ({n_processes} CPUs)")
+    def collect(iterator):
+        results = []
+        if progress_callback is None:
+            iterator = tqdm(iterator, total=R, desc="Bootstrap")
 
+        for i, result in enumerate(iterator, start=1):
+            results.append(result)
+            if progress_callback is not None:
+                progress_callback(stage="bootstrap", current=i, total=R)
+        return results
+
+    if n_processes and n_processes > 1:
+        logger.info(f"Bootstrap multiprocessing: using {n_processes} CPUs")
         with Pool(n_processes) as pool:
-            results = list(
-                tqdm(
-                    pool.imap(partial(bootstrap_iteration, arr=arr), indices),
-                    total=R,
-                    desc="Bootstrap",
-                )
+            results = collect(
+                pool.imap(partial(bootstrap_iteration, arr=arr), indices)
             )
     else:
-        results = [
-            bootstrap_iteration(idx, arr)
-            for idx in tqdm(indices, desc="Bootstrap")
-        ]
+        results = collect(bootstrap_iteration(idx, arr) for idx in indices)
 
     # -----------------------------------------------------
     # Collect results
@@ -630,7 +608,7 @@ def bootstrStack(
     gms_spec = np.nanmedian(gmsArr, axis=1)
     gms_err = 0.5 * (gms_p84 - gms_p16)
 
-    print("Bootstrap completed")
+    logger.info("Bootstrap completed")
 
     return mean_spec, mean_err, med_spec, med_err, geom_spec, geom_err, mode_spec, mode_err, gms_spec, gms_err
 

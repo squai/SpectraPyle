@@ -123,7 +123,7 @@ def _read_scale_factor(header):
         if key in header:
             scale = float(header[key])
             if scale != 1.0:
-                logger.warning(
+                logger.info(
                     f"Found flux scale factor {key}={scale} in FITS header. "
                     f"Applying to flux and error arrays."
                 )
@@ -414,9 +414,9 @@ def readSpec(config, specid, grism):
     """
     global _pixel_size_warning_logged
     if not _pixel_size_warning_logged:
-        logger.warning(
-            "Generic instrument: only manual pixel_size_type is supported. "
-            "Ensure pixel_resampling is set in your config."
+        logger.info(
+            "Generic instrument uses manual pixel_size_type; "
+            "pixel_resampling is taken from the configuration."
         )
         _pixel_size_warning_logged = True
 

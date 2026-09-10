@@ -97,6 +97,7 @@ project_root.zip
 # =========================
 # AI / local development tools
 # =========================
+*.patch
 .claudignore
 CLAUDE.md
 .superpowers/

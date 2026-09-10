@@ -21,6 +21,10 @@ from pathlib import Path
 from typing import Any, Dict, Callable
 from pydantic import BaseModel
 
+from spectraPyle.utils.log import get_logger
+
+logger = get_logger(__name__)
+
 from spectraPyle.schema.schema import StackingConfig
 
 
@@ -517,7 +521,7 @@ def flatten_schema_model(cfg):
         cfg = cfg.model_dump()
 
     if "instrument" not in cfg:
-        print("configuration already flattened")
+        logger.debug("Configuration already flattened")
         return cfg
 
     flat = {}

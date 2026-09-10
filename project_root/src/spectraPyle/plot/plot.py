@@ -53,7 +53,7 @@ def plotting(output_filename, width=950, height=550):
         A Plotly figure with two rows: pixel counts and spectrum flux.
     """
 
-    print(f"Plotting {output_filename} stack results")
+    logger.info(f"Plotting stacked results: {output_filename}")
     
     redshift, units, units_fscale = get_header(name_stack=output_filename)
     
@@ -639,9 +639,9 @@ def plot_h5_heatmap(h5_path, fits_path, template_array='norm',
                 [wavelength[-1] + half[-1]]
             ])
         else:
-            print(
-                f"⚠  nbinsx={nbinsx_val} < n_pixels={n_pixels}: uniform x-bins applied. "
-                f"On non-uniform (e.g. log-linear) grids this redistributes flux across bins — "
+            logger.warning(
+                f"Heatmap nbinsx={nbinsx_val} < n_pixels={n_pixels}: uniform x-bins applied. "
+                f"On non-uniform (e.g. log-linear) grids this redistributes flux across bins; "
                 f"use n_pixels for a physically unbiased map."
             )
             xedges = np.linspace(wavelength[0], wavelength[-1], nbinsx_val + 1)
