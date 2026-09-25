@@ -1838,8 +1838,16 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
                     {detail_line}<br>
                     Total runtime: {elapsed} seconds<br><br>
                 
-                    <b>Output FITS:</b><br>
-                    <code>{output_filename}</code><br><br>
+                    <b>Output FITS:</b>
+                    <div style="
+                        margin-top:4px;
+                        padding:8px;
+                        background:#eef6fb;
+                        border-left:4px solid #2c7fb8;
+                    ">
+                        <code>{output_filename}</code>
+                    </div>
+                    <br>
                 
                     Log file:<br>
                     <code>{path_to_log_file}</code>
@@ -1854,7 +1862,15 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
                     Total runtime: {elapsed} seconds<br><br>
                 
                     <b>Output FITS:</b><br>
-                    <code>{output_filename}</code><br><br>
+                    <div style="
+                        margin-top:4px;
+                        padding:8px;
+                        background:#eef6fb;
+                        border-left:4px solid #2c7fb8;
+                    ">
+                        <code>{output_filename}</code>
+                    </div>
+                    <br>
                 
                     Log file:<br>
                     <code>{path_to_log_file}</code>
