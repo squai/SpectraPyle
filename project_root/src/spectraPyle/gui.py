@@ -1922,7 +1922,9 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
             # columns, since the same catalogue may also be used with locally
             # downloaded spectra.
             instrument_w.value = "euclid"
+            survey_w.value = "deep"
             spectra_format_w.value = MODE_METADATA
+    
             startup_note.value = (
                 "<div style='border-left:6px solid #2c7fb8; background:#eef6fb; "
                 "padding:8px; margin-bottom:8px;'>"
