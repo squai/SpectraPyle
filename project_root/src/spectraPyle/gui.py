@@ -1794,6 +1794,9 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
                 _State.validated_cfg,
                 progress_callback=progress_callback,
             )
+
+            output_filename = str(Path(output_filename).resolve())
+            run_logger.info(f"Output FITS: {output_filename}")
             run_logger.info("=== spectraPyle run completed ===")
 
             if _State.validated_cfg.plot.plot_results and output_filename:
@@ -1833,8 +1836,13 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
                     Usable spectrum inputs: {run_stats['ok']} / {run_stats['total']}<br>
                     Rejected/unusable: {run_stats['rejected']} &nbsp; | &nbsp; Unavailable: {run_stats['missing']}
                     {detail_line}<br>
-                    Total runtime: {elapsed} seconds<br>
-                    Log file: <code>{path_to_log_file}</code>
+                    Total runtime: {elapsed} seconds<br><br>
+                
+                    <b>Output FITS:</b><br>
+                    <code>{output_filename}</code><br><br>
+                
+                    Log file:<br>
+                    <code>{path_to_log_file}</code>
                 </div>
                 """
             else:
@@ -1843,8 +1851,13 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
                 <div style="border:1px solid #4CAF50;padding:10px;border-radius:6px;background-color:#E8F5E9;">
                     <b>✅ spectraPyle finished successfully</b><br>
                     Usable spectrum inputs: {run_stats['ok']} / {run_stats['total']}<br>
-                    Total runtime: {elapsed} seconds<br>
-                    Log file: <code>{path_to_log_file}</code>
+                    Total runtime: {elapsed} seconds<br><br>
+                
+                    <b>Output FITS:</b><br>
+                    <code>{output_filename}</code><br><br>
+                
+                    Log file:<br>
+                    <code>{path_to_log_file}</code>
                 </div>
                 """
 
