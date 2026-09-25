@@ -4,6 +4,15 @@ SpectraPyle GUI — pure ipywidgets, no local server needed.
 Usage (in a notebook cell):
     from spectraPyle.gui import start
     start()
+
+DataLabs example:
+    from pathlib import Path
+    from spectraPyle.gui import start
+    start(
+        preset="datalabs",
+        catalogue_file=catalogue_file,
+        initial_dir=Path.home() / "my_workspace",
+    )
 """
 
 import json
@@ -68,6 +77,7 @@ def advanced_box(content, title="⚙️ Advanced"):
 
 class _State:
     validated_cfg = None
+    start_dir = None
     current_path = None
     last_dir = None
     lambda_norm_rest_value = None
@@ -82,11 +92,65 @@ class _State:
 # start() — build and display the full widget UI
 # ---------------------------------------------------------------------------
 
-def start():
+def start(initial_dir=None, preset=None, catalogue_file=None):
+    """Build and display the spectraPyle widget interface.
+
+    Parameters
+    ----------
+    initial_dir : str or pathlib.Path, optional
+        Initial directory used by the file browsers. If omitted, the current
+        working directory is used.
+    preset : {"datalabs"}, optional
+        Apply a lightweight workflow preset. The ``datalabs`` preset selects
+        Euclid and sets the spectra format to ``metadata path``. It does not
+        infer the spectra format from catalogue columns, so catalogues that
+        contain DataLabs metadata can still be used with locally downloaded
+        spectra in a normal ``start()`` session.
+    catalogue_file : str or pathlib.Path, optional
+        Catalogue to load when the GUI starts. Relative paths are interpreted
+        relative to ``initial_dir``.
+    """
     # -----------------------------------------------------------------------
     # Initialise mutable path state
     # -----------------------------------------------------------------------
-    _State.current_path = PACKAGE_ROOT
+    start_dir = Path.cwd() if initial_dir is None else Path(initial_dir).expanduser()
+    start_dir = start_dir.resolve()
+    if not start_dir.exists():
+        raise FileNotFoundError(f"Initial directory does not exist: {start_dir}")
+    if not start_dir.is_dir():
+        raise NotADirectoryError(f"Initial directory is not a directory: {start_dir}")
+
+    if preset is None:
+        startup_preset = None
+    elif isinstance(preset, str):
+        startup_preset = preset.strip().lower()
+    else:
+        raise TypeError("preset must be a string or None")
+
+    supported_presets = {None, "datalabs"}
+    if startup_preset not in supported_presets:
+        raise ValueError(
+            f"Unknown preset '{preset}'. Supported presets: datalabs"
+        )
+
+    startup_catalogue = None
+    if catalogue_file is not None:
+        startup_catalogue = Path(catalogue_file).expanduser()
+        if not startup_catalogue.is_absolute():
+            startup_catalogue = start_dir / startup_catalogue
+        startup_catalogue = startup_catalogue.resolve()
+        if not startup_catalogue.exists():
+            raise FileNotFoundError(f"Catalogue file does not exist: {startup_catalogue}")
+        if not startup_catalogue.is_file():
+            raise ValueError(f"Catalogue path is not a file: {startup_catalogue}")
+        if startup_catalogue.suffix.lower().lstrip(".") not in {"fits", "csv", "npz"}:
+            raise ValueError(
+                "Unsupported catalogue format. Expected one of: .fits, .csv, .npz"
+            )
+
+    _State.start_dir = start_dir
+    _State.current_path = start_dir
+    _State.last_dir = str(start_dir)
 
     # -----------------------------------------------------------------------
     # Load instrument rules
@@ -105,6 +169,9 @@ def start():
 
     def get_last_dir():
         return _State.last_dir if _State.last_dir else get_current_path()
+
+    def get_start_dir():
+        return str(Path(_State.start_dir).resolve())
 
     instrument_w = w.Dropdown(
         options=["euclid", "desi", "generic"],
@@ -285,6 +352,13 @@ def start():
     )
     file_fc.show_only_files = True
 
+    back_to_start_btn = w.Button(
+        description="Back to start folder",
+        icon="home",
+        tooltip=f"Return all file browsers to {get_start_dir()}",
+        layout=w.Layout(width="190px"),
+    )
+
     catalogue_label = w.HTML()
 
     def update_catalogue_label():
@@ -325,6 +399,7 @@ def start():
         path = os.path.join(directory, f"{filename}.{ext}")
         set_catalogue_selection(path)
         _State.current_path = Path(dirIn_w.value)
+        _State.last_dir = dirIn_w.value
         sync_current_path_to_spectra(_State.current_path)
         update_output_dir(dirIn_w.value)
         update_catalogue_columns()
@@ -453,6 +528,35 @@ def start():
                 fc.reset(path=path_str)
             except Exception:
                 pass
+
+    def _navigate_chooser(chooser, path):
+        """Move a FileChooser without changing the currently configured input."""
+        try:
+            chooser._selected_files = []
+            chooser._selected_path = None
+            chooser.reset(path=path)
+        except Exception:
+            try:
+                chooser.path = path
+            except Exception:
+                pass
+
+    def back_to_start_folder(_):
+        """Return all input file browsers to the session start directory."""
+        path = get_start_dir()
+        _State.current_path = Path(path)
+        _State.last_dir = path
+
+        _navigate_chooser(file_fc, path)
+        _navigate_chooser(spectra_dir_fc, path)
+        _navigate_chooser(spectra_file_fc, path)
+
+        for wdg in grism_dir_widgets.values():
+            _navigate_chooser(wdg["fc"], path)
+        for wdg in grism_file_widgets.values():
+            _navigate_chooser(wdg["fc"], path)
+
+    back_to_start_btn.on_click(back_to_start_folder)
 
     def update_spectra_dir(change=None):
         mode = spectra_format_w.value
@@ -1806,6 +1910,41 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
     show_log_btn.on_click(show_log)
 
     # -----------------------------------------------------------------------
+    # Startup preset / preloaded catalogue
+    # -----------------------------------------------------------------------
+
+    startup_note = w.HTML(value="")
+
+    def apply_startup_preset():
+        if startup_preset == "datalabs":
+            # The preset explicitly describes the intended access workflow.
+            # Do not infer metadata mode merely from the presence of metadata
+            # columns, since the same catalogue may also be used with locally
+            # downloaded spectra.
+            instrument_w.value = "euclid"
+            spectra_format_w.value = MODE_METADATA
+            startup_note.value = (
+                "<div style='border-left:6px solid #2c7fb8; background:#eef6fb; "
+                "padding:8px; margin-bottom:8px;'>"
+                "<b>DataLabs preset active.</b> Spectra format is set to "
+                "<code>metadata path</code>, so spectra are read through the "
+                "catalogue metadata rather than from a local spectra directory."
+                "</div>"
+            )
+
+    def load_startup_catalogue():
+        if startup_catalogue is None:
+            return
+        sync_catalogue_to_ui(
+            str(startup_catalogue.parent),
+            startup_catalogue.stem,
+            startup_catalogue.suffix.lower().lstrip("."),
+        )
+
+    apply_startup_preset()
+    load_startup_catalogue()
+
+    # -----------------------------------------------------------------------
     # Layout assembly
     # -----------------------------------------------------------------------
 
@@ -1847,6 +1986,7 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
 
     io_tab = w.VBox([
         section("Input/Output (*)"),
+        back_to_start_btn,
         section("Catalogue"),
         catalogue_label,
         file_fc,
@@ -1922,6 +2062,7 @@ Higher is better.<br><br> Note: Euclid Q1 max dithers = 4 (recommended ≥ 2).
     log_section.selected_index = None
 
     ui = w.VBox([
+        startup_note,
         load_config_section,
         main_tabs,
         run_section,
